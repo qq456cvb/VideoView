@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="action_settings">Settings</string>
+    <string name="app_name">福建试听评议系统</string>
+    <string name="audio">Audio</string>
+    <string name="hello_world">Welcome to the sample!</string>
+    <string name="load_a_mp3">Play h.264 over HTTP</string>
+    <string name="refresh">Refresh</string>
+    <string name="video">Video</string>
+    <string name="title">网上视听评议系统</string>
+    <string name="default_url">http://k.youku.com/player/getFlvPath/sid/543998559974010d78949_00/st/flv/fileid/030002010055D3C962748F07ED62135A000F29-0231-12A7-972C-C0C8EFD0BAF0?K=b2121d8f86eb10a224124f73&amp;ctype=10&amp;ev=1&amp;oip=2043096855&amp;token=5630&amp;ep=v2vbCyO9bQn5roDmJHCFk55LaK62qNBjDJaH%2BcpJokFqyu8U5d7c%2B%2B7ccOUlnZ06Uf5RxmAXMVpNOcnmbxZAuiLj0OuojsRNQ7TtDT%2BvOblxzx6lzTefGX29s5MFnReZvWNIoRFGzlg%3D&amp;ymovie=1</string>
+    <string name="play_pause_button">play_pause_button</string>
+</resources>

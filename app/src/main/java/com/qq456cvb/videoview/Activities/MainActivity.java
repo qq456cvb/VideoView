@@ -55,9 +55,12 @@ public class MainActivity extends Activity implements ProfileFragment.OnProfileL
             @Override
             public void onClick(View v) {
                 clearFragments();
+                mContentVideo.setVisibility(View.VISIBLE);
+                mContentList.setVisibility(View.VISIBLE);
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction transaction = fm.beginTransaction();
-                transaction.replace(R.id.content_right, mComment);
+                transaction.show(mVideo);
+                transaction.show(mList);
                 transaction.commit();
             }
         });
@@ -67,7 +70,7 @@ public class MainActivity extends Activity implements ProfileFragment.OnProfileL
                 clearFragments();
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction transaction = fm.beginTransaction();
-                transaction.replace(R.id.content_right, mProfileFragment);
+                transaction.show(mProfileFragment);
                 transaction.commit();
             }
         });
@@ -86,20 +89,24 @@ public class MainActivity extends Activity implements ProfileFragment.OnProfileL
 
     private void setDefaultFragment()
     {
+        // add all the fragments
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.replace(R.id.video_fragment, mVideo);
-        transaction.replace(R.id.list_fragment, mList);
+        transaction.add(R.id.video_fragment, mVideo);
+        transaction.add(R.id.list_fragment, mList);
+        transaction.add(R.id.content_right, mProfileFragment);
+        transaction.hide(mProfileFragment);
         transaction.commit();
     }
 
     public void clearFragments()
     {
+        mProfileFragment.clearFragments();
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.remove(mVideo);
-        transaction.remove(mList);
-        transaction.remove(mComment);
+        transaction.hide(mVideo);
+        transaction.hide(mList);
+        transaction.hide(mProfileFragment);
         transaction.commit();
 
         // hide all the fragment container

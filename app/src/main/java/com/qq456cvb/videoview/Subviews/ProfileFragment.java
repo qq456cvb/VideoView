@@ -43,7 +43,18 @@ public class ProfileFragment extends Fragment {
         profileArticleFragment = new ProfileArticleFragment();
         findViews();
         bindOnClickListeners();
+        setDefaultFragment();
         return mView;
+    }
+
+    private void setDefaultFragment()
+    {
+        // add all the fragments
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.add(R.id.content_right, profileArticleFragment);
+        transaction.hide(profileArticleFragment);
+        transaction.commit();
     }
 
     private void findViews() {
@@ -67,7 +78,7 @@ public class ProfileFragment extends Fragment {
                 onProfileListener.clearFragments();
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction transaction = fm.beginTransaction();
-                transaction.replace(R.id.content_right, profileArticleFragment);
+                transaction.show(profileArticleFragment);
                 transaction.commit();
             }
         });
@@ -85,5 +96,12 @@ public class ProfileFragment extends Fragment {
 
             }
         });
+    }
+
+    public void clearFragments() {
+        FragmentManager fm = getFragmentManager();
+        FragmentTransaction transaction = fm.beginTransaction();
+        transaction.hide(profileArticleFragment);
+        transaction.commit();
     }
 }

@@ -75,6 +75,7 @@ public class ProfileImageFragment extends Fragment {
     @Override
     public void onHiddenChanged(boolean hidden) {
         if (hidden && list.size() > 0 && image_grid != null) {
+            list.clear();
             String[] paths=new String[30];
             for(int i=0;i<15;i++) {
                 paths[2*i] = "/storage/emulated/0/test/" + String.valueOf(1) + ".jpg";

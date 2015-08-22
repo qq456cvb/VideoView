@@ -11,11 +11,11 @@ import com.qq456cvb.videoview.R;
 /**
  * Created by qq456cvb on 8/19/15.
  */
-public class ProfileArticleFragment extends Fragment {
+public class ProfileReviewFragment extends Fragment {
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        return inflater.inflate(R.layout.profile_article, container, false);
+        return inflater.inflate(R.layout.profile_review, container, false);
     }
 }

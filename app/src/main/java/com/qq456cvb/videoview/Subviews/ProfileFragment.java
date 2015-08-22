@@ -22,11 +22,12 @@ public class ProfileFragment extends Fragment {
     }
 
     private ImageView profileVideoButton;
-    private ImageView profileArticleButton;
+    private ImageView profileReviewButton;
     private ImageView profileConfigButton;
     private ImageView profilePictureButton;
     private OnProfileListener onProfileListener;
-    private ProfileArticleFragment profileArticleFragment;
+    private ProfileReviewFragment profileReviewFragment;
+    private ProfileImageFragment profileImageFragment;
     private View mView;
 
     @Override
@@ -40,7 +41,8 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState)
     {
         mView = inflater.inflate(R.layout.profile, container, false);
-        profileArticleFragment = new ProfileArticleFragment();
+        profileReviewFragment = new ProfileReviewFragment();
+        profileImageFragment = new ProfileImageFragment();
         findViews();
         bindOnClickListeners();
         setDefaultFragment();
@@ -52,14 +54,16 @@ public class ProfileFragment extends Fragment {
         // add all the fragments
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.add(R.id.content_right, profileArticleFragment);
-        transaction.hide(profileArticleFragment);
+        transaction.add(R.id.content_right, profileReviewFragment);
+        transaction.add(R.id.content_right, profileImageFragment);
+        transaction.hide(profileReviewFragment);
+        transaction.hide(profileImageFragment);
         transaction.commit();
     }
 
     private void findViews() {
         profileVideoButton = (ImageView)mView.findViewById(R.id.profile_video_img);
-        profileArticleButton = (ImageView)mView.findViewById(R.id.profile_article_img);
+        profileReviewButton = (ImageView)mView.findViewById(R.id.profile_article_img);
         profileConfigButton = (ImageView)mView.findViewById(R.id.profile_config_img);
         profilePictureButton = (ImageView)mView.findViewById(R.id.profile_picture_img);
     }
@@ -72,13 +76,14 @@ public class ProfileFragment extends Fragment {
             }
         });
 
-        profileArticleButton.setOnClickListener(new View.OnClickListener() {
+        profileReviewButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 onProfileListener.clearFragments();
+                clearFragments();
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction transaction = fm.beginTransaction();
-                transaction.show(profileArticleFragment);
+                transaction.show(profileReviewFragment);
                 transaction.commit();
             }
         });
@@ -93,7 +98,12 @@ public class ProfileFragment extends Fragment {
         profilePictureButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                onProfileListener.clearFragments();
+                clearFragments();
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction transaction = fm.beginTransaction();
+                transaction.show(profileImageFragment);
+                transaction.commit();
             }
         });
     }
@@ -101,7 +111,8 @@ public class ProfileFragment extends Fragment {
     public void clearFragments() {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.hide(profileArticleFragment);
+        transaction.hide(profileReviewFragment);
+        transaction.hide(profileImageFragment);
         transaction.commit();
     }
 }

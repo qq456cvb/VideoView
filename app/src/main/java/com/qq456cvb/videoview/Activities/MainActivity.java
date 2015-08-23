@@ -20,8 +20,8 @@ import com.qq456cvb.videoview.Subviews.VideoFragment;
 public class MainActivity extends Activity implements ProfileFragment.OnProfileListener{
     public final static String TAG = "MainActivity";
 
-    private ListFragment mList = new ListFragment();
-    private VideoFragment mVideo = new VideoFragment();
+    private ListFragment mListFragment = new ListFragment();
+    private VideoFragment mVideoFragment = new VideoFragment();
     private CommentFragment mComment = new CommentFragment();
     private ProfileFragment mProfileFragment = new ProfileFragment();
     private LinearLayout mWatchButton;
@@ -59,8 +59,8 @@ public class MainActivity extends Activity implements ProfileFragment.OnProfileL
                 mContentList.setVisibility(View.VISIBLE);
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction transaction = fm.beginTransaction();
-                transaction.show(mVideo);
-                transaction.show(mList);
+                transaction.show(mVideoFragment);
+                transaction.show(mListFragment);
                 transaction.commit();
             }
         });
@@ -92,10 +92,13 @@ public class MainActivity extends Activity implements ProfileFragment.OnProfileL
         // add all the fragments
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.add(R.id.video_fragment, mVideo);
-        transaction.add(R.id.list_fragment, mList);
+        transaction.add(R.id.video_fragment, mVideoFragment);
+        transaction.add(R.id.list_fragment, mListFragment);
         transaction.add(R.id.content_right, mProfileFragment);
         transaction.hide(mProfileFragment);
+        transaction.hide(mVideoFragment);
+        transaction.hide(mListFragment);
+        transaction.show(mVideoFragment);
         transaction.commit();
     }
 
@@ -104,8 +107,8 @@ public class MainActivity extends Activity implements ProfileFragment.OnProfileL
         mProfileFragment.clearFragments();
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.hide(mVideo);
-        transaction.hide(mList);
+        transaction.hide(mVideoFragment);
+        transaction.hide(mListFragment);
         transaction.hide(mProfileFragment);
         transaction.commit();
 

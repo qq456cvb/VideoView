@@ -30,6 +30,7 @@ public class ProfileFragment extends Fragment {
 //    private ProfileReviewFragment profileReviewFragment;
     private CommentListFragment profileReviewFragment;
     private ProfileImageFragment profileImageFragment;
+    private ProfileConfigFragment profileConfigFragment;
     private View mView;
 
     @Override
@@ -45,6 +46,7 @@ public class ProfileFragment extends Fragment {
         mView = inflater.inflate(R.layout.profile, container, false);
         profileReviewFragment = new CommentListFragment();
         profileImageFragment = new ProfileImageFragment();
+        profileConfigFragment = new ProfileConfigFragment();
         findViews();
         bindOnClickListeners();
         setDefaultFragment();
@@ -58,8 +60,10 @@ public class ProfileFragment extends Fragment {
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.add(R.id.content_right, profileReviewFragment);
         transaction.add(R.id.content_right, profileImageFragment);
+        transaction.add(R.id.content_right, profileConfigFragment);
         transaction.hide(profileReviewFragment);
         transaction.hide(profileImageFragment);
+        transaction.hide(profileConfigFragment);
         transaction.commit();
     }
 
@@ -93,7 +97,12 @@ public class ProfileFragment extends Fragment {
         profileConfigButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                onProfileListener.clearFragments();
+                clearFragments();
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction transaction = fm.beginTransaction();
+                transaction.show(profileConfigFragment);
+                transaction.commit();
             }
         });
 
@@ -115,6 +124,7 @@ public class ProfileFragment extends Fragment {
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.hide(profileReviewFragment);
         transaction.hide(profileImageFragment);
+        transaction.hide(profileConfigFragment);
         transaction.commit();
     }
 }

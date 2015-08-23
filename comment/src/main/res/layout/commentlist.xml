@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="15pt"
+        android:background="@drawable/setbar_bg">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="类型"
+            android:id="@+id/textView"
+            android:layout_weight="1"
+            android:textSize="10pt"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="标题"
+            android:id="@+id/textView2"
+            android:layout_weight="1"
+            android:textSize="10pt" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="文档名称"
+            android:id="@+id/textView3"
+            android:layout_weight="1"
+            android:textSize="10pt" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="关联文件"
+            android:id="@+id/textView4"
+            android:layout_weight="1"
+            android:textSize="10pt" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="评议时间"
+            android:id="@+id/textView5"
+            android:layout_weight="1"
+            android:textSize="10pt" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="操作"
+            android:id="@+id/textView6"
+            android:layout_weight="1"
+            android:textSize="10pt" />
+    </LinearLayout>
+
+    <ListView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@android:id/list"
+        android:layout_weight="1"
+        android:descendantFocusability= "beforeDescendants"
+        android:fastScrollEnabled="true"
+        android:fastScrollAlwaysVisible="false" />
+
+</LinearLayout>

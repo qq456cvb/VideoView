@@ -10,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
 
+import com.example.littlebeanfang.comment.CommentListFragment;
 import com.qq456cvb.videoview.R;
 
 /**
@@ -26,7 +27,8 @@ public class ProfileFragment extends Fragment {
     private ImageView profileConfigButton;
     private ImageView profilePictureButton;
     private OnProfileListener onProfileListener;
-    private ProfileReviewFragment profileReviewFragment;
+//    private ProfileReviewFragment profileReviewFragment;
+    private CommentListFragment profileReviewFragment;
     private ProfileImageFragment profileImageFragment;
     private View mView;
 
@@ -41,7 +43,7 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState)
     {
         mView = inflater.inflate(R.layout.profile, container, false);
-        profileReviewFragment = new ProfileReviewFragment();
+        profileReviewFragment = new CommentListFragment();
         profileImageFragment = new ProfileImageFragment();
         findViews();
         bindOnClickListeners();

@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation="horizontal">
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="New Text"
+        android:id="@+id/type"
+        android:layout_weight="1"
+        android:autoText="false"
+        android:layout_marginRight="3pt" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="New Text"
+        android:id="@+id/title"
+        android:layout_weight="1"
+        android:layout_marginRight="3pt" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="New Text"
+        android:id="@+id/docname"
+        android:layout_weight="1"
+        android:layout_marginRight="3pt" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="New Text"
+        android:id="@+id/relfile"
+        android:layout_weight="1"
+        android:layout_marginRight="3pt" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:text="New Text"
+        android:id="@+id/date"
+        android:layout_weight="1"
+        android:layout_marginRight="3pt" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1">
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="13pt"
+            android:text="编辑"
+            android:id="@+id/cm_edit"
+            android:layout_weight="1"
+            android:textColor="#ffffff"
+            android:background="#316dff"
+            android:shadowColor="#110c30"
+            android:layout_margin="2pt"
+            android:focusable="false"/>
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="13pt"
+            android:text="删除"
+            android:id="@+id/cm_delete"
+            android:layout_weight="1"
+            android:textColor="#ffffff"
+            android:background="#316dff"
+            android:shadowColor="#110c30"
+            android:layout_margin="2pt"
+            android:focusable="false"/>
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="match_parent"
+            android:layout_height="13pt"
+            android:text="上传"
+            android:id="@+id/cm_upload"
+            android:layout_weight="1"
+            android:textColor="#ffffff"
+            android:background="#316dff"
+            android:shadowColor="#110c30"
+            android:layout_margin="2pt"
+            android:focusable="false"/>
+    </LinearLayout>
+
+</LinearLayout>

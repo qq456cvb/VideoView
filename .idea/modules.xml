@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/VideoView.iml" filepath="$PROJECT_DIR$/VideoView.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/comment/comment.iml" filepath="$PROJECT_DIR$/comment/comment.iml" />
       <module fileurl="file://$PROJECT_DIR$/libvlc/libvlc.iml" filepath="$PROJECT_DIR$/libvlc/libvlc.iml" />
     </modules>
   </component>

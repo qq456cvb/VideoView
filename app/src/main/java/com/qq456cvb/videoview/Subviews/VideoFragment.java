@@ -86,6 +86,10 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
         return view;
     }
 
+    @Override
+    public void onHiddenChanged(boolean hidden) {
+        Log.d("Video", String.valueOf(hidden));
+    }
     private void showOverlay() {
         vlcOverlay.setVisibility(View.VISIBLE);
     }

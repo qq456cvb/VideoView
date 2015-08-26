@@ -12,6 +12,8 @@ import android.widget.ImageView;
 
 import com.example.littlebeanfang.comment.CommentListFragment;
 import com.qq456cvb.videoview.R;
+import com.qq456cvb.videoview.Subviews.Profile.ProfileConfigFragment;
+import com.qq456cvb.videoview.Subviews.Profile.ProfileImageFragment;
 
 /**
  * Created by qq456cvb on 8/19/15.
@@ -28,8 +30,9 @@ public class ProfileFragment extends Fragment {
     private ImageView profilePictureButton;
     private OnProfileListener onProfileListener;
 //    private ProfileReviewFragment profileReviewFragment;
-    private CommentListFragment profileReviewFragment;
+    public CommentListFragment profileCommentFragment;
     private ProfileImageFragment profileImageFragment;
+    private ProfileConfigFragment profileConfigFragment;
     private View mView;
 
     @Override
@@ -43,8 +46,9 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState)
     {
         mView = inflater.inflate(R.layout.profile, container, false);
-        profileReviewFragment = new CommentListFragment();
+        profileCommentFragment = new CommentListFragment();
         profileImageFragment = new ProfileImageFragment();
+        profileConfigFragment = new ProfileConfigFragment();
         findViews();
         bindOnClickListeners();
         setDefaultFragment();
@@ -56,10 +60,12 @@ public class ProfileFragment extends Fragment {
         // add all the fragments
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.add(R.id.content_right, profileReviewFragment);
+        transaction.add(R.id.content_right, profileCommentFragment);
         transaction.add(R.id.content_right, profileImageFragment);
-        transaction.hide(profileReviewFragment);
+        transaction.add(R.id.content_right, profileConfigFragment);
+        transaction.hide(profileCommentFragment);
         transaction.hide(profileImageFragment);
+        transaction.hide(profileConfigFragment);
         transaction.commit();
     }
 
@@ -85,7 +91,7 @@ public class ProfileFragment extends Fragment {
                 clearFragments();
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction transaction = fm.beginTransaction();
-                transaction.show(profileReviewFragment);
+                transaction.show(profileCommentFragment);
                 transaction.commit();
             }
         });
@@ -93,7 +99,12 @@ public class ProfileFragment extends Fragment {
         profileConfigButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                onProfileListener.clearFragments();
+                clearFragments();
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction transaction = fm.beginTransaction();
+                transaction.show(profileConfigFragment);
+                transaction.commit();
             }
         });
 
@@ -113,8 +124,9 @@ public class ProfileFragment extends Fragment {
     public void clearFragments() {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.hide(profileReviewFragment);
+        transaction.hide(profileCommentFragment);
         transaction.hide(profileImageFragment);
+        transaction.hide(profileConfigFragment);
         transaction.commit();
     }
 }

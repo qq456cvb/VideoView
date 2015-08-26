@@ -9,6 +9,6 @@
     <string name="refresh">Refresh</string>
     <string name="video">Video</string>
     <string name="title">网上视听评议系统</string>
-    <string name="default_url">http://k.youku.com/player/getFlvPath/sid/543998559974010d78949_00/st/flv/fileid/030002010055D3C962748F07ED62135A000F29-0231-12A7-972C-C0C8EFD0BAF0?K=b2121d8f86eb10a224124f73&amp;ctype=10&amp;ev=1&amp;oip=2043096855&amp;token=5630&amp;ep=v2vbCyO9bQn5roDmJHCFk55LaK62qNBjDJaH%2BcpJokFqyu8U5d7c%2B%2B7ccOUlnZ06Uf5RxmAXMVpNOcnmbxZAuiLj0OuojsRNQ7TtDT%2BvOblxzx6lzTefGX29s5MFnReZvWNIoRFGzlg%3D&amp;ymovie=1</string>
+    <string name="default_url">http://220.250.58.250:7000/D*5005*</string>
     <string name="play_pause_button">play_pause_button</string>
 </resources>

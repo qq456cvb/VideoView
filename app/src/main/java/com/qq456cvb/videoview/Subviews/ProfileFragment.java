@@ -12,8 +12,6 @@ import android.widget.ImageView;
 
 import com.example.littlebeanfang.comment.CommentListFragment;
 import com.qq456cvb.videoview.R;
-import com.qq456cvb.videoview.Subviews.Profile.ProfileConfigFragment;
-import com.qq456cvb.videoview.Subviews.Profile.ProfileImageFragment;
 
 /**
  * Created by qq456cvb on 8/19/15.
@@ -30,7 +28,7 @@ public class ProfileFragment extends Fragment {
     private ImageView profilePictureButton;
     private OnProfileListener onProfileListener;
 //    private ProfileReviewFragment profileReviewFragment;
-    public CommentListFragment profileCommentFragment;
+    private CommentListFragment profileReviewFragment;
     private ProfileImageFragment profileImageFragment;
     private ProfileConfigFragment profileConfigFragment;
     private View mView;
@@ -46,7 +44,7 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState)
     {
         mView = inflater.inflate(R.layout.profile, container, false);
-        profileCommentFragment = new CommentListFragment();
+        profileReviewFragment = new CommentListFragment();
         profileImageFragment = new ProfileImageFragment();
         profileConfigFragment = new ProfileConfigFragment();
         findViews();
@@ -60,10 +58,10 @@ public class ProfileFragment extends Fragment {
         // add all the fragments
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.add(R.id.content_right, profileCommentFragment);
+        transaction.add(R.id.content_right, profileReviewFragment);
         transaction.add(R.id.content_right, profileImageFragment);
         transaction.add(R.id.content_right, profileConfigFragment);
-        transaction.hide(profileCommentFragment);
+        transaction.hide(profileReviewFragment);
         transaction.hide(profileImageFragment);
         transaction.hide(profileConfigFragment);
         transaction.commit();
@@ -91,7 +89,7 @@ public class ProfileFragment extends Fragment {
                 clearFragments();
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction transaction = fm.beginTransaction();
-                transaction.show(profileCommentFragment);
+                transaction.show(profileReviewFragment);
                 transaction.commit();
             }
         });
@@ -124,7 +122,7 @@ public class ProfileFragment extends Fragment {
     public void clearFragments() {
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.hide(profileCommentFragment);
+        transaction.hide(profileReviewFragment);
         transaction.hide(profileImageFragment);
         transaction.hide(profileConfigFragment);
         transaction.commit();

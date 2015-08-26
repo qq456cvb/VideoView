@@ -28,11 +28,12 @@
             android:textSize="30sp"
             android:gravity="center_vertical|center_horizontal" />
 
-        <TextView
+        <EditText
             android:layout_width="200dp"
             android:layout_height="fill_parent"
-            android:text="New Text"
             android:id="@+id/username"
+            android:layout_weight="0"
+            android:text="test"
             android:gravity="center_vertical" />
 
         <TextView
@@ -63,7 +64,7 @@
         <EditText
             android:layout_width="200dp"
             android:layout_height="fill_parent"
-            android:id="@+id/name"
+            android:id="@+id/editText2"
             android:layout_weight="0"
             android:text="test"
             android:gravity="center_vertical" />
@@ -72,7 +73,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="*"
-            android:id="@+id/nameFlag"
+            android:id="@+id/textView14"
             android:textIsSelectable="false"
             android:textSize="30sp"
             android:textColor="#ffff3032" />
@@ -87,15 +88,15 @@
         <TextView
             android:layout_width="200dp"
             android:layout_height="fill_parent"
-            android:text="旧密码"
-            android:id="@+id/oldPwdTextView"
+            android:text="用户名称"
+            android:id="@+id/textView15"
             android:textSize="30sp"
             android:gravity="center_vertical|center_horizontal" />
 
         <EditText
             android:layout_width="200dp"
             android:layout_height="fill_parent"
-            android:id="@+id/oldPwd"
+            android:id="@+id/editText3"
             android:layout_weight="0"
             android:text="test"
             android:gravity="center_vertical" />
@@ -104,7 +105,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="*"
-            android:id="@+id/oldPwdFlag"
+            android:id="@+id/textView16"
             android:textIsSelectable="false"
             android:textSize="30sp"
             android:textColor="#ffff3032" />
@@ -119,15 +120,15 @@
         <TextView
             android:layout_width="200dp"
             android:layout_height="fill_parent"
-            android:text="新密码"
-            android:id="@+id/newPwdTextView"
+            android:text="用户名称"
+            android:id="@+id/textView17"
             android:textSize="30sp"
             android:gravity="center_vertical|center_horizontal" />
 
         <EditText
             android:layout_width="200dp"
             android:layout_height="fill_parent"
-            android:id="@+id/newPwd"
+            android:id="@+id/editText4"
             android:layout_weight="0"
             android:text="test"
             android:gravity="center_vertical" />
@@ -136,7 +137,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="*"
-            android:id="@+id/newPwdFlag"
+            android:id="@+id/textView19"
             android:textIsSelectable="false"
             android:textSize="30sp"
             android:textColor="#ffff3032" />
@@ -151,15 +152,15 @@
         <TextView
             android:layout_width="200dp"
             android:layout_height="fill_parent"
-            android:text="新密码确认"
-            android:id="@+id/newPwdCfmTextView"
+            android:text="用户名称"
+            android:id="@+id/textView20"
             android:textSize="30sp"
             android:gravity="center_vertical|center_horizontal" />
 
         <EditText
             android:layout_width="200dp"
             android:layout_height="fill_parent"
-            android:id="@+id/newPwdCfm"
+            android:id="@+id/editText5"
             android:layout_weight="0"
             android:text="test"
             android:gravity="center_vertical" />
@@ -168,7 +169,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="*"
-            android:id="@+id/newPwdCfmFlag"
+            android:id="@+id/textView21"
             android:textIsSelectable="false"
             android:textSize="30sp"
             android:textColor="#ffff3032" />
@@ -183,15 +184,15 @@
         <TextView
             android:layout_width="200dp"
             android:layout_height="fill_parent"
-            android:text="联系电话"
-            android:id="@+id/phoneTextView"
+            android:text="用户名称"
+            android:id="@+id/textView22"
             android:textSize="30sp"
             android:gravity="center_vertical|center_horizontal" />
 
         <EditText
             android:layout_width="200dp"
             android:layout_height="fill_parent"
-            android:id="@+id/phone"
+            android:id="@+id/editText6"
             android:layout_weight="0"
             android:text="test"
             android:gravity="center_vertical" />
@@ -200,7 +201,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="*"
-            android:id="@+id/phoneFlag"
+            android:id="@+id/textView23"
             android:textIsSelectable="false"
             android:textSize="30sp"
             android:textColor="#ffff3032" />
@@ -212,23 +213,30 @@
         android:layout_height="match_parent"
         android:layout_weight="0.1" >
 
-        <TextView
-            android:layout_width="200dp"
-            android:layout_height="fill_parent"
-            android:text="邮箱"
-            android:id="@+id/mailTextView"
-            android:textSize="30sp"
-            android:gravity="center_vertical|center_horizontal" />
-
         <EditText
             android:layout_width="200dp"
             android:layout_height="fill_parent"
-            android:id="@+id/mail"
+            android:id="@+id/editText6"
             android:layout_weight="0"
             android:text="test"
-            android:gravity="center_vertical"
-            android:inputType="textEmailAddress" />
+            android:gravity="center_vertical" />
 
+        <TextView
+            android:layout_width="200dp"
+            android:layout_height="fill_parent"
+            android:text="用户名称"
+            android:id="@+id/textView22"
+            android:textSize="30sp"
+            android:gravity="center_vertical|center_horizontal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="*"
+            android:id="@+id/textView23"
+            android:textIsSelectable="false"
+            android:textSize="30sp"
+            android:textColor="#ffff3032" />
     </LinearLayout>
 
     <LinearLayout
@@ -237,22 +245,30 @@
         android:layout_height="match_parent"
         android:layout_weight="0.1" >
 
-        <TextView
-            android:layout_width="200dp"
-            android:layout_height="fill_parent"
-            android:text="部门名称"
-            android:id="@+id/departTextView"
-            android:textSize="30sp"
-            android:gravity="center_vertical|center_horizontal" />
-
         <EditText
             android:layout_width="200dp"
             android:layout_height="fill_parent"
-            android:id="@+id/depart"
+            android:id="@+id/editText6"
             android:layout_weight="0"
             android:text="test"
             android:gravity="center_vertical" />
 
+        <TextView
+            android:layout_width="200dp"
+            android:layout_height="fill_parent"
+            android:text="用户名称"
+            android:id="@+id/textView22"
+            android:textSize="30sp"
+            android:gravity="center_vertical|center_horizontal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="*"
+            android:id="@+id/textView23"
+            android:textIsSelectable="false"
+            android:textSize="30sp"
+            android:textColor="#ffff3032" />
     </LinearLayout>
 
     <LinearLayout
@@ -261,22 +277,30 @@
         android:layout_height="match_parent"
         android:layout_weight="0.1" >
 
-        <TextView
-            android:layout_width="200dp"
-            android:layout_height="fill_parent"
-            android:text="角色"
-            android:id="@+id/roleTextView"
-            android:textSize="30sp"
-            android:gravity="center_vertical|center_horizontal" />
-
         <EditText
             android:layout_width="200dp"
             android:layout_height="fill_parent"
-            android:id="@+id/role"
+            android:id="@+id/editText6"
             android:layout_weight="0"
             android:text="test"
             android:gravity="center_vertical" />
 
+        <TextView
+            android:layout_width="200dp"
+            android:layout_height="fill_parent"
+            android:text="用户名称"
+            android:id="@+id/textView22"
+            android:textSize="30sp"
+            android:gravity="center_vertical|center_horizontal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="*"
+            android:id="@+id/textView23"
+            android:textIsSelectable="false"
+            android:textSize="30sp"
+            android:textColor="#ffff3032" />
     </LinearLayout>
 
     <LinearLayout
@@ -285,22 +309,30 @@
         android:layout_height="match_parent"
         android:layout_weight="0.1" >
 
-        <TextView
+        <EditText
             android:layout_width="200dp"
             android:layout_height="fill_parent"
-            android:text="备注"
-            android:id="@+id/remarkTextView"
-            android:textSize="30sp"
-            android:gravity="center_vertical|center_horizontal" />
-
-        <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:id="@+id/remark"
+            android:id="@+id/editText6"
             android:layout_weight="0"
             android:text="test"
             android:gravity="center_vertical" />
 
+        <TextView
+            android:layout_width="200dp"
+            android:layout_height="fill_parent"
+            android:text="用户名称"
+            android:id="@+id/textView22"
+            android:textSize="30sp"
+            android:gravity="center_vertical|center_horizontal" />
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="*"
+            android:id="@+id/textView23"
+            android:textIsSelectable="false"
+            android:textSize="30sp"
+            android:textColor="#ffff3032" />
     </LinearLayout>
 
     <LinearLayout
@@ -312,13 +344,13 @@
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="确认"
-            android:id="@+id/configConfirm" />
+            android:text="New Button"
+            android:id="@+id/button" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="取消"
-            android:id="@+id/configCancel" />
+            android:text="New Button"
+            android:id="@+id/button2" />
     </LinearLayout>
 </LinearLayout>

@@ -1,1 +1,1 @@
-include ':app', ':libvlc', ':comment'
+include ':app', ':libvlc', ':comment', ':sample', ':richeditor'

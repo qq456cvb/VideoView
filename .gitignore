@@ -1,8 +1,12 @@
-/libvlc/build/*
+/libvlc/build
 .gradle
 /local.properties
 /.idea/workspace.xml
 /.idea/libraries
 .DS_Store
 /build
-/captures
+/capture
+/sample
+/richeditor
+.idea
+/gradle.properties

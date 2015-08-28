@@ -13,6 +13,8 @@
             <option value="$PROJECT_DIR$/app" />
             <option value="$PROJECT_DIR$/comment" />
             <option value="$PROJECT_DIR$/libvlc" />
+            <option value="$PROJECT_DIR$/richeditor" />
+            <option value="$PROJECT_DIR$/sample" />
           </set>
         </option>
       </GradleProjectSettings>

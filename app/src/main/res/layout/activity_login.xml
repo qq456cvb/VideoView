@@ -7,13 +7,15 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/login_username"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:text="ceshi" />
 
     <EditText
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/login_password"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:text="1234" />
 
     <Button
         android:layout_width="wrap_content"

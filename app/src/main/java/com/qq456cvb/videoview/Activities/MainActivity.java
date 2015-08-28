@@ -1,62 +1,50 @@
 package com.qq456cvb.videoview.Activities;
 
-import android.app.Activity;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
+import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.Toast;
 
 import com.qq456cvb.videoview.R;
-import com.qq456cvb.videoview.Subviews.ListFragment;
+import com.qq456cvb.videoview.Subviews.MiddleFragment;
 import com.qq456cvb.videoview.Subviews.ProfileFragment;
-import com.qq456cvb.videoview.Subviews.VideoFragment;
+import com.qq456cvb.videoview.Subviews.RightFragment;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
-
-public class MainActivity extends Activity implements ProfileFragment.OnProfileListener{
-    public final static String driver = "oracle.jdbc.driver.OracleDriver";
-    String serverName = "220.250.58.250";
-    String portNumber = "1521";
-    String db = "callsc";
-    String url = "jdbc:oracle:thin:@" + serverName + ":" + portNumber + ":" + db;
-    String user = "fjstpy";
-    String password = "fjstpy";
+public class MainActivity extends FragmentActivity implements ProfileFragment.OnProfileListener{
 
     public final static String TAG = "MainActivity";
+    public final static int CHANNEL = 1;
 
-    private ListFragment mListFragment = new ListFragment();
-    private VideoFragment mVideoFragment = new VideoFragment();
+    private RightFragment mRightFragment = new RightFragment();
+    private MiddleFragment mMiddleFragment = new MiddleFragment();
     private ProfileFragment mProfileFragment = new ProfileFragment();
     private LinearLayout mWatchButton;
     private LinearLayout mCommentButton;
     private LinearLayout mProfileButton;
-    private LinearLayout mContentRight;
-    private FrameLayout mContentVideo;
-    private FrameLayout mContentList;
+    private LinearLayout mContentMain;
+    private LinearLayout mContentMiddle;
+    private FrameLayout mContentRight;
+
+    public static Handler handler;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
+        setHandler();
         findViews();
         bindOnClickListeners();
 
-        try {
-            test();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
         // default layout
         setDefaultFragment();
     }
@@ -65,9 +53,9 @@ public class MainActivity extends Activity implements ProfileFragment.OnProfileL
         mWatchButton = (LinearLayout)findViewById(R.id.watchButton);
         mCommentButton = (LinearLayout)findViewById(R.id.commentButton);
         mProfileButton = (LinearLayout)findViewById(R.id.profileButton);
-        mContentRight = (LinearLayout)findViewById(R.id.content_right);
-        mContentVideo = (FrameLayout)findViewById(R.id.video_fragment);
-        mContentList = (FrameLayout)findViewById(R.id.list_fragment);
+        mContentMain = (LinearLayout)findViewById(R.id.content_main);
+        mContentMiddle = (LinearLayout)findViewById(R.id.content_middle);
+        mContentRight = (FrameLayout)findViewById(R.id.content_right);
     }
 
     public void bindOnClickListeners() {
@@ -75,12 +63,12 @@ public class MainActivity extends Activity implements ProfileFragment.OnProfileL
             @Override
             public void onClick(View v) {
                 clearFragments();
-                mContentVideo.setVisibility(View.VISIBLE);
-                mContentList.setVisibility(View.VISIBLE);
+                mContentMiddle.setVisibility(View.VISIBLE);
+                mContentRight.setVisibility(View.VISIBLE);
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction transaction = fm.beginTransaction();
-                transaction.show(mVideoFragment);
-                transaction.show(mListFragment);
+                transaction.show(mMiddleFragment);
+                transaction.show(mRightFragment);
                 transaction.commit();
             }
         });
@@ -122,13 +110,14 @@ public class MainActivity extends Activity implements ProfileFragment.OnProfileL
         // add all the fragments
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.add(R.id.video_fragment, mVideoFragment);
-        transaction.add(R.id.list_fragment, mListFragment);
-        transaction.add(R.id.content_right, mProfileFragment);
+        transaction.add(R.id.content_middle, mMiddleFragment);
+        transaction.add(R.id.content_right, mRightFragment);
+        transaction.add(R.id.content_main, mProfileFragment);
         transaction.hide(mProfileFragment);
-        transaction.hide(mVideoFragment);
-        transaction.hide(mListFragment);
-        transaction.show(mVideoFragment);
+        transaction.hide(mMiddleFragment);
+        transaction.hide(mRightFragment);
+        transaction.show(mMiddleFragment);
+        transaction.show(mRightFragment);
         transaction.commit();
     }
 
@@ -137,36 +126,34 @@ public class MainActivity extends Activity implements ProfileFragment.OnProfileL
         mProfileFragment.clearFragments();
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.hide(mVideoFragment);
-        transaction.hide(mListFragment);
+        transaction.hide(mMiddleFragment);
+        transaction.hide(mRightFragment);
         transaction.hide(mProfileFragment);
         transaction.commit();
 
         // hide all the fragment container
-        mContentVideo.setVisibility(View.GONE);
-        mContentList.setVisibility(View.GONE);
+        mContentMiddle.setVisibility(View.GONE);
+        mContentRight.setVisibility(View.GONE);
     }
 
-    public void test() throws ClassNotFoundException {
-        Class.forName(driver);
-        new Thread() {
-            @Override
-            public void run() {
-                Connection con = null;
-                try {
-                    con = DriverManager.getConnection(url, user, password);
-                    Statement stmt = con.createStatement();
-                    String sql = "SELECT * FROM Tbl_User";
-                    ResultSet rs = stmt.executeQuery(sql);
-
-                    while (rs.next()) {
-                        Toast.makeText(MainActivity.this, rs.getString("username"), Toast.LENGTH_SHORT).show();
+    public void setHandler() {
+        handler = new Handler() {
+            public void handleMessage(Message message) {
+                switch (message.what) {
+                    case CHANNEL: {
+                        String type = message.getData().getString("type");
+                        if (type.equals("list")) {
+                            mRightFragment.changeCategory(message.getData().getString("value"));
+                        }
+                        else if (type.equals("play")) {
+                            mMiddleFragment.changeSrc(message.getData().getString("value"));
+                        }
+                        break;
                     }
-                } catch (SQLException e) {
-                    e.printStackTrace();
+                    default:
+                        break;
                 }
             }
-        }.start();
+        };
     }
-
 }

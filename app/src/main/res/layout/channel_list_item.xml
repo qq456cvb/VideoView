@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="match_parent"
+        android:layout_height="13pt"
+        android:text="上传"
+        android:id="@+id/channel_button"
+        android:layout_weight="1"
+        android:textColor="#ffffff"
+        android:background="#316dff"
+        android:shadowColor="#110c30"
+        android:layout_margin="2pt"
+        android:focusable="false"/>
+</LinearLayout>

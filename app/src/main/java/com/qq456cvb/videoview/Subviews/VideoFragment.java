@@ -348,6 +348,15 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
         mVideoHeight = 0;
     }
 
+    public void changeSrc(String src) {
+        libvlc.stop();
+        libvlc.clearBuffer();
+        libvlc.getMediaList().clear();
+        libvlc.getMediaList().add(new Media(libvlc, LibVLC.PathToURI(src)), false);
+        libvlc.playIndex(0);
+        overlayTitle.setText(src);
+    }
+
     /**
      * **********
      * Events

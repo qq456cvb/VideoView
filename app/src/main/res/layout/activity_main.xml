@@ -176,20 +176,23 @@
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:id="@+id/content_right"
+            android:id="@+id/content_main"
             android:baselineAligned="false">
 
-            <FrameLayout
+            <LinearLayout
+                android:orientation="vertical"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:id="@+id/video_fragment"
-                android:layout_weight="3"></FrameLayout>
+                android:layout_weight="3"
+                android:id="@+id/content_middle">
+
+            </LinearLayout>
 
             <FrameLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_weight="5"
-                android:id="@+id/list_fragment"></FrameLayout>
+                android:id="@+id/content_right"></FrameLayout>
 
         </LinearLayout>
 

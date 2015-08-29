@@ -1,6 +1,5 @@
 package com.qq456cvb.videoview.Adapters.Channel;
 
-import android.content.Context;
 import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
@@ -10,6 +9,8 @@ import android.widget.BaseExpandableListAdapter;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.qq456cvb.videoview.R;
+import com.qq456cvb.videoview.Subviews.RightChannelFragment;
 import com.qq456cvb.videoview.Utils.Channel;
 
 import java.util.ArrayList;
@@ -19,31 +20,22 @@ import java.util.ArrayList;
  */
 public class ChannelListAdapter extends BaseExpandableListAdapter {
 
-    private Context context;
+    private RightChannelFragment rightChannelFragment;
     private ArrayList<Channel> channels;
-    public ChannelListAdapter(Context context, ArrayList<Channel> channels) {
-        this.context = context;
+    public ChannelListAdapter(RightChannelFragment rightChannelFragment, ArrayList<Channel> channels) {
+        this.rightChannelFragment = rightChannelFragment;
         this.channels = channels;
     }
-    //设置组视图的显示文字
-    private String[] generalsTypes;
-    //子视图显示文字
-    private String[][] generals = new String[][] {
-            { "夏侯惇", "甄姬", "许褚", "郭嘉", "司马懿", "杨修" },
-            { "马超", "张飞", "刘备", "诸葛亮", "黄月英", "赵云" },
-            { "吕蒙", "陆逊", "孙权", "周瑜", "孙尚香" }
-
-    };
 
     //自己定义一个获得文字信息的方法
     TextView getTextView() {
         AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
-        ViewGroup.LayoutParams.FILL_PARENT, 64);
-        TextView textView = new TextView(context);
+        ViewGroup.LayoutParams.MATCH_PARENT, 150);
+        TextView textView = new TextView(rightChannelFragment.getActivity());
         textView.setLayoutParams(lp);
         textView.setGravity(Gravity.CENTER_VERTICAL);
-        textView.setPadding(36, 0, 0, 0);
-        textView.setTextSize(20);
+        textView.setGravity(Gravity.CENTER_HORIZONTAL);
+        textView.setTextSize(40);
         textView.setTextColor(Color.BLACK);
         return textView;
     }
@@ -59,6 +51,10 @@ public class ChannelListAdapter extends BaseExpandableListAdapter {
     @Override
     public Object getGroup(int groupPosition) {
         // TODO Auto-generated method stub
+        return channels.get(groupPosition).getName();
+    }
+
+    public String getGroupMulticastIP(int groupPosition) {
         return channels.get(groupPosition).getMulticastIP();
     }
 
@@ -93,25 +89,32 @@ public class ChannelListAdapter extends BaseExpandableListAdapter {
     }
 
     @Override
-    public View getGroupView(int groupPosition, boolean isExpanded,
-            View convertView, ViewGroup parent) {
-        // TODO Auto-generated method stub
-        LinearLayout ll = new LinearLayout(context);
-        ll.setOrientation(LinearLayout.VERTICAL);
-        TextView textView = getTextView();
-        textView.setTextColor(Color.BLACK);
+    public View getGroupView(final int groupPosition, boolean isExpanded,
+            final View convertView, ViewGroup parent) {
+        View view = (rightChannelFragment.getActivity()).getLayoutInflater().inflate(R.layout.channel_list_item, null);
+        final TextView textView = (TextView)view.findViewById(R.id.channel_item);
         textView.setText(getGroup(groupPosition).toString());
-        ll.addView(textView);
-
-        return ll;
+//        view.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                rightChannelFragment.expandGroup(groupPosition);
+//            }
+//        });
+//        view.setOnTouchListener(new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                return false;
+//            }
+//        });
+        return view;
     }
 
     @Override
     public View getChildView(int groupPosition, int childPosition,
         boolean isLastChild, View convertView, ViewGroup parent) {
 
-        LinearLayout ll = new LinearLayout(context);
-        ll.setOrientation(LinearLayout.VERTICAL);
+        LinearLayout ll = new LinearLayout(rightChannelFragment.getActivity());
+        ll.setOrientation(LinearLayout.HORIZONTAL);
         TextView textView = getTextView();
         textView.setText(getChild(groupPosition, childPosition)
         .toString());

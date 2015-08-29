@@ -314,13 +314,13 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
             }
             // Create a new media player
             libvlc = LibVLC.getInstance();
-            libvlc.setHardwareAcceleration(LibVLC.HW_ACCELERATION_DISABLED);
+            libvlc.setHardwareAcceleration(LibVLC.HW_ACCELERATION_AUTOMATIC);
             libvlc.eventVideoPlayerActivityCreated(true);
             libvlc.setSubtitlesEncoding("");
             libvlc.setAout(LibVLC.AOUT_OPENSLES);
             libvlc.setChroma("RV32");
             LibVLC.restart(view.getContext());
-            libvlc.setNetworkCaching(20000);
+//            libvlc.setNetworkCaching(20000);
             EventHandler.getInstance().addHandler(mHandler);
             holder.setFormat(PixelFormat.RGBX_8888);
             holder.setKeepScreenOn(true);
@@ -351,6 +351,7 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
     public void changeSrc(String src) {
         libvlc.stop();
         libvlc.clearBuffer();
+        LibVLC.restart(view.getContext());
         libvlc.getMediaList().clear();
         libvlc.getMediaList().add(new Media(libvlc, LibVLC.PathToURI(src)), false);
         libvlc.playIndex(0);

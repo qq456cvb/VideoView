@@ -36,13 +36,13 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
         }
         view = inflater.inflate(R.layout.right_layout_channel, container, false);
         channelList = (ExpandableListView) view.findViewById(R.id.list);
-        channelLoader.getChannelsBycategory("weishi");
+        channelLoader.getChannelsBycategory("yangshi");
 
         return view;
     }
 
     public void onLoaded(ArrayList<Channel> channels) {
-        channelListAdapter = new ChannelListAdapter(this.getActivity(), channels);
+        channelListAdapter = new ChannelListAdapter(this, channels);
         channelList.setAdapter(channelListAdapter);
 
         channelList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
@@ -67,7 +67,7 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
                 msg.what = MainActivity.CHANNEL;
                 Bundle bundle = new Bundle();
                 bundle.putString("type", "play");
-                bundle.putString("value", (String)channelListAdapter.getGroup(groupPosition));
+                bundle.putString("value", channelListAdapter.getGroupMulticastIP(groupPosition));
                 msg.setData(bundle);
                 msg.sendToTarget();
             }
@@ -76,5 +76,13 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
 
     public void changeCategory(String category) {
         channelLoader.getChannelsBycategory(category);
+    }
+
+    public void expandGroup(int groupPosition)
+    {
+        if(channelList.isGroupExpanded(groupPosition))
+            channelList.collapseGroup(groupPosition);
+        else
+            channelList.expandGroup(groupPosition);
     }
 }

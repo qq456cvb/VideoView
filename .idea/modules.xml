@@ -6,6 +6,8 @@
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/comment/comment.iml" filepath="$PROJECT_DIR$/comment/comment.iml" />
       <module fileurl="file://$PROJECT_DIR$/libvlc/libvlc.iml" filepath="$PROJECT_DIR$/libvlc/libvlc.iml" />
+      <module fileurl="file://$PROJECT_DIR$/richeditor/richeditor.iml" filepath="$PROJECT_DIR$/richeditor/richeditor.iml" />
+      <module fileurl="file://$PROJECT_DIR$/sample/sample.iml" filepath="$PROJECT_DIR$/sample/sample.iml" />
     </modules>
   </component>
 </project>

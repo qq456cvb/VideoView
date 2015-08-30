@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="5"
+        android:gravity="center_vertical|center_horizontal">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="电视"
+            android:id="@+id/menu_tv"
+            android:layout_weight="1"
+            android:layout_marginLeft="100dp"
+            android:background="#00ffffff"
+            android:textSize="36sp"
+            android:textStyle="bold" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="广播"
+            android:id="@+id/menu_radio"
+            android:layout_weight="1"
+            android:layout_marginRight="100dp"
+            android:background="#00ffffff"
+            android:textSize="36sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="5"
+        android:id="@+id/tab_container"
+        android:gravity="center_vertical|center_horizontal">
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="央视"
+            android:id="@+id/tv_1"
+            android:background="#00ffffff"
+            android:layout_weight="1"
+            android:textSize="30sp"
+            android:contentDescription="tv" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="卫视"
+            android:id="@+id/tv_2"
+            android:background="#00ffffff"
+            android:layout_weight="1"
+            android:textSize="30sp"
+            android:contentDescription="tv" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="省级"
+            android:id="@+id/tv_3"
+            android:background="#00ffffff"
+            android:layout_weight="1"
+            android:textSize="30sp"
+            android:contentDescription="tv" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="地市"
+            android:id="@+id/tv_4"
+            android:background="#00ffffff"
+            android:layout_weight="1"
+            android:textSize="30sp"
+            android:contentDescription="tv" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="县级"
+            android:id="@+id/tv_5"
+            android:background="#00ffffff"
+            android:layout_weight="1"
+            android:textSize="30sp"
+            android:contentDescription="tv" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="境外"
+            android:id="@+id/tv_6"
+            android:background="#00ffffff"
+            android:layout_weight="1"
+            android:textSize="30sp"
+            android:contentDescription="tv" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="New Button"
+            android:id="@+id/radio_1"
+            android:background="#00ffffff"
+            android:layout_weight="1"
+            android:textSize="30sp"
+            android:contentDescription="radio" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="New Button"
+            android:id="@+id/radio_2"
+            android:background="#00ffffff"
+            android:layout_weight="1"
+            android:textSize="30sp"
+            android:contentDescription="radio" />
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="5" />
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/video_fragment"
+        android:layout_weight="1"
+        android:layout_marginLeft="30dp"
+        android:layout_marginBottom="20dp" />
+</LinearLayout>

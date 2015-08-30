@@ -150,18 +150,18 @@ public class CommentListFragment extends ListFragment {
                     Log.d(TAG, "layout" + layout);
                     builder.setView(layout);
 //                    builder.setTitle("修改信息");
-                    final EditText tv_title = (EditText) layout.findViewById(R.id.edit_title);
-                    final EditText tv_content = (EditText) layout.findViewById(R.id.edit_content);
+//                    final EditText tv_title = (EditText) layout.findViewById(R.id.edit_title);
+//                    final EditText tv_content = (EditText) layout.findViewById(R.id.edit_content);
                     final HashMap<String, String> map = (HashMap<String, String>) dataList.get(position);
-                    tv_title.setText(map.get("title"));
-                    tv_content.setText(map.get("docname"));
+//                    tv_title.setText(map.get("title"));
+//                    tv_content.setText(map.get("docname"));
                     builder.setPositiveButton("保存", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            String title = tv_title.getText().toString();
-                            String content = tv_content.getText().toString();
-                            map.put("title", title);
-                            map.put("docname", content);
+//                            String title = tv_title.getText().toString();
+//                            String content = tv_content.getText().toString();
+//                            map.put("title", title);
+//                            map.put("docname", content);
                             dialog.dismiss();
                             notifyDataSetChanged();
                         }

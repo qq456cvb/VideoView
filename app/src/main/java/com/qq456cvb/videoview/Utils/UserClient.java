@@ -9,8 +9,25 @@ import com.loopj.android.http.RequestParams;
  */
 public class UserClient {
     private static final String BASE_URL = "http://220.250.58.250";
-
     private static AsyncHttpClient client = new AsyncHttpClient();
+    private String username;
+    private String password;
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
     public static void get(String url, RequestParams params, AsyncHttpResponseHandler responseHandler) {
         client.get(getAbsoluteUrl(url), params, responseHandler);

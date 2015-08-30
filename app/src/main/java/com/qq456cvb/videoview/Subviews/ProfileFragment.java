@@ -30,9 +30,9 @@ public class ProfileFragment extends Fragment {
     private ImageView profilePictureButton;
     private OnProfileListener onProfileListener;
 //    private ProfileReviewFragment profileReviewFragment;
-    public CommentListFragment profileCommentFragment;
-    private ProfileImageFragment profileImageFragment;
-    private ProfileConfigFragment profileConfigFragment;
+    public CommentListFragment profileCommentFragment = new CommentListFragment();
+    private ProfileImageFragment profileImageFragment = new ProfileImageFragment();
+    private ProfileConfigFragment profileConfigFragment = new ProfileConfigFragment();
     private View mView;
 
     @Override
@@ -46,9 +46,6 @@ public class ProfileFragment extends Fragment {
                              Bundle savedInstanceState)
     {
         mView = inflater.inflate(R.layout.profile, container, false);
-        profileCommentFragment = new CommentListFragment();
-        profileImageFragment = new ProfileImageFragment();
-        profileConfigFragment = new ProfileConfigFragment();
         findViews();
         bindOnClickListeners();
         setDefaultFragment();
@@ -60,9 +57,9 @@ public class ProfileFragment extends Fragment {
         // add all the fragments
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.add(R.id.content_right, profileCommentFragment);
-        transaction.add(R.id.content_right, profileImageFragment);
-        transaction.add(R.id.content_right, profileConfigFragment);
+        transaction.add(R.id.content_main, profileCommentFragment);
+        transaction.add(R.id.content_main, profileImageFragment);
+        transaction.add(R.id.content_main, profileConfigFragment);
         transaction.hide(profileCommentFragment);
         transaction.hide(profileImageFragment);
         transaction.hide(profileConfigFragment);

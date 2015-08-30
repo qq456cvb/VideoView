@@ -6,7 +6,8 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="400dp"
+        android:background="#FFFFFF">
 
         <Button
             android:layout_width="wrap_content"
@@ -16,7 +17,7 @@
             android:textSize="20sp" />
 
         <TextView
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="no file selected"
             android:id="@+id/tv_selectedfile" />
@@ -25,22 +26,20 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:gravity="center_vertical|right">
+        android:layout_height="wrap_content"
+        android:gravity="right">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="保存"
-            android:id="@+id/btn_wordsave"
-            android:textSize="20sp" />
+            android:text="上传"
+            android:id="@+id/btn_wordsave" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="取消"
-            android:id="@+id/btn_wordcancel"
-            android:textSize="20sp" />
+            android:text="返回"
+            android:id="@+id/btn_wordcancel" />
     </LinearLayout>
 </LinearLayout>
 <!-- From: file:/Users/qq456cvb/Documents/VideoView/sample/src/main/res/layout/commentwordmode.xml -->

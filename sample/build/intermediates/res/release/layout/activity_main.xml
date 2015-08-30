@@ -1,0 +1,13 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <fragment
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent"
+        android:name="jp.wasabeef.sample.WordUploadFragment"
+        android:id="@+id/fragment" />
+
+</LinearLayout>
+<!-- From: file:/Users/qq456cvb/Documents/VideoView/sample/src/main/res/layout/activity_main.xml -->

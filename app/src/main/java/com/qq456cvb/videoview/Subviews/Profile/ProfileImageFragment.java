@@ -12,7 +12,7 @@ import android.widget.GridView;
 import com.qq456cvb.videoview.Adapters.Profile.ProfileImageAdapter;
 import com.qq456cvb.videoview.Adapters.Profile.ProfileImageSetAdapter;
 import com.qq456cvb.videoview.R;
-import com.qq456cvb.videoview.Utils.ImageGridWithText;
+import com.qq456cvb.videoview.CustomWidgets.ImageGridWithText;
 
 import java.util.ArrayList;
 import java.util.List;

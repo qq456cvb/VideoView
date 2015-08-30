@@ -67,7 +67,8 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
                 msg.what = MainActivity.CHANNEL;
                 Bundle bundle = new Bundle();
                 bundle.putString("type", "play");
-                bundle.putString("value", channelListAdapter.getGroupMulticastIP(groupPosition));
+                bundle.putString("value", channelListAdapter.getGroupChannel(groupPosition).getMulticastIP());
+                msg.obj = channelListAdapter.getGroupChannel(groupPosition);
                 msg.setData(bundle);
                 msg.sendToTarget();
             }

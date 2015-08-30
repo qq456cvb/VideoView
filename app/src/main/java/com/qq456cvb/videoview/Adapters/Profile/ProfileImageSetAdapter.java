@@ -12,7 +12,7 @@ import android.widget.ImageView;
 
 import com.qq456cvb.videoview.R;
 import com.qq456cvb.videoview.Tools.AsyncImageLoader;
-import com.qq456cvb.videoview.Utils.ImageGridWithText;
+import com.qq456cvb.videoview.CustomWidgets.ImageGridWithText;
 
 import java.util.List;
 

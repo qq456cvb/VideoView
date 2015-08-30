@@ -13,10 +13,12 @@ import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 
+import com.qq456cvb.videoview.Application.GlobalApp;
 import com.qq456cvb.videoview.R;
 import com.qq456cvb.videoview.Subviews.MiddleFragment;
 import com.qq456cvb.videoview.Subviews.ProfileFragment;
 import com.qq456cvb.videoview.Subviews.RightFragment;
+import com.qq456cvb.videoview.Utils.Channel;
 
 public class MainActivity extends FragmentActivity implements ProfileFragment.OnProfileListener{
 
@@ -147,6 +149,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
                         }
                         else if (type.equals("play")) {
                             mMiddleFragment.changeSrc(message.getData().getString("value"));
+                            GlobalApp.currentChannel = (Channel)message.obj;
                         }
                         break;
                     }

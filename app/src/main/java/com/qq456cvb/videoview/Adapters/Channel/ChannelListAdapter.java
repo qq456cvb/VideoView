@@ -54,8 +54,8 @@ public class ChannelListAdapter extends BaseExpandableListAdapter {
         return channels.get(groupPosition).getName();
     }
 
-    public String getGroupMulticastIP(int groupPosition) {
-        return channels.get(groupPosition).getMulticastIP();
+    public Channel getGroupChannel(int groupPosition) {
+        return channels.get(groupPosition);
     }
 
     @Override

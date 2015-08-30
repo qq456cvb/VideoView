@@ -11,7 +11,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qq456cvb.videoview.R;
-import com.qq456cvb.videoview.Utils.User;
+import com.qq456cvb.videoview.Utils.DebugUser;
 
 /**
  * Created by qq456cvb on 8/22/15.
@@ -28,15 +28,15 @@ public class ProfileConfigFragment extends Fragment {
     private Button confirm;
     private Button cancel;
     private View view;
-    private User user = new User();
+    private DebugUser debugUser = new DebugUser();
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        user.setUsername("username");
-        user.setName("test");
-        user.setPhone("123456");
+        debugUser.setUsername("username");
+        debugUser.setName("test");
+        debugUser.setPhone("123456");
 
         view = inflater.inflate(R.layout.profile_config, container, false);
         findViews();
@@ -60,9 +60,9 @@ public class ProfileConfigFragment extends Fragment {
     }
 
     public void loadDataFromUser() {
-        username.setText(user.getUsername());
-        name.setText(user.getName());
-        phone.setText(user.getPhone());
+        username.setText(debugUser.getUsername());
+        name.setText(debugUser.getName());
+        phone.setText(debugUser.getPhone());
     }
 
     public void bindOnClickListeners() {
@@ -70,8 +70,8 @@ public class ProfileConfigFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 if (!name.getText().toString().isEmpty() && !phone.getText().toString().isEmpty()) {
-                    user.setName(name.getText().toString());
-                    user.setPhone(phone.getText().toString());
+                    debugUser.setName(name.getText().toString());
+                    debugUser.setPhone(phone.getText().toString());
                     loadDataFromUser();
                 } else {
                     Toast.makeText(view.getContext(), "必填项不能为空", Toast.LENGTH_SHORT).show();

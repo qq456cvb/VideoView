@@ -3,7 +3,7 @@ package com.qq456cvb.videoview.Utils;
 /**
  * Created by qq456cvb on 8/23/15.
  */
-public class User extends UserClient {
+public class DebugUser extends UserClient {
     private String username;
     private String name;
     private String password;

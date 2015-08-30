@@ -1,4 +1,4 @@
-package com.qq456cvb.videoview.Utils;
+package com.qq456cvb.videoview.CustomWidgets;
 
 /**
  * Created by qq456cvb on 8/22/15.

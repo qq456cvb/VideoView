@@ -6,7 +6,5 @@
 .DS_Store
 /build
 /capture
-/sample
-/richeditor
 .idea
 /gradle.properties

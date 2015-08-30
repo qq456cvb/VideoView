@@ -1,23 +1,20 @@
 package jp.wasabeef.sample;
 
+import android.app.Fragment;
 import android.graphics.Color;
 import android.os.Bundle;
-import android.app.Fragment;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
+import android.widget.EditText;
 
 import jp.wasabeef.richeditor.RichEditor;
 
 public class TextEditorFragment extends Fragment {
     String TAG="TextEditorFragment";
     private RichEditor mEditor;
-    private Button cmsave;
-    private Button cmcancel;
-
     private String content;
+    private EditText et_cmtitle;
 
     /**
      * Use this factory method to create a new instance of
@@ -45,24 +42,7 @@ public class TextEditorFragment extends Fragment {
         // Inflate the layout for this fragment
         View view=inflater.inflate(R.layout.texteditorfragment, container, false);
         mEditor = (RichEditor) view.findViewById(R.id.editor);
-//        cmsave= (Button) view.findViewById(R.id.cmsave);
-//        cmsave.setOnClickListener(new View.OnClickListener(){
-//
-//            @Override
-//            public void onClick(View v) {
-//                sendContentToServer(content);
-//                sendMessageToActivity();
-//            }
-//        });
-//        cmcancel=(Button)view.findViewById(R.id.cmcancel);
-//        cmcancel.setOnClickListener(new View.OnClickListener(){
-//
-//            @Override
-//            public void onClick(View v) {
-//                Log.d(TAG, "cancel, reload right fragment");
-//                sendMessageToActivity();
-//            }
-//        });
+        et_cmtitle=(EditText) view. findViewById(R.id.et_cmtitle);
         mEditor.setOnTextChangeListener(new RichEditor.OnTextChangeListener() {
             @Override
             public void onTextChange(String text) {
@@ -186,7 +166,7 @@ public class TextEditorFragment extends Fragment {
 
             @Override
             public void onClick(View v) {
-                mEditor.setTextBackgroundColor(isChanged ? Color.TRANSPARENT : Color.YELLOW);
+                mEditor.setTextBackgroundColor(isChanged ? Color.WHITE : Color.YELLOW);
                 isChanged = !isChanged;
             }
         });
@@ -250,24 +230,23 @@ public class TextEditorFragment extends Fragment {
 //        });
         return view;
     }
-
-    private void sendMessageToActivity() {
-        //TODO: send message to activity, to change the right fragment
+    public String getContent(){
+        return mEditor.getHtml();
     }
-
-    private void sendContentToServer(String content) {
-        //TODO: send content to server, need a new thread?
-
+    public void setContentFile(String fileurl){
+        mEditor.loadUrl(fileurl);
     }
-
-//    @Override
-//    public void onAttach(Activity activity) {
-//        super.onAttach(activity);
-//        try {
-//            mListener = (OnFragmentInteractionListener) activity;
-//        } catch (ClassCastException e) {
-//            throw new ClassCastException(activity.toString()
-//                    + " must implement OnFragmentInteractionListener");
-//        }
-//    }
+    public void setContent(String content){
+        mEditor.setHtml(content);
+    }
+    public void setTitle(String title){
+        et_cmtitle.setText(title);
+    }
+    public String getTitle(){
+        return et_cmtitle.getText().toString();
+    }
+    public void clear(){
+        mEditor.setHtml("");
+        et_cmtitle.setText("");
+    }
 }

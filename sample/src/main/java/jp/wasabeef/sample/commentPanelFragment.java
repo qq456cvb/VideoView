@@ -1,20 +1,18 @@
 package jp.wasabeef.sample;
 
-import android.app.Activity;
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
-import android.net.Uri;
 import android.os.Bundle;
-import android.app.Fragment;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.LinearLayout;
 import android.widget.RadioGroup;
-import android.widget.TextView;
 
 
 public class commentPanelFragment extends Fragment {
+    private String TAG="commentPanelFragment";
     private RadioGroup cm_moderatio;
     public static commentPanelFragment newInstance(String param1, String param2) {
         commentPanelFragment fragment = new commentPanelFragment();
@@ -35,24 +33,31 @@ public class commentPanelFragment extends Fragment {
                              Bundle savedInstanceState) {
         View view=inflater.inflate(R.layout.texteditor_container, container, false);
         cm_moderatio=(RadioGroup)view.findViewById(R.id.cm_mode);
-        FragmentManager fragmentManager = getFragmentManager();
-        final FragmentTransaction fragmentTransaction = fragmentManager
-                .beginTransaction();
-        final TextEditorFragment tef=new TextEditorFragment();
-        final WordUploadFragment wuf=new WordUploadFragment();
 
+        final TextModeFragment tmf=new TextModeFragment();
+        final WordUploadFragment wuf=new WordUploadFragment();
         cm_moderatio.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup group, int checkedId) {
-                if(checkedId==R.id.cm_txtratio){
-                    fragmentTransaction.replace(R.id.cm_contentlayout,tef);
+                Log.d(TAG, ""+checkedId);
+                if(checkedId== R.id.cm_txtratio){
+                    Log.d(TAG, "cmtxt set");
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager
+                            .beginTransaction();
+                    fragmentTransaction.replace(R.id.cm_contentlayout,tmf);
                     fragmentTransaction.commit();
                 }else{
+                    Log.d(TAG, "cmword set");
+                    FragmentManager fragmentManager = getFragmentManager();
+                    FragmentTransaction fragmentTransaction = fragmentManager
+                            .beginTransaction();
                     fragmentTransaction.replace(R.id.cm_contentlayout,wuf);
                     fragmentTransaction.commit();
                 }
             }
         });
+        cm_moderatio.check(R.id.cm_txtratio);
         return view;
     }
 

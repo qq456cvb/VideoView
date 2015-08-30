@@ -2,6 +2,7 @@ package com.example.littlebeanfang.comment;
 
 
 import android.app.Dialog;
+import android.app.DialogFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
@@ -21,6 +22,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import jp.wasabeef.sample.UploadPicOrVideoDialogFragment;
+import jp.wasabeef.sample.editorDialogFragment;
 
 /**
  * Created by littlebeanfang on 2015/8/18.
@@ -144,37 +148,8 @@ public class CommentListFragment extends ListFragment {
                 @Override
                 public void onClick(View v) {
                     //TODO: upload change to database
-                    Log.d(TAG, "EditClickPosition:" + position);
-                    AlertDialog.Builder builder = new AlertDialog.Builder(fcontext);
-                    View layout = mInflater.inflate(R.layout.editdialog,null);
-                    Log.d(TAG, "layout" + layout);
-                    builder.setView(layout);
-//                    builder.setTitle("修改信息");
-//                    final EditText tv_title = (EditText) layout.findViewById(R.id.edit_title);
-//                    final EditText tv_content = (EditText) layout.findViewById(R.id.edit_content);
-                    final HashMap<String, String> map = (HashMap<String, String>) dataList.get(position);
-//                    tv_title.setText(map.get("title"));
-//                    tv_content.setText(map.get("docname"));
-                    builder.setPositiveButton("保存", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-//                            String title = tv_title.getText().toString();
-//                            String content = tv_content.getText().toString();
-//                            map.put("title", title);
-//                            map.put("docname", content);
-                            dialog.dismiss();
-                            notifyDataSetChanged();
-                        }
-                    });
-                    builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            dialog.dismiss();
-                        }
-                    });
-                    Dialog d=builder.create();
-//                    d.requestWindowFeature(Window.FEATURE_NO_TITLE);
-                    d.show();
+                    DialogFragment dialogFragment=new editorDialogFragment();
+                    dialogFragment.show(getFragmentManager(), "editdialog");
                 }
             });
             holder.delete.setOnClickListener(new View.OnClickListener() {
@@ -205,7 +180,8 @@ public class CommentListFragment extends ListFragment {
                 @Override
                 public void onClick(View v) {
                     //TODO:upload change to database
-
+                    UploadPicOrVideoDialogFragment dialogFragment = UploadPicOrVideoDialogFragment.newInstance();
+                    dialogFragment.show(getFragmentManager(), "uploaddialog");
                     Log.d(TAG,"UploadClickPostion:"+position);
                 }
             });

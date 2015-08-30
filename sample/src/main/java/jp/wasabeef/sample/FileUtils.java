@@ -9,6 +9,10 @@ import android.os.Environment;
 import android.provider.DocumentsContract;
 import android.provider.MediaStore;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 public class FileUtils {/**
  * Get a file path from a Uri. This will get the the path for Storage Access
  * Framework Documents, as well as the _data field for the MediaStore and
@@ -33,8 +37,6 @@ public static String getPath(final Context context, final Uri uri) {
             if ("primary".equalsIgnoreCase(type)) {
                 return Environment.getExternalStorageDirectory() + "/" + split[1];
             }
-
-            // TODO handle non-primary volumes
         }
         // DownloadsProvider
         else if (isDownloadsDocument(uri)) {
@@ -136,4 +138,38 @@ public static String getPath(final Context context, final Uri uri) {
      */
     public static boolean isMediaDocument(Uri uri) {
         return "com.android.providers.media.documents".equals(uri.getAuthority());
-    }}
+    }
+
+    private static boolean saveContentToSDCard(String fileNmae, String content) throws IOException {
+        boolean isExternalStorageAvailable = false;            //SD卡可读写的标志位
+        FileOutputStream fileOutputStream = null;            //FileOutputStream对象
+
+        //创建File对象，以SD卡所在的路径作为文件存储路径
+        File file = new File(Environment.getExternalStorageDirectory(), fileNmae);
+
+        //判断SD卡是否可读写
+        if(Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
+            isExternalStorageAvailable = true;
+            fileOutputStream = new FileOutputStream(file);            //创建FileOutputStream对象
+            fileOutputStream.write(content.getBytes());                //向FileOutputStream对象中写入数据
+            if(fileOutputStream != null) {            //关闭FileOutputStream对象
+                fileOutputStream.close();
+            }
+        }
+        return isExternalStorageAvailable;
+    }
+    private static void saveContentToLocal(Context mContext, String fileNmae, String content) throws IOException {
+        FileOutputStream fileOutputStream = mContext.openFileOutput(fileNmae, Context.MODE_APPEND);
+        fileOutputStream.write(content.getBytes());
+        if(fileOutputStream != null) {
+            fileOutputStream.close();
+        }
+    }
+
+    public static void saveToMobile(Context mContext, String fileName, String content) throws IOException {
+        boolean saved=saveContentToSDCard(fileName,content);
+        if(!saved){
+            saveContentToLocal(mContext, fileName, content);
+        }
+    }
+}

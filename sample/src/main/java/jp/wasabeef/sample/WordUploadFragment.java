@@ -5,6 +5,7 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -60,10 +61,10 @@ public class WordUploadFragment extends Fragment {
         btn_wordupload.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if(selectFileName!=null){
+                if (selectFileName != null) {
                     //TODO: upload select file to server
-                }else{
-                    Toast.makeText(getActivity().getApplicationContext(),"请先选择要上传的文件",Toast.LENGTH_LONG);
+                } else {
+                    Toast.makeText(getActivity().getApplicationContext(), "请先选择要上传的文件", Toast.LENGTH_LONG);
                 }
             }
         });

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- From: file:/Users/bean/StudioProjects/VideoView/sample/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string name="app_name">richeditor-android</string>
+    <string name="hello_blank_fragment">Hello blank fragment</string>
+    <string name="title_activity_main">RichEditor Demo</string>
+    <!-- From: file:/Users/bean/StudioProjects/VideoView/sample/src/main/res/values/styles.xml -->
+    <eat-comment/>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Customize your theme here. -->
+    </style>
+</resources>

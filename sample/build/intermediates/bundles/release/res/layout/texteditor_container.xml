@@ -1,27 +1,32 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:paddingLeft="20dp"
+    android:paddingRight="5dp">
 
     <RadioGroup
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="85dp"
         android:orientation="horizontal"
         android:id="@+id/cm_mode"
-        android:gravity="center_horizontal">
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_marginTop="30dp">
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="txt"
             android:id="@+id/cm_txtratio"
-            android:layout_marginRight="50dp" />
+            android:layout_marginRight="50dp"
+            android:textSize="25dp" />
 
         <RadioButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="word"
-            android:id="@+id/cm_wordratio" />
+            android:id="@+id/cm_wordratio"
+            android:textSize="25dp" />
 
     </RadioGroup>
 
@@ -40,4 +45,4 @@
     </LinearLayout>
 
 </LinearLayout>
-<!-- From: file:/Users/qq456cvb/Documents/VideoView/sample/src/main/res/layout/texteditor_container.xml -->
+<!-- From: file:/Users/bean/StudioProjects/VideoView/sample/src/main/res/layout/texteditor_container.xml -->

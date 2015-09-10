@@ -5,32 +5,44 @@
     <LinearLayout
         android:orientation="vertical"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:layout_marginLeft="10dp"
+        android:layout_marginRight="30dp">
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:id="@+id/txtmode_editorlayout"></LinearLayout>
+            android:layout_height="match_parent"
+            android:id="@+id/txtmode_editorlayout"
+            android:layout_weight="11"></LinearLayout>
 
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:gravity="right">
+            android:gravity="right"
+            android:layout_weight="1"
+            android:layout_marginTop="10dp">
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="保存"
-                android:id="@+id/btn_txtsave" />
+                android:id="@+id/btn_txtsave"
+                android:textSize="25dp"
+                android:background="@drawable/setrec_bg"
+                android:textColor="#FFFFFF"
+                android:layout_marginRight="15dp" />
 
             <Button
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:text="返回"
                 android:id="@+id/btn_txtcancel"
-                android:singleLine="false" />
+                android:singleLine="false"
+                android:textSize="25dp"
+                android:background="@drawable/setrec_bg"
+                android:textColor="#FFFFFF" />
         </LinearLayout>
     </LinearLayout>
 </FrameLayout>

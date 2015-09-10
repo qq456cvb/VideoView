@@ -15,9 +15,10 @@
             android:text="修改信息"
             android:id="@+id/textView"
             android:textSize="25sp"
-            android:background="#ff3790ff"
+            android:background="@color/mainpanelblue"
             android:gravity="center_horizontal"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:padding="10dp" />
 
         <LinearLayout
             android:orientation="horizontal"
@@ -34,4 +35,4 @@
     </LinearLayout>
 
 </FrameLayout>
-<!-- From: file:/Users/qq456cvb/Documents/VideoView/sample/src/main/res/layout/fragment_editordialog.xml -->
+<!-- From: file:/Users/bean/StudioProjects/VideoView/sample/src/main/res/layout/fragment_editordialog.xml -->

@@ -56,6 +56,8 @@ public class WordUploadFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 //TODO: tell activity set right panel to be channel list
+                CommentPanelRetSwitcher sprs=(CommentPanelRetSwitcher)getActivity();
+                sprs.switchRightPanel();
             }
         });
         btn_wordupload.setOnClickListener(new View.OnClickListener() {

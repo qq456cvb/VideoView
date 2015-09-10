@@ -68,6 +68,8 @@ public class TextModeFragment extends Fragment {
             public void onClick(View v) {
                 tef.clear();
                 //TODO: tell activity set right panal to be channel list
+                CommentPanelRetSwitcher sprs=(CommentPanelRetSwitcher)getActivity();
+                sprs.switchRightPanel();
             }
         });
         return view;

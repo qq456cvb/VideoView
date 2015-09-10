@@ -17,9 +17,10 @@
             android:id="@+id/textView3"
             android:textSize="25sp"
             android:gravity="center_horizontal"
-            android:background="#ff3790ff"
+            android:background="@color/mainpanelblue"
             android:clickable="false"
-            android:textColor="#FFFFFF" />
+            android:textColor="#FFFFFF"
+            android:padding="10dp" />
 
         <LinearLayout
             android:orientation="vertical"
@@ -37,13 +38,15 @@
                     android:layout_height="wrap_content"
                     android:text="视频"
                     android:id="@+id/radio_uploadvideo"
-                    android:layout_marginRight="20dp" />
+                    android:layout_marginRight="20dp"
+                    android:textSize="25dp" />
 
                 <RadioButton
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="图片"
-                    android:id="@+id/radio_uploadpic" />
+                    android:id="@+id/radio_uploadpic"
+                    android:textSize="25dp" />
             </RadioGroup>
 
             <LinearLayout
@@ -55,13 +58,15 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="选择文件"
-                    android:id="@+id/btn_uploadselfile" />
+                    android:id="@+id/btn_uploadselfile"
+                    android:textSize="25dp" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:text="no file selected!"
-                    android:id="@+id/tv_uploadselectfile" />
+                    android:id="@+id/tv_uploadselectfile"
+                    android:textSize="25dp" />
 
             </LinearLayout>
 

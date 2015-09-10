@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <!-- From: file:/Users/qq456cvb/Documents/VideoView/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/res/values/values.xml -->
+    <!-- From: file:/Users/bean/StudioProjects/VideoView/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/res/values/values.xml -->
     <eat-comment/>
     <attr format="reference" name="drawerArrowStyle"/>
     <attr format="dimension" name="height"/>
@@ -41,6 +41,11 @@
     <color name="hint_foreground_material_light">@color/bright_foreground_disabled_material_light</color>
     <color name="link_text_material_dark">@color/material_deep_teal_200</color>
     <color name="link_text_material_light">@color/material_deep_teal_500</color>
+    <!-- From: file:/Users/bean/StudioProjects/VideoView/sample/src/main/res/values/color.xml -->
+    <eat-comment/>
+    <color name="mainpanelblue">#009CE6</color>
+    <!-- From: file:/Users/bean/StudioProjects/VideoView/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/res/values/values.xml -->
+    <eat-comment/>
     <color name="material_blue_grey_800">#ff37474f</color>
     <color name="material_blue_grey_900">#ff263238</color>
     <color name="material_blue_grey_950">#ff21272b</color>
@@ -190,28 +195,28 @@
     <string name="abc_shareactionprovider_share_with">Share with</string>
     <string name="abc_shareactionprovider_share_with_application">Share with %s</string>
     <string name="abc_toolbar_collapse_description">Collapse</string>
-    <!-- From: file:/Users/qq456cvb/Documents/VideoView/sample/src/main/res/values/strings.xml -->
+    <!-- From: file:/Users/bean/StudioProjects/VideoView/sample/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="app_name">richeditor-android</string>
     <string name="hello_blank_fragment">Hello blank fragment</string>
-    <!-- From: file:/Users/qq456cvb/Documents/VideoView/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/res/values/values.xml -->
+    <!-- From: file:/Users/bean/StudioProjects/VideoView/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/res/values/values.xml -->
     <eat-comment/>
     <string name="status_bar_notification_info_overflow">999+</string>
-    <!-- From: file:/Users/qq456cvb/Documents/VideoView/sample/src/main/res/values/strings.xml -->
+    <!-- From: file:/Users/bean/StudioProjects/VideoView/sample/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string name="title_activity_main">RichEditor Demo</string>
-    <!-- From: file:/Users/qq456cvb/Documents/VideoView/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/res/values/values.xml -->
+    <!-- From: file:/Users/bean/StudioProjects/VideoView/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/res/values/values.xml -->
     <eat-comment/>
     <style name="AlertDialog.AppCompat" parent="Base.AlertDialog.AppCompat"/>
     <style name="AlertDialog.AppCompat.Light" parent="Base.AlertDialog.AppCompat.Light"/>
     <style name="Animation.AppCompat.Dialog" parent="Base.Animation.AppCompat.Dialog"/>
     <style name="Animation.AppCompat.DropDownUp" parent="Base.Animation.AppCompat.DropDownUp"/>
-    <!-- From: file:/Users/qq456cvb/Documents/VideoView/sample/src/main/res/values/styles.xml -->
+    <!-- From: file:/Users/bean/StudioProjects/VideoView/sample/src/main/res/values/styles.xml -->
     <eat-comment/>
     <style name="AppTheme" parent="Theme.AppCompat.Light.DarkActionBar">
         <!-- Customize your theme here. -->
     </style>
-    <!-- From: file:/Users/qq456cvb/Documents/VideoView/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/res/values/values.xml -->
+    <!-- From: file:/Users/bean/StudioProjects/VideoView/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/res/values/values.xml -->
     <eat-comment/>
     <style name="Base.AlertDialog.AppCompat" parent="android:Widget">
         <item name="android:layout">@layout/abc_alert_dialog_material</item>

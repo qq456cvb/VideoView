@@ -14,7 +14,8 @@
             android:orientation="horizontal"
             android:layout_width="match_parent"
             android:layout_height="75dp"
-            android:gravity="center_vertical|center_horizontal">
+            android:gravity="center_vertical|center_horizontal"
+            android:layout_marginTop="30dp">
 
             <LinearLayout
                 android:orientation="horizontal"
@@ -22,7 +23,8 @@
                 android:layout_height="match_parent"
                 android:layout_marginRight="20dp"
                 android:clickable="true"
-                android:id="@+id/ll_mycomment">
+                android:id="@+id/ll_mycomment"
+                android:gravity="center_vertical">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -35,7 +37,7 @@
                     android:layout_height="wrap_content"
                     android:text="我的评议"
                     android:id="@+id/textView12"
-                    android:textSize="20sp"
+                    android:textSize="24sp"
                     android:layout_gravity="center_vertical"
                     android:textColor="#000000" />
             </LinearLayout>
@@ -45,7 +47,8 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
-                android:id="@+id/ll_editcomment">
+                android:id="@+id/ll_editcomment"
+                android:gravity="center_vertical">
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -58,7 +61,7 @@
                     android:layout_height="wrap_content"
                     android:text="视频评议"
                     android:id="@+id/textView13"
-                    android:textSize="20sp"
+                    android:textSize="24sp"
                     android:layout_gravity="center_vertical"
                     android:textColor="#000000" />
             </LinearLayout>

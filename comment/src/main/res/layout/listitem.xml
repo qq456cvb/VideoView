@@ -10,7 +10,8 @@
         android:id="@+id/type"
         android:layout_weight="1"
         android:autoText="false"
-        android:layout_marginRight="3pt" />
+        android:layout_marginRight="3pt"
+        android:textSize="18sp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -18,7 +19,8 @@
         android:text="New Text"
         android:id="@+id/title"
         android:layout_weight="1"
-        android:layout_marginRight="3pt" />
+        android:layout_marginRight="3pt"
+        android:textSize="18sp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -26,7 +28,8 @@
         android:text="New Text"
         android:id="@+id/docname"
         android:layout_weight="1"
-        android:layout_marginRight="3pt" />
+        android:layout_marginRight="3pt"
+        android:textSize="18sp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -34,7 +37,8 @@
         android:text="New Text"
         android:id="@+id/relfile"
         android:layout_weight="1"
-        android:layout_marginRight="3pt" />
+        android:layout_marginRight="3pt"
+        android:textSize="18sp" />
 
     <TextView
         android:layout_width="match_parent"
@@ -42,7 +46,8 @@
         android:text="New Text"
         android:id="@+id/date"
         android:layout_weight="1"
-        android:layout_marginRight="3pt" />
+        android:layout_marginRight="3pt"
+        android:textSize="18sp" />
 
     <LinearLayout
         android:orientation="horizontal"
@@ -58,7 +63,7 @@
             android:id="@+id/cm_edit"
             android:layout_weight="1"
             android:textColor="#ffffff"
-            android:background="#316dff"
+            android:background="@drawable/setrec_bg"
             android:shadowColor="#110c30"
             android:layout_margin="2pt"
             android:focusable="false"/>
@@ -71,7 +76,7 @@
             android:id="@+id/cm_delete"
             android:layout_weight="1"
             android:textColor="#ffffff"
-            android:background="#316dff"
+            android:background="@drawable/setrec_bg"
             android:shadowColor="#110c30"
             android:layout_margin="2pt"
             android:focusable="false"/>
@@ -84,7 +89,7 @@
             android:id="@+id/cm_upload"
             android:layout_weight="1"
             android:textColor="#ffffff"
-            android:background="#316dff"
+            android:background="@drawable/setrec_bg"
             android:shadowColor="#110c30"
             android:layout_margin="2pt"
             android:focusable="false"/>

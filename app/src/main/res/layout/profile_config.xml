@@ -5,20 +5,19 @@
 
     <TextView
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="wrap_content"
         android:text="修改资料"
         android:id="@+id/textView11"
         android:layout_gravity="center_horizontal"
-        android:layout_weight="0.1"
         android:textStyle="bold"
-        android:textSize="40sp"
-        android:gravity="center_vertical|center_horizontal" />
+        android:textSize="35sp"
+        android:gravity="center_vertical|center_horizontal"
+        android:layout_margin="10dp" />
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.1">
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="200dp"
@@ -26,7 +25,8 @@
             android:text="用户名称"
             android:id="@+id/usernameTextView"
             android:textSize="30sp"
-            android:gravity="center_vertical|center_horizontal" />
+            android:gravity="left|center_vertical"
+            android:paddingLeft="20dp" />
 
         <TextView
             android:layout_width="200dp"
@@ -49,8 +49,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.1" >
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="200dp"
@@ -58,7 +57,8 @@
             android:text="真实姓名"
             android:id="@+id/nameTextView"
             android:textSize="30sp"
-            android:gravity="center_vertical|center_horizontal" />
+            android:gravity="left|center_vertical"
+            android:paddingLeft="20dp" />
 
         <EditText
             android:layout_width="200dp"
@@ -81,8 +81,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.1" >
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="200dp"
@@ -90,7 +89,8 @@
             android:text="旧密码"
             android:id="@+id/oldPwdTextView"
             android:textSize="30sp"
-            android:gravity="center_vertical|center_horizontal" />
+            android:gravity="left|center_vertical"
+            android:paddingLeft="20dp" />
 
         <EditText
             android:layout_width="200dp"
@@ -113,8 +113,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.1" >
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="200dp"
@@ -122,7 +121,8 @@
             android:text="新密码"
             android:id="@+id/newPwdTextView"
             android:textSize="30sp"
-            android:gravity="center_vertical|center_horizontal" />
+            android:gravity="left|center_vertical"
+            android:paddingLeft="20dp" />
 
         <EditText
             android:layout_width="200dp"
@@ -145,8 +145,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.1" >
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="200dp"
@@ -154,7 +153,8 @@
             android:text="新密码确认"
             android:id="@+id/newPwdCfmTextView"
             android:textSize="30sp"
-            android:gravity="center_vertical|center_horizontal" />
+            android:gravity="left|center_vertical"
+            android:paddingLeft="20dp" />
 
         <EditText
             android:layout_width="200dp"
@@ -177,8 +177,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.1" >
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="200dp"
@@ -186,7 +185,8 @@
             android:text="联系电话"
             android:id="@+id/phoneTextView"
             android:textSize="30sp"
-            android:gravity="center_vertical|center_horizontal" />
+            android:gravity="left|center_vertical"
+            android:paddingLeft="20dp" />
 
         <EditText
             android:layout_width="200dp"
@@ -209,8 +209,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.1" >
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="200dp"
@@ -218,7 +217,8 @@
             android:text="邮箱"
             android:id="@+id/mailTextView"
             android:textSize="30sp"
-            android:gravity="center_vertical|center_horizontal" />
+            android:gravity="left|center_vertical"
+            android:paddingLeft="20dp" />
 
         <EditText
             android:layout_width="200dp"
@@ -234,8 +234,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.1" >
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="200dp"
@@ -243,7 +242,8 @@
             android:text="部门名称"
             android:id="@+id/departTextView"
             android:textSize="30sp"
-            android:gravity="center_vertical|center_horizontal" />
+            android:gravity="left|center_vertical"
+            android:paddingLeft="20dp" />
 
         <EditText
             android:layout_width="200dp"
@@ -258,8 +258,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.1" >
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="200dp"
@@ -267,7 +266,8 @@
             android:text="角色"
             android:id="@+id/roleTextView"
             android:textSize="30sp"
-            android:gravity="center_vertical|center_horizontal" />
+            android:gravity="left|center_vertical"
+            android:paddingLeft="20dp" />
 
         <EditText
             android:layout_width="200dp"
@@ -282,8 +282,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0.1" >
+        android:layout_height="wrap_content">
 
         <TextView
             android:layout_width="200dp"
@@ -291,15 +290,22 @@
             android:text="备注"
             android:id="@+id/remarkTextView"
             android:textSize="30sp"
-            android:gravity="center_vertical|center_horizontal" />
+            android:gravity="top|left"
+            android:paddingLeft="20dp" />
 
         <EditText
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/editText"
+            android:layout_weight="1" />
+
+        <EditText
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
             android:id="@+id/remark"
             android:layout_weight="0"
             android:text="test"
-            android:gravity="center_vertical" />
+            android:gravity="top|left" />
 
     </LinearLayout>
 
@@ -307,18 +313,26 @@
         android:orientation="horizontal"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
-        android:layout_weight="0.1">
+        android:layout_weight="0.1"
+        android:gravity="bottom|right">
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="确认"
-            android:id="@+id/configConfirm" />
+            android:id="@+id/configConfirm"
+            android:background="@drawable/setrec_bg"
+            android:textColor="#FFFFFF"
+            android:textSize="25dp"
+            android:layout_marginRight="15dp" />
 
         <Button
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="取消"
-            android:id="@+id/configCancel" />
+            android:id="@+id/configCancel"
+            android:background="@drawable/setrec_bg"
+            android:textColor="#FFFFFF"
+            android:textSize="25dp" />
     </LinearLayout>
 </LinearLayout>

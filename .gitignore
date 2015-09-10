@@ -8,3 +8,5 @@
 /capture
 .idea
 /gradle.properties
+/sample/build
+/app/*.apk

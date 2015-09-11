@@ -48,6 +48,8 @@ public class editorDialogFragment extends DialogFragment {
                         public void onClick(DialogInterface dialog, int id) {
                             //TODO:save and change data
                             Log.d(TAG, "title:" + tef.getTitle() + "content:" + tef.getContent());
+                            CommentPanelRetSwitcher sprs=(CommentPanelRetSwitcher)getActivity();
+                            sprs.uploadTxtComment(tef.getTitle(), tef.getContent());
                             tef.clear();
                         }
                     })

@@ -17,7 +17,9 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="250dp"
+        android:paddingRight="150dp">
 
         <TextView
             android:layout_width="200dp"
@@ -49,7 +51,9 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="250dp"
+        android:paddingRight="150dp">
 
         <TextView
             android:layout_width="200dp"
@@ -81,7 +85,9 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="250dp"
+        android:paddingRight="150dp">
 
         <TextView
             android:layout_width="200dp"
@@ -113,7 +119,9 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="250dp"
+        android:paddingRight="150dp">
 
         <TextView
             android:layout_width="200dp"
@@ -145,7 +153,9 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="250dp"
+        android:paddingRight="150dp">
 
         <TextView
             android:layout_width="200dp"
@@ -177,7 +187,9 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="250dp"
+        android:paddingRight="150dp">
 
         <TextView
             android:layout_width="200dp"
@@ -209,7 +221,9 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="250dp"
+        android:paddingRight="150dp">
 
         <TextView
             android:layout_width="200dp"
@@ -234,7 +248,9 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="250dp"
+        android:paddingRight="150dp">
 
         <TextView
             android:layout_width="200dp"
@@ -258,7 +274,9 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="250dp"
+        android:paddingRight="150dp">
 
         <TextView
             android:layout_width="200dp"
@@ -282,7 +300,9 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="wrap_content"
+        android:paddingLeft="250dp"
+        android:paddingRight="150dp">
 
         <TextView
             android:layout_width="200dp"

@@ -20,9 +20,11 @@ import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import jp.wasabeef.sample.CommentPanelRetSwitcher;
 import jp.wasabeef.sample.UploadPicOrVideoDialogFragment;
 import jp.wasabeef.sample.editorDialogFragment;
 
@@ -33,6 +35,7 @@ public class CommentListFragment extends ListFragment {
     private String TAG="CommentListFragment";
     private List<? extends Map<String,?>> dataList;
     private ListView cmList;
+    private CommentAdapter commentAdapter;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,6 +52,8 @@ public class CommentListFragment extends ListFragment {
     private List<? extends Map<String,?>> getData() {
         //TODO
         Log.d(TAG,"-------getData");
+        CommentPanelRetSwitcher cprs=(CommentPanelRetSwitcher)getActivity();
+        cprs.getCommentList();
         ArrayList<HashMap<String,String>> list=new ArrayList<HashMap<String, String>>();
         HashMap<String, String> map1=new HashMap<String, String>();
         HashMap<String, String> map2=new HashMap<String, String>();
@@ -75,6 +80,19 @@ public class CommentListFragment extends ListFragment {
         return list;
     }
 
+    public void changeList(ArrayList<HashMap<String, String>> list){
+        Log.d(TAG, "-------changeList");
+        dataList=list;
+        HashMap<String, String> map=(HashMap<String, String>)dataList.get(0);
+        Log.d(TAG, "list size:"+dataList.size()+"map0:"+map+", mapsize:"+map.size());
+        Iterator ite=map.entrySet().iterator();
+        while (ite.hasNext()){
+            Map.Entry<String, String> entry=(Map.Entry)ite.next();
+            Log.d(TAG, "key:"+entry.getKey()+", value:"+entry.getValue());
+        }
+
+        commentAdapter.notifyDataSetChanged();
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -84,7 +102,8 @@ public class CommentListFragment extends ListFragment {
         cmList=(ListView) view.findViewById(android.R.id.list);
         Log.d(TAG,"cmList:"+cmList);
         dataList=getData();
-        cmList.setAdapter(new CommentAdapter(this.getActivity()));
+        commentAdapter=new CommentAdapter(this.getActivity());
+        cmList.setAdapter(commentAdapter);
         return view;
     }
     class CommentAdapter extends BaseAdapter {
@@ -150,6 +169,7 @@ public class CommentListFragment extends ListFragment {
                     //TODO: upload change to database
                     DialogFragment dialogFragment=new editorDialogFragment();
                     dialogFragment.show(getFragmentManager(), "editdialog");
+
                 }
             });
             holder.delete.setOnClickListener(new View.OnClickListener() {

@@ -21,6 +21,10 @@ import com.qq456cvb.videoview.Subviews.MiddleFragment;
 import com.qq456cvb.videoview.Subviews.ProfileFragment;
 import com.qq456cvb.videoview.Subviews.RightFragment;
 import com.qq456cvb.videoview.Utils.Channel;
+import com.qq456cvb.videoview.Utils.CommentHttpHelper;
+
+import java.util.ArrayList;
+import java.util.HashMap;
 
 import jp.wasabeef.sample.CommentPanelRetSwitcher;
 import jp.wasabeef.sample.commentPanelFragment;
@@ -127,7 +131,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
         transaction.add(R.id.content_middle, mMiddleFragment);
         transaction.add(R.id.content_right, mRightFragment);
         transaction.add(R.id.content_main, mProfileFragment);
-        transaction.add(R.id.content_right,commentPanelFragment);
+        transaction.add(R.id.content_right, commentPanelFragment);
         transaction.add(R.id.content_right,comchanFragment);
         transaction.hide(mProfileFragment);
         transaction.hide(mMiddleFragment);
@@ -207,5 +211,19 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
         transaction.show(mMiddleFragment);
         transaction.show(comchanFragment);
         transaction.commit();
+    }
+    @Override
+    public void uploadTxtComment(String title, String content) {
+        CommentHttpHelper.uploadTxtCommentHelper(title, content);
+    }
+
+    @Override
+    public void getCommentList() {
+        CommentHttpHelper.getCommentHelper(MainActivity.this);
+    }
+
+    @Override
+    public void notifyListChange(ArrayList<HashMap<String, String>> newlist) {
+        mProfileFragment.profileCommentFragment.changeList(newlist);
     }
 }

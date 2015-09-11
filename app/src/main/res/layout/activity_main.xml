@@ -23,7 +23,9 @@
             android:textAlignment="center"
             android:gravity="center_vertical|center_horizontal"
             android:textColor="@android:color/white"
-            android:background="#ff3280ff" />
+            android:background="@drawable/titlepanelshape"
+            android:layout_marginRight="15dp"
+            android:layout_marginLeft="15dp" />
     </FrameLayout>
 
     <LinearLayout
@@ -39,8 +41,10 @@
             android:layout_width="fill_parent"
             android:layout_height="match_parent"
             android:layout_gravity="center_vertical"
-            android:layout_weight="4"
-            android:background="#ff4f8eff">
+            android:layout_weight="5"
+            android:background="@drawable/leftpanelshape"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp">
 
             <LinearLayout
                 android:layout_width="fill_parent"
@@ -174,7 +178,9 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:id="@+id/content_main"
-            android:baselineAligned="false">
+            android:baselineAligned="false"
+            android:layout_marginTop="20dp"
+            android:layout_marginBottom="20dp">
 
             <LinearLayout
                 android:orientation="vertical"

@@ -2,6 +2,4 @@
     <shape xmlns:android="http://schemas.android.com/apk/res/android" >
         <!-- 背景色 -->
         <solid android:color="#32828282"/>
-        <!-- 边框色 -->
-        <stroke android:width="0.5dip" android:color="#000000" />
     </shape>

@@ -14,7 +14,8 @@
             android:text="标题"
             android:id="@+id/titlelabel"
             android:layout_marginRight="10dp"
-            android:textSize="20sp" />
+            android:textSize="25sp"
+            android:textColor="#000000" />
 
         <EditText
             android:layout_width="match_parent"
@@ -168,7 +169,7 @@
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="match_parent"
-        android:layout_height="342dp">
+        android:layout_height="match_parent">
 
         <jp.wasabeef.richeditor.RichEditor
             android:id="@+id/editor"
@@ -177,4 +178,4 @@
     </LinearLayout>
 
 </LinearLayout>
-<!-- From: file:/Users/qq456cvb/Documents/VideoView/sample/src/main/res/layout/texteditorfragment.xml -->
+<!-- From: file:/Users/bean/StudioProjects/VideoView/sample/src/main/res/layout/texteditorfragment.xml -->

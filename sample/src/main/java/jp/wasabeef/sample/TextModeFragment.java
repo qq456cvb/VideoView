@@ -1,9 +1,11 @@
 package jp.wasabeef.sample;
 
+import android.app.Application;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
+import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -56,7 +58,9 @@ public class TextModeFragment extends Fragment {
                     } else {
                         //need to save to local?
                         FileUtils.saveToMobile(getActivity().getApplicationContext(), tef.getTitle(), tef.getContent());
-                        //TODO: upload text file to server
+                        CommentPanelRetSwitcher sprs=(CommentPanelRetSwitcher)getActivity();
+                        sprs.uploadTxtComment(tef.getTitle(), tef.getContent());
+                        tef.clear();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();
@@ -68,6 +72,8 @@ public class TextModeFragment extends Fragment {
             public void onClick(View v) {
                 tef.clear();
                 //TODO: tell activity set right panal to be channel list
+                CommentPanelRetSwitcher sprs=(CommentPanelRetSwitcher)getActivity();
+                sprs.switchRightPanel();
             }
         });
         return view;

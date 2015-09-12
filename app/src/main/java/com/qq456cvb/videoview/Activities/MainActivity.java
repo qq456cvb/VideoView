@@ -3,16 +3,21 @@ package com.qq456cvb.videoview.Activities;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
+import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import com.qq456cvb.videoview.Application.GlobalApp;
 import com.qq456cvb.videoview.R;
@@ -27,9 +32,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import jp.wasabeef.sample.CommentPanelRetSwitcher;
+import jp.wasabeef.sample.EditDialogContent;
 import jp.wasabeef.sample.commentPanelFragment;
+import jp.wasabeef.sample.editorDialogFragment;
 
-public class MainActivity extends FragmentActivity implements ProfileFragment.OnProfileListener, CommentPanelRetSwitcher{
+public class MainActivity extends FragmentActivity implements ProfileFragment.OnProfileListener, CommentPanelRetSwitcher {
 
     public final static String TAG = "MainActivity";
     public final static int CHANNEL = 1;
@@ -49,6 +56,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
     private FrameLayout mContentRight;
 
     public static Handler handler;
+    public ProgressDialog progress;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -180,6 +188,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
                         FragmentManager fm = getFragmentManager();
                         FragmentTransaction transaction = fm.beginTransaction();
                         transaction.show(mProfileFragment.profileCommentFragment);
+                        getCommentList();
                         transaction.commit();
                         break;
                     }
@@ -214,16 +223,68 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
     }
     @Override
     public void uploadTxtComment(String title, String content) {
-        CommentHttpHelper.uploadTxtCommentHelper(title, content);
+        CommentHttpHelper.uploadTxtCommentHelper(title, content, this);
+//        showProgressDialog("上传评论中");
     }
 
     @Override
     public void getCommentList() {
         CommentHttpHelper.getCommentHelper(MainActivity.this);
+//        showProgressDialog("获取评论列表");
     }
 
     @Override
-    public void notifyListChange(ArrayList<HashMap<String, String>> newlist) {
-        mProfileFragment.profileCommentFragment.changeList(newlist);
+    public void notifyListChange(ArrayList<HashMap<String, String>> newlist, ArrayList<Integer> queryId) {
+        mProfileFragment.profileCommentFragment.changeList(newlist, queryId);
+    }
+
+    @Override
+    public void getContents(ArrayList<Integer> queryIds) {
+        Log.d(TAG, "----getContents");
+        CommentHttpHelper.editTxtCommentHelper(queryIds, this);
+    }
+
+    @Override
+    public void setEditDialogContent(HashMap<Integer,String> map) {
+        mProfileFragment.profileCommentFragment.setContents(map);
+    }
+
+    @Override
+    public void updateComment(int queryid, String title, String content) {
+        CommentHttpHelper.updateTxtCommentHelper(queryid, title, content, this);
+//        showProgressDialog("更新评论中");
+    }
+
+    @Override
+    public void deleteComment(int queryid) {
+        CommentHttpHelper.deleteTxtCommentHelper(queryid, this);
+    }
+
+    @Override
+    public void uploadPic(int queryid, String filepath, String fileName) {
+        CommentHttpHelper.uploadCommentPicHelper(queryid, filepath, fileName, this);
+    }
+
+    @Override
+    public void showProgressDialog(String message) {
+        progress=new ProgressDialog(MainActivity.this);
+        progress.setTitle(message);
+        progress.setProgressStyle(ProgressDialog.STYLE_SPINNER);
+        progress.show();
+    }
+
+    @Override
+    public void stopProgressDialog() {
+//        if(progress==null){
+            SystemClock.sleep(1000);
+//        }
+        progress.cancel();
+        progress=null;
+    }
+
+    @Override
+    public void makeToast(String msg) {
+        Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
+
     }
 }

@@ -6,6 +6,7 @@ import android.app.DialogFragment;
 import android.app.FragmentManager;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.InflateException;
 import android.view.LayoutInflater;
@@ -14,11 +15,14 @@ import android.view.ViewGroup;
 import android.view.Window;
 
 
-public class editorDialogFragment extends DialogFragment {
+public class editorDialogFragment extends DialogFragment{
     private String TAG="editorDialogFragment";
     TextEditorFragment tef;
     private static View view=null;
 
+    private String title="";
+    private String content="";
+    private int queryid=-1;
     @Override
     public Dialog onCreateDialog(Bundle savedInstanceState)
     {
@@ -40,6 +44,8 @@ public class editorDialogFragment extends DialogFragment {
         }
 
         tef=(TextEditorFragment)fm.findFragmentById(R.id.frag_edit);
+        tef.setTitle(title);
+        tef.setContent(content);
         builder.setView(view)
                 // Add action buttons
                 .setPositiveButton("保存",
@@ -49,7 +55,10 @@ public class editorDialogFragment extends DialogFragment {
                             //TODO:save and change data
                             Log.d(TAG, "title:" + tef.getTitle() + "content:" + tef.getContent());
                             CommentPanelRetSwitcher sprs=(CommentPanelRetSwitcher)getActivity();
-                            sprs.uploadTxtComment(tef.getTitle(), tef.getContent());
+                            sprs.updateComment(queryid,tef.getTitle(), tef.getContent());
+                            //tai liu mang le
+                            SystemClock.sleep(1000);
+                            sprs.getCommentList();
                             tef.clear();
                         }
                     })
@@ -62,5 +71,14 @@ public class editorDialogFragment extends DialogFragment {
         Dialog dialog=builder.create();
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
         return dialog;
+    }
+    public void setTitle(String tt){
+        title=tt;
+    }
+    public void setContent(String ct){
+        content=ct;
+    }
+    public void setQueryid(int id){
+        queryid=id;
     }
 }

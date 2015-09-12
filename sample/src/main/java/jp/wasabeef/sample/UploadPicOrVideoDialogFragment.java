@@ -26,7 +26,13 @@ public class UploadPicOrVideoDialogFragment extends DialogFragment {
     private String MIMEType="*/*";
 
     private String selectFileName=null;
+    private String fileUrl=null;
     private String selectType=null;
+    private int queryid=-1;
+
+    public void setQueryid(int qid){
+        queryid=qid;
+    }
 
     public static UploadPicOrVideoDialogFragment newInstance() {
         UploadPicOrVideoDialogFragment fragment = new UploadPicOrVideoDialogFragment();
@@ -66,7 +72,9 @@ public class UploadPicOrVideoDialogFragment extends DialogFragment {
                 new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int id) {
-                        //TODO: upload related data to server
+                    //TODO: upload related data to server
+                        CommentPanelRetSwitcher cprs=(CommentPanelRetSwitcher)getActivity();
+                        cprs.uploadPic(queryid, fileUrl, selectFileName);
                     }
                 }).setNegativeButton("取消", null);
         Dialog dialog=builder.create();
@@ -95,6 +103,7 @@ public class UploadPicOrVideoDialogFragment extends DialogFragment {
             String url;
 //            try {
             url = FileUtils.getPath(getActivity(), uri);
+            fileUrl = url;
             Log.i("ht", "url" + url);
             String fileName = url.substring(url.lastIndexOf("/") + 1);
             tv_selfile.setText(fileName);

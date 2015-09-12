@@ -15,6 +15,8 @@ import com.qq456cvb.videoview.R;
 import com.qq456cvb.videoview.Subviews.Profile.ProfileConfigFragment;
 import com.qq456cvb.videoview.Subviews.Profile.ProfileImageFragment;
 
+import jp.wasabeef.sample.CommentPanelRetSwitcher;
+
 /**
  * Created by qq456cvb on 8/19/15.
  */
@@ -90,6 +92,8 @@ public class ProfileFragment extends Fragment {
                 FragmentTransaction transaction = fm.beginTransaction();
                 transaction.show(profileCommentFragment);
                 transaction.commit();
+                CommentPanelRetSwitcher cprs=(CommentPanelRetSwitcher)getActivity();
+                cprs.getCommentList();
             }
         });
 

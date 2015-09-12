@@ -8,6 +8,7 @@ import android.content.DialogInterface;
 import android.os.Bundle;
 import android.app.ListFragment;
 import android.app.AlertDialog;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -36,6 +37,8 @@ public class CommentListFragment extends ListFragment {
     private List<? extends Map<String,?>> dataList;
     private ListView cmList;
     private CommentAdapter commentAdapter;
+    private ArrayList<Integer> queryId=new ArrayList<Integer>();
+    private HashMap<Integer,String> contents=new HashMap<Integer, String>();
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -47,7 +50,10 @@ public class CommentListFragment extends ListFragment {
 //        setListAdapter(adapter);
     }
 
-
+    public void setContents(HashMap<Integer,String> map){
+        Log.d(TAG, "-----setContens:"+map.size());
+        contents=map;
+    }
 
     private List<? extends Map<String,?>> getData() {
         //TODO
@@ -80,17 +86,13 @@ public class CommentListFragment extends ListFragment {
         return list;
     }
 
-    public void changeList(ArrayList<HashMap<String, String>> list){
+    public void changeList(ArrayList<HashMap<String, String>> list, ArrayList<Integer> queryId){
         Log.d(TAG, "-------changeList");
+        Log.d(TAG, "newlist title" + list.get(1).get("title"));
         dataList=list;
-        HashMap<String, String> map=(HashMap<String, String>)dataList.get(0);
-        Log.d(TAG, "list size:"+dataList.size()+"map0:"+map+", mapsize:"+map.size());
-        Iterator ite=map.entrySet().iterator();
-        while (ite.hasNext()){
-            Map.Entry<String, String> entry=(Map.Entry)ite.next();
-            Log.d(TAG, "key:"+entry.getKey()+", value:"+entry.getValue());
-        }
-
+        this.queryId=queryId;
+        CommentPanelRetSwitcher cprs=(CommentPanelRetSwitcher)getActivity();
+        cprs.getContents(queryId);
         commentAdapter.notifyDataSetChanged();
     }
 
@@ -167,9 +169,13 @@ public class CommentListFragment extends ListFragment {
                 @Override
                 public void onClick(View v) {
                     //TODO: upload change to database
-                    DialogFragment dialogFragment=new editorDialogFragment();
+                    editorDialogFragment dialogFragment=new editorDialogFragment();
                     dialogFragment.show(getFragmentManager(), "editdialog");
-
+                    Log.d(TAG, dataList.get(position).get("title").toString());
+                    dialogFragment.setTitle(dataList.get(position).get("title").toString());
+                    Log.d(TAG, contents.get(queryId.get(position)));
+                    dialogFragment.setContent(contents.get(queryId.get(position)));
+                    dialogFragment.setQueryid(queryId.get(position));
                 }
             });
             holder.delete.setOnClickListener(new View.OnClickListener() {
@@ -182,6 +188,10 @@ public class CommentListFragment extends ListFragment {
                     builder.setTitle("提示");builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
+                            CommentPanelRetSwitcher cprs=(CommentPanelRetSwitcher)getActivity();
+                            cprs.deleteComment(queryId.get(position));
+                            //wo you liu mang le
+                            SystemClock.sleep(1000);
                             dataList.remove(position);
                             notifyDataSetChanged();
                             dialog.dismiss();
@@ -201,6 +211,11 @@ public class CommentListFragment extends ListFragment {
                 public void onClick(View v) {
                     //TODO:upload change to database
                     UploadPicOrVideoDialogFragment dialogFragment = UploadPicOrVideoDialogFragment.newInstance();
+                    dialogFragment.setQueryid(queryId.get(position));
+                    Log.d(TAG, "position="+position+", queryid="+queryId.get(position));
+                    for(int qid:queryId){
+                        Log.d(TAG, "qid:"+qid);
+                    }
                     dialogFragment.show(getFragmentManager(), "uploaddialog");
                     Log.d(TAG,"UploadClickPostion:"+position);
                 }

@@ -16,6 +16,7 @@ public interface CommentPanelRetSwitcher {
     public void updateComment(int queryid, String title, String content);
     public void deleteComment(int queryid);
     public void uploadPic(int queryid, String filepath, String fileName);
+    public void uploadVideo(int queryid, String filepath, String fileName);
     public void showProgressDialog(String message);
     public void stopProgressDialog();
     public void makeToast(String msg);

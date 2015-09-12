@@ -212,6 +212,10 @@ public class CommentListFragment extends ListFragment {
                     //TODO:upload change to database
                     UploadPicOrVideoDialogFragment dialogFragment = UploadPicOrVideoDialogFragment.newInstance();
                     dialogFragment.setQueryid(queryId.get(position));
+                    Log.d(TAG, "position="+position+", queryid="+queryId.get(position));
+                    for(int qid:queryId){
+                        Log.d(TAG, "qid:"+qid);
+                    }
                     dialogFragment.show(getFragmentManager(), "uploaddialog");
                     Log.d(TAG,"UploadClickPostion:"+position);
                 }

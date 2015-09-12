@@ -1,6 +1,5 @@
 package com.qq456cvb.videoview.Activities;
 
-import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
@@ -16,7 +15,6 @@ import android.view.View;
 import android.view.Window;
 import android.widget.FrameLayout;
 import android.widget.LinearLayout;
-import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import com.qq456cvb.videoview.Application.GlobalApp;
@@ -32,9 +30,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import jp.wasabeef.sample.CommentPanelRetSwitcher;
-import jp.wasabeef.sample.EditDialogContent;
 import jp.wasabeef.sample.commentPanelFragment;
-import jp.wasabeef.sample.editorDialogFragment;
 
 public class MainActivity extends FragmentActivity implements ProfileFragment.OnProfileListener, CommentPanelRetSwitcher {
 
@@ -262,7 +258,12 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
 
     @Override
     public void uploadPic(int queryid, String filepath, String fileName) {
-        CommentHttpHelper.uploadCommentPicHelper(queryid, filepath, fileName, this);
+        CommentHttpHelper.uploadCommentFileHelper(CommentHttpHelper.PICTURE,queryid, filepath, fileName, this);
+    }
+
+    @Override
+    public void uploadVideo(int queryid, String filepath, String fileName) {
+        CommentHttpHelper.uploadCommentFileHelper(CommentHttpHelper.VIDEO,queryid, filepath, fileName, this);
     }
 
     @Override
@@ -285,6 +286,5 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
     @Override
     public void makeToast(String msg) {
         Toast.makeText(getApplicationContext(), msg, Toast.LENGTH_LONG).show();
-
     }
 }

@@ -32,6 +32,10 @@ public class CommentHttpHelper {
     private static String updateReviewUrl="/stpy/reviewMainAction!updateReviewInfo.action";
     private static String deleteReviewUrl="/stpy/reviewMainAction!deleteReview.action";
     private static String uploadPicReviewUrl="/stpy/reviewMainAction!doUpload.action";
+    private static String uploadWordUrl="/stpy/reviewAction!uploadWord.action?hdnPageNo=1";
+    public static int VIDEO=1;
+    public static int PICTURE=2;
+
     public static void uploadTxtCommentHelper(final String title,  final String content, final CommentPanelRetSwitcher cprs){
         final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, String response) {
@@ -42,7 +46,7 @@ public class CommentHttpHelper {
             }
 
             public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
-                Log.d("test", "sssss"+response);
+                Log.d("test", "sssss" + response);
                 cprs.makeToast("评论上传失败");
             }
         };
@@ -176,7 +180,7 @@ public class CommentHttpHelper {
             }
 
             public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
-                Log.d("test", "sssss"+response);
+                Log.d("test", "sssss" + response);
             }
         };
         new Thread() {
@@ -266,20 +270,20 @@ public class CommentHttpHelper {
             }
         }.start();
     }
-    public static void uploadCommentPicHelper(final int queryId, final String filepath, final String fileName,
-                                              final CommentPanelRetSwitcher cprs){
-        Log.d(TAG, "uploadCommentPicHelper");
+    public static void uploadCommentFileHelper(final int doctype, final int queryId, final String filepath, final String fileName,
+                                               final CommentPanelRetSwitcher cprs){
         final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, String response) {
                 Log.d(TAG, "---onsucess");
                 Log.d(TAG, "statusCode:" + statusCode + ", response:" + response);
-                cprs.makeToast("文件上传评论成功");
+                cprs.makeToast("文件上传成功");
+                cprs.getCommentList();
             }
 
             public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
                 Log.d(TAG, "---onfailure");
                 Log.d(TAG, "upload"+response);
-                cprs.makeToast("文件上传评论失败");
+                cprs.makeToast("文件上传失败");
             }
         };
         new Thread() {
@@ -287,7 +291,7 @@ public class CommentHttpHelper {
             public void run() {
                 try {
                     RequestParams params = new RequestParams();
-                    params.put("hdnid", queryId);
+                    params.put("hdnId", queryId);
                     try{
                         File picFile=new File(filepath);
                         params.put("fileUrl",picFile);
@@ -297,6 +301,7 @@ public class CommentHttpHelper {
                         //TODO: Toast
                     }
                     params.put("filName", fileName);
+                    params.put("radioReview", doctype);
                     String tmpUrl=uploadPicReviewUrl+"?id="+queryId;
                     Log.d(TAG, tmpUrl);
                     GlobalApp.user.post(tmpUrl, params, handler);

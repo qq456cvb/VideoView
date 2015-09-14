@@ -355,6 +355,7 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
         libvlc.getMediaList().clear();
         libvlc.getMediaList().add(new Media(libvlc, LibVLC.PathToURI(src)), false);
         libvlc.playIndex(0);
+//        libvlc.pause();
         overlayTitle.setText(src);
     }
 

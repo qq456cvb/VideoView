@@ -3,17 +3,25 @@ package com.qq456cvb.videoview.Subviews;
 import android.app.Fragment;
 import android.os.Bundle;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ExpandableListView;
 import android.widget.Toast;
 
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.qq456cvb.videoview.Activities.MainActivity;
 import com.qq456cvb.videoview.Adapters.Channel.ChannelListAdapter;
 import com.qq456cvb.videoview.R;
 import com.qq456cvb.videoview.Tools.ChannelLoader;
 import com.qq456cvb.videoview.Utils.Channel;
+import com.qq456cvb.videoview.Utils.Programme;
+import com.qq456cvb.videoview.Utils.UserClient;
+
+import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.util.ArrayList;
 
@@ -31,9 +39,7 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
     {
-        for (int i = 0; i < 30; ++i) {
-            channels.add(String.valueOf(i));
-        }
+
         view = inflater.inflate(R.layout.right_layout_channel, container, false);
         channelList = (ExpandableListView) view.findViewById(R.id.list);
         channelLoader.getChannelsBycategory("yangshi");
@@ -48,12 +54,54 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
         channelList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
-                                        int groupPosition, int childPosition, long id) {
+                                        final int groupPosition, final int childPosition, long id) {
 
                 Toast.makeText(RightChannelFragment.this.getActivity(),
                         "你点击了" + channelListAdapter.getChild(groupPosition, childPosition),
                         Toast.LENGTH_SHORT).show();
+                final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
+                    public void onSuccess(int statusCode, Header[] headers, String response) {
+                        response = response.replace("\\", "");
+                        response = response.substring(1, response.length() - 1);
+                        try {
+                            JSONObject obj = new JSONObject(response);
+                            Message msg = Message.obtain(MainActivity.handler);
+                            msg.what = MainActivity.PROGRAMME;
+                            Bundle bundle = new Bundle();
+                            bundle.putString("type", "play");
+                            bundle.putString("value", obj.getString("url"));
+//                        msg.obj = channelListAdapter.getGroupChannel(groupPosition);
+                            msg.setData(bundle);
+                            msg.sendToTarget();
+                        }catch (JSONException e) {
+                            e.printStackTrace();
+                        }
+                    }
 
+                    public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
+                        Log.d("test", "sssss");
+                    }
+                };
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            Programme programme = channelListAdapter.getChildProgramme(groupPosition, childPosition);
+                            int id = Integer.valueOf(programme.channel.substring(5));
+                            if (id > 4) {
+                                id = id - 1;
+                            } else {
+                                if (id == 4) {
+                                    id = 7;
+                                }
+                            }
+                            UserClient.get("/stpy/ajaxVlcAction!getUrl.action?id=" + String.valueOf(id) + "&dateTime="+
+                                    channelListAdapter.getChildProgramme(groupPosition, childPosition).starttime+"&hdnType=3&urlNext=1", null, handler);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
                 return false;
             }
         });
@@ -73,6 +121,11 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
                 msg.sendToTarget();
             }
         });
+    }
+
+    public void onProgrammeLoaded(ArrayList<ArrayList<Programme>> programmes) {
+        channelListAdapter.updateProgramme(programmes);
+        channelListAdapter.notifyDataSetChanged();
     }
 
     public void changeCategory(String category) {

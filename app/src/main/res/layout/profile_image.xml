@@ -14,7 +14,8 @@
         android:stretchMode="columnWidth"
         android:gravity="center"
         android:background="#ffffff"
-        android:layout_weight="4" />
+        android:layout_weight="4"
+        android:layout_margin="30dp" />
 
     <LinearLayout
         android:orientation="horizontal"

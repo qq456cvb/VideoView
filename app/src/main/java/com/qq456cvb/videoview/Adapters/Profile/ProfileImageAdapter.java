@@ -9,23 +9,22 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
 import android.widget.ImageView;
-import android.widget.TextView;
 
 import com.qq456cvb.videoview.R;
 import com.qq456cvb.videoview.Subviews.Profile.ProfileImageFragment;
 import com.qq456cvb.videoview.Tools.AsyncImageLoader;
-import com.qq456cvb.videoview.CustomWidgets.ImageGridWithText;
+import com.qq456cvb.videoview.Utils.UserImage;
 
 import java.util.List;
 
 /**
  * Created by qq456cvb on 8/22/15.
  */
-public class ProfileImageAdapter extends ArrayAdapter<ImageGridWithText> {
+public class ProfileImageAdapter extends ArrayAdapter<UserImage> {
 
     private GridView gridView;
     private AsyncImageLoader asyncImageLoader;
-    public ProfileImageAdapter(Activity activity, List<ImageGridWithText> imageGridWithTexts, GridView gridView1) {
+    public ProfileImageAdapter(Activity activity, List<UserImage> imageGridWithTexts, GridView gridView1) {
         super(activity, 0, imageGridWithTexts);
         this.gridView = gridView1;
         asyncImageLoader = new AsyncImageLoader();
@@ -38,10 +37,10 @@ public class ProfileImageAdapter extends ArrayAdapter<ImageGridWithText> {
         View rowView;
         LayoutInflater inflater = activity.getLayoutInflater();
         rowView = inflater.inflate(R.layout.profile_image_grid_item, null);
-        ImageGridWithText imageGridWithText = getItem(position);
+        final UserImage image = getItem(position);
 
         // Load the image and set it on the ImageView
-        String imageUrl = imageGridWithText.getImageUrl();
+        String imageUrl = image.getURL();
         ImageView imageView = (ImageView)rowView.findViewById(R.id.grid_item_image);
         imageView.setTag(String.valueOf(position));
         imageView.setOnClickListener(new View.OnClickListener() {
@@ -49,6 +48,7 @@ public class ProfileImageAdapter extends ArrayAdapter<ImageGridWithText> {
             public void onClick(View v) {
                 Message msg = Message.obtain(ProfileImageFragment.handler);
                 msg.arg1 = position % 2;
+                msg.obj = image.getReviewId();
                 msg.sendToTarget();
             }
         });
@@ -66,8 +66,8 @@ public class ProfileImageAdapter extends ArrayAdapter<ImageGridWithText> {
             imageView.setImageDrawable(cachedImage);
         }
         // Set the text on the TextView
-        TextView textView = (TextView)rowView.findViewById(R.id.grid_item_text);
-        textView.setText(imageGridWithText.getText());
+//        TextView textView = (TextView)rowView.findViewById(R.id.grid_item_text);
+//        textView.setText(imageGridWithText.getText());
         return rowView;
     }
 

@@ -19,4 +19,12 @@ public class UserImage {
     public String getUserId() {
         return userId;
     }
+
+    public void setReviewId(String reviewId) {
+        this.reviewId = reviewId;
+    }
+
+    public String getReviewId() {
+        return reviewId;
+    }
 }

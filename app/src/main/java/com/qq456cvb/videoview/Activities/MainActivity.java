@@ -39,6 +39,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
     public final static int CHANNEL = 1;
     public final static int MYCOMMENT = 2;
     public final static int EDITCOMMENT = 3;
+    public final static int PROGRAMME = 4;
 
     private RightFragment mRightFragment = new RightFragment();
     private MiddleFragment mMiddleFragment = new MiddleFragment();
@@ -196,6 +197,16 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
                         else if (type.equals("play")) {
                             mMiddleFragment.changeSrc(message.getData().getString("value"));
                             GlobalApp.currentChannel = (Channel)message.obj;
+                        }
+                        break;
+                    }
+                    case PROGRAMME: {
+                        String type = message.getData().getString("type");
+                        if (type.equals("list")) {
+                            mRightFragment.changeCategory(message.getData().getString("value"));
+                        }
+                        else if (type.equals("play")) {
+                            mMiddleFragment.changeSrc(message.getData().getString("value"));
                         }
                         break;
                     }

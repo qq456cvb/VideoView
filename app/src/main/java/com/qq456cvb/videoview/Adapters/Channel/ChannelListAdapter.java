@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.qq456cvb.videoview.R;
 import com.qq456cvb.videoview.Subviews.RightChannelFragment;
 import com.qq456cvb.videoview.Utils.Channel;
+import com.qq456cvb.videoview.Utils.Programme;
 
 import java.util.ArrayList;
 
@@ -22,9 +23,14 @@ public class ChannelListAdapter extends BaseExpandableListAdapter {
 
     private RightChannelFragment rightChannelFragment;
     private ArrayList<Channel> channels;
+    private ArrayList<ArrayList<Programme>> programmes;
     public ChannelListAdapter(RightChannelFragment rightChannelFragment, ArrayList<Channel> channels) {
         this.rightChannelFragment = rightChannelFragment;
         this.channels = channels;
+    }
+
+    public void updateProgramme (ArrayList<ArrayList<Programme>> programmes) {
+        this.programmes = programmes;
     }
 
     //自己定义一个获得文字信息的方法
@@ -57,6 +63,9 @@ public class ChannelListAdapter extends BaseExpandableListAdapter {
     public Channel getGroupChannel(int groupPosition) {
         return channels.get(groupPosition);
     }
+    public Programme getChildProgramme(int groupPosition, int childPosition) {
+        return programmes.get(groupPosition).get(childPosition);
+    }
 
     @Override
     public long getGroupId(int groupPosition) {
@@ -67,13 +76,16 @@ public class ChannelListAdapter extends BaseExpandableListAdapter {
     @Override
     public int getChildrenCount(int groupPosition) {
         // TODO Auto-generated method stub
-        return 6;
+        if (programmes == null) {
+            return 0;
+        }
+        return programmes.get(groupPosition).size();
     }
 
     @Override
     public Object getChild(int groupPosition, int childPosition) {
         // TODO Auto-generated method stub
-        return "1";
+        return programmes.get(groupPosition).get(childPosition).starttime.substring(11,16) + " " + programmes.get(groupPosition).get(childPosition).name;
     }
 
     @Override

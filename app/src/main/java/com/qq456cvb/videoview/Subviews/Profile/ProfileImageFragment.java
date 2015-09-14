@@ -12,7 +12,8 @@ import android.widget.GridView;
 import com.qq456cvb.videoview.Adapters.Profile.ProfileImageAdapter;
 import com.qq456cvb.videoview.Adapters.Profile.ProfileImageSetAdapter;
 import com.qq456cvb.videoview.R;
-import com.qq456cvb.videoview.CustomWidgets.ImageGridWithText;
+import com.qq456cvb.videoview.Tools.ImageLoader;
+import com.qq456cvb.videoview.Utils.UserImage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,11 +23,15 @@ import java.util.List;
  */
 
 // ugly code due to the test, wait for JDBC beans
-public class ProfileImageFragment extends Fragment {
+public class ProfileImageFragment extends Fragment implements ImageLoader.OnLoadedListener {
     private GridView image_grid;
     private View view;
     public static Handler handler;
-    private List<ImageGridWithText> list = new ArrayList<ImageGridWithText>();
+    private ImageLoader imageLoader = new ImageLoader(this);
+    private List<UserImage> list = new ArrayList<UserImage>();
+    private List<UserImage> detailList = new ArrayList<UserImage>();
+    private ProfileImageAdapter profileImageAdapter;
+    private ProfileImageSetAdapter profileImageSetAdapter;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -37,33 +42,18 @@ public class ProfileImageFragment extends Fragment {
         view = inflater.inflate(R.layout.profile_image, container, false);
         image_grid = (GridView)view.findViewById(R.id.image_grid);
 
-
-        String[] paths=new String[30];
-        for(int i=0;i<15;i++) {
-            paths[2*i] = "/storage/emulated/0/test/" + String.valueOf(1) + ".jpg";
-            paths[2*i+1] = "/storage/emulated/0/test/" + String.valueOf(2) + ".jpg";
-        }
-        for(int i=0;i<30;i++){
-            list.add(new ImageGridWithText(paths[i], String.valueOf(i)));
-        }
-        image_grid.setAdapter(new ProfileImageAdapter(this.getActivity(), list, image_grid));
+        profileImageAdapter = new ProfileImageAdapter(this.getActivity(), list, image_grid);
+        profileImageSetAdapter = new ProfileImageSetAdapter(this.getActivity(), detailList, image_grid);
+        image_grid.setAdapter(profileImageAdapter);
 
         handler = new Handler() {
             public void handleMessage(Message message) {
                 switch (message.arg1) {
                     case 0:
-                        list.clear();
-                        for(int i=0;i<15;i++){
-                            list.add(new ImageGridWithText("/storage/emulated/0/test/" + String.valueOf(1) + ".jpg", String.valueOf(i)));
-                        }
-                        image_grid.setAdapter(new ProfileImageSetAdapter(ProfileImageFragment.this.getActivity(), list, image_grid));
+                        imageLoader.getImagesByReviewId((String)message.obj);
                         break;
                     case 1:
-                        list.clear();
-                        for(int i=0;i<15;i++){
-                            list.add(new ImageGridWithText("/storage/emulated/0/test/" + String.valueOf(2) + ".jpg", String.valueOf(i)));
-                        }
-                        image_grid.setAdapter(new ProfileImageSetAdapter(ProfileImageFragment.this.getActivity(), list, image_grid));
+                        imageLoader.getImagesByReviewId((String)message.obj);
                         break;
                 }
             }
@@ -74,17 +64,25 @@ public class ProfileImageFragment extends Fragment {
 
     @Override
     public void onHiddenChanged(boolean hidden) {
-        if (hidden && list.size() > 0 && image_grid != null) {
+        if (!hidden && image_grid != null) {
+
+            imageLoader.getImages();
+            image_grid.setAdapter(profileImageAdapter);
+        }
+    }
+
+    public void onLoaded(ArrayList<UserImage> images, int type) {
+
+        if (type == 0) {
             list.clear();
-            String[] paths=new String[30];
-            for(int i=0;i<15;i++) {
-                paths[2*i] = "/storage/emulated/0/test/" + String.valueOf(1) + ".jpg";
-                paths[2*i+1] = "/storage/emulated/0/test/" + String.valueOf(2) + ".jpg";
-            }
-            for(int i=0;i<30;i++){
-                list.add(new ImageGridWithText(paths[i], String.valueOf(i)));
-            }
-            image_grid.setAdapter(new ProfileImageAdapter(this.getActivity(), list, image_grid));
+            list.addAll(images);
+            image_grid.setAdapter(profileImageAdapter);
+            profileImageAdapter.notifyDataSetChanged();
+        } else {
+            detailList.clear();
+            detailList.addAll(images);
+            image_grid.setAdapter(profileImageSetAdapter);
+            profileImageSetAdapter.notifyDataSetChanged();
         }
     }
 

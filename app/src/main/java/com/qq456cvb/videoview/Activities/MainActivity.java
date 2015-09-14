@@ -20,11 +20,12 @@ import android.widget.Toast;
 import com.qq456cvb.videoview.Application.GlobalApp;
 import com.qq456cvb.videoview.R;
 import com.qq456cvb.videoview.Subviews.CommentAndChannelListFragment;
+import com.qq456cvb.videoview.Subviews.DownloadAndChannelListFragment;
 import com.qq456cvb.videoview.Subviews.MiddleFragment;
 import com.qq456cvb.videoview.Subviews.ProfileFragment;
 import com.qq456cvb.videoview.Subviews.RightFragment;
 import com.qq456cvb.videoview.Utils.Channel;
-import com.qq456cvb.videoview.Utils.CommentHttpHelper;
+import com.qq456cvb.videoview.Tools.CommentHttpHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -44,7 +45,9 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
     private ProfileFragment mProfileFragment = new ProfileFragment();
     private CommentAndChannelListFragment comchanFragment = new CommentAndChannelListFragment();
     private commentPanelFragment commentPanelFragment = new commentPanelFragment();
+    private DownloadAndChannelListFragment downloadAndChannelListFragment = new DownloadAndChannelListFragment();
     private LinearLayout mWatchButton;
+    private LinearLayout mDownloadButton;
     private LinearLayout mCommentButton;
     private LinearLayout mProfileButton;
     private LinearLayout mContentMain;
@@ -70,6 +73,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
 
     public void findViews() {
         mWatchButton = (LinearLayout)findViewById(R.id.watchButton);
+        mDownloadButton = (LinearLayout)findViewById(R.id.downloadButton);
         mCommentButton = (LinearLayout)findViewById(R.id.commentButton);
         mProfileButton = (LinearLayout)findViewById(R.id.profileButton);
         mContentMain = (LinearLayout)findViewById(R.id.content_main);
@@ -88,6 +92,19 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
                 FragmentTransaction transaction = fm.beginTransaction();
                 transaction.show(mMiddleFragment);
                 transaction.show(mRightFragment);
+                transaction.commit();
+            }
+        });
+        mDownloadButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                clearFragments();
+                mContentMiddle.setVisibility(View.VISIBLE);
+                mContentRight.setVisibility(View.VISIBLE);
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction transaction = fm.beginTransaction();
+                transaction.show(mMiddleFragment);
+                transaction.show(downloadAndChannelListFragment);
                 transaction.commit();
             }
         });
@@ -137,11 +154,13 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
         transaction.add(R.id.content_main, mProfileFragment);
         transaction.add(R.id.content_right, commentPanelFragment);
         transaction.add(R.id.content_right,comchanFragment);
+        transaction.add(R.id.content_right, downloadAndChannelListFragment);
         transaction.hide(mProfileFragment);
         transaction.hide(mMiddleFragment);
         transaction.hide(mRightFragment);
         transaction.hide(commentPanelFragment);
         transaction.hide(comchanFragment);
+        transaction.hide(downloadAndChannelListFragment);
         transaction.show(mMiddleFragment);
         transaction.show(mRightFragment);
         transaction.commit();
@@ -156,6 +175,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
         transaction.hide(mRightFragment);
         transaction.hide(comchanFragment);
         transaction.hide(commentPanelFragment);
+        transaction.hide(downloadAndChannelListFragment);
         transaction.hide(mProfileFragment);
         transaction.commit();
 

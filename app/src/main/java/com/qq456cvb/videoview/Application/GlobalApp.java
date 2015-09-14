@@ -3,7 +3,6 @@ package com.qq456cvb.videoview.Application;
 import android.app.Application;
 
 import com.qq456cvb.videoview.Utils.Channel;
-import com.qq456cvb.videoview.Utils.CommentHttpHelper;
 import com.qq456cvb.videoview.Utils.UserClient;
 
 

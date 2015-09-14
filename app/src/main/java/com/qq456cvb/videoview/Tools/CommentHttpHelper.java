@@ -1,4 +1,4 @@
-package com.qq456cvb.videoview.Utils;
+package com.qq456cvb.videoview.Tools;
 
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -8,7 +8,6 @@ import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 
-import com.loopj.android.http.AsyncHttpClient;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.qq456cvb.videoview.Application.GlobalApp;

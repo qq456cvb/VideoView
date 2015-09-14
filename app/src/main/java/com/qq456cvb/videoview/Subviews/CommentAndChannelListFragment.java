@@ -49,6 +49,7 @@ public class CommentAndChannelListFragment extends Fragment {
         FragmentManager fm=getActivity().getFragmentManager();
         FragmentTransaction ft=fm.beginTransaction();
         //TODO: channel fragment may be changed later
+        //TODO(youyang): use the current right channel fragment, not a new one.
         RightChannelFragment rcf=new RightChannelFragment();
         ft.replace(R.id.fl_channelfrag,rcf);
         ft.commit();

@@ -25,7 +25,7 @@ import com.qq456cvb.videoview.Subviews.MiddleFragment;
 import com.qq456cvb.videoview.Subviews.ProfileFragment;
 import com.qq456cvb.videoview.Subviews.RightFragment;
 import com.qq456cvb.videoview.Utils.Channel;
-import com.qq456cvb.videoview.Tools.CommentHttpHelper;
+import com.qq456cvb.videoview.Utils.CommentHttpHelper;
 
 import java.util.ArrayList;
 import java.util.HashMap;

@@ -1,4 +1,4 @@
-package com.qq456cvb.videoview.Tools;
+package com.qq456cvb.videoview.Utils;
 
 import android.app.Activity;
 import android.app.AlertDialog;

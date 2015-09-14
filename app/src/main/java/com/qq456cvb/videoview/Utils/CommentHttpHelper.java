@@ -84,6 +84,7 @@ public class CommentHttpHelper {
                 String save="";
                 String[] names={"type","title","docname","relfile","date"};
                 HashMap<String, String> map=new HashMap<String, String>();
+                boolean flag=false;
                 int j=0;
                 for(int i=0; i<items.length ;i++){
                     if(items[i].trim().equals("</html>")){
@@ -101,6 +102,7 @@ public class CommentHttpHelper {
                             line=items[i].trim();
                             if(line.equals("<center>")||line.equals("")){
                                 //skip
+                                flag=true;
                             }else if (line.contains("update_channel.png")) {
 //                                Log.d(TAG, "mapsize:" + map.size());
                                 list.add(map);
@@ -123,6 +125,7 @@ public class CommentHttpHelper {
                                 }
                                 break;
                             }else if(line.equals("</center>")){
+                                flag=false;
                                 //ret.add(save);
 //                                map.put(names[ret.size()%5],save);
 //                                Log.d(TAG, "j="+j);
@@ -130,7 +133,11 @@ public class CommentHttpHelper {
                                 save="";
                                 break;
                             } else {
-                                save += line;
+                                if(flag){
+                                    save += line;
+                                }else{
+                                    Log.d(TAG, "not contain:"+line);
+                                }
                             }
                         }
                     }
@@ -304,6 +311,46 @@ public class CommentHttpHelper {
                     String tmpUrl=uploadPicReviewUrl+"?id="+queryId;
                     Log.d(TAG, tmpUrl);
                     GlobalApp.user.post(tmpUrl, params, handler);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
+
+    public static void uploadWordCommentHelper(final String filepath,  final String fileName, final CommentPanelRetSwitcher cprs){
+        final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
+            public void onSuccess(int statusCode, Header[] headers, String response) {
+                cprs.makeToast("word上传成功");
+            }
+
+            public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
+                Log.d("test", "sssss" + response);
+                cprs.makeToast("word上传失败");
+            }
+        };
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+
+                    RequestParams params = new RequestParams();
+                    params.put("checkedimgname","review_click.png");
+                    params.put("checkedimgindex", 2);
+                    params.put("radioReview", 2);
+                    params.put("hdnPageNo", 1);
+                    params.put("hdnType", 3);
+                    try{
+                        File picFile=new File(filepath);
+                        params.put("fileUrl",picFile);
+                        Log.d(TAG, "create file success");
+                    }catch (Exception e){
+                        Log.d(TAG, "cannot open file!");
+                        //TODO: Toast
+                    }
+                    params.put("filName", fileName);
+                    GlobalApp.user.post(uploadWordUrl, params, handler);
                 }
                 catch (Exception e) {
                     e.printStackTrace();

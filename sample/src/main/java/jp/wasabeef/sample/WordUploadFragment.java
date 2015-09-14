@@ -23,6 +23,7 @@ public class WordUploadFragment extends Fragment {
     private Button btn_wordret;
     private TextView tv_selectedfile;
     private String selectFileName=null;
+    private String selectFilePath=null;
 
     public static WordUploadFragment newInstance(String param1, String param2) {
         WordUploadFragment fragment = new WordUploadFragment();
@@ -65,6 +66,8 @@ public class WordUploadFragment extends Fragment {
             public void onClick(View v) {
                 if (selectFileName != null) {
                     //TODO: upload select file to server
+                    CommentPanelRetSwitcher cprs=(CommentPanelRetSwitcher)getActivity();
+                    cprs.uploadWord(selectFilePath, selectFileName);
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "请先选择要上传的文件", Toast.LENGTH_LONG);
                 }
@@ -97,6 +100,7 @@ public class WordUploadFragment extends Fragment {
                 String fileName = url.substring(url.lastIndexOf("/") + 1);
                 if(fileName.endsWith(".doc")||fileName.endsWith("docx")){
                     tv_selectedfile.setText(fileName);
+                    selectFilePath=url;
                     selectFileName=fileName;
                     Log.d(TAG, "select file:" + fileName);
                 }else{

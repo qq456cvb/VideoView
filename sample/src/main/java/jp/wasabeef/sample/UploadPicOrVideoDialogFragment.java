@@ -74,7 +74,12 @@ public class UploadPicOrVideoDialogFragment extends DialogFragment {
                     public void onClick(DialogInterface dialog, int id) {
                     //TODO: upload related data to server
                         CommentPanelRetSwitcher cprs=(CommentPanelRetSwitcher)getActivity();
-                        cprs.uploadPic(queryid, fileUrl, selectFileName);
+                        if(MIMEType.equals("images/*")){
+                            cprs.uploadPic(queryid, fileUrl, selectFileName);
+                        }else{
+                            cprs.uploadVideo(queryid, fileUrl, selectFileName);
+                        }
+
                     }
                 }).setNegativeButton("取消", null);
         Dialog dialog=builder.create();

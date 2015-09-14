@@ -287,6 +287,11 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
     }
 
     @Override
+    public void uploadWord(String filepath, String fileName) {
+        CommentHttpHelper.uploadWordCommentHelper(filepath, fileName, this);
+    }
+
+    @Override
     public void showProgressDialog(String message) {
         progress=new ProgressDialog(MainActivity.this);
         progress.setTitle(message);

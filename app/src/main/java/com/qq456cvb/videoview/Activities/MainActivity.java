@@ -307,6 +307,11 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
     }
 
     @Override
+    public void downWord(int queryid, String fileName) {
+        CommentHttpHelper.downloadWordHelper(queryid, fileName,this, this);
+    }
+
+    @Override
     public void showProgressDialog(String message) {
         progress=new ProgressDialog(MainActivity.this);
         progress.setTitle(message);

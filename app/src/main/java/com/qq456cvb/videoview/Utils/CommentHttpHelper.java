@@ -4,10 +4,12 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.Environment;
 import android.os.SystemClock;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.qq456cvb.videoview.Application.GlobalApp;
@@ -15,6 +17,8 @@ import com.qq456cvb.videoview.Application.GlobalApp;
 import org.apache.http.Header;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -32,6 +36,7 @@ public class CommentHttpHelper {
     private static String deleteReviewUrl="/stpy/reviewMainAction!deleteReview.action";
     private static String uploadPicReviewUrl="/stpy/reviewMainAction!doUpload.action";
     private static String uploadWordUrl="/stpy/reviewAction!uploadWord.action?hdnPageNo=1";
+    private static String downloadWordUrl="/stpy/reviewMainAction!queryWrod.action";
     public static int VIDEO=1;
     public static int PICTURE=2;
 
@@ -86,62 +91,90 @@ public class CommentHttpHelper {
                 HashMap<String, String> map=new HashMap<String, String>();
                 boolean flag=false;
                 int j=0;
-                for(int i=0; i<items.length ;i++){
-                    if(items[i].trim().equals("</html>")){
-                        break;
-                    }
-                    if(items[i].contains("class=\"fixtableNopositionTd")){
-
-//                        Log.d(TAG, "j is reset");
-                        while(true){
-                            i++;
-                            //Log.d(TAG, "i="+i+"line:"+items[i]);
-                            if(i==items.length){
-                                break;
-                            }
-                            line=items[i].trim();
-                            if(line.equals("<center>")||line.equals("")){
-                                //skip
-                                flag=true;
-                            }else if (line.contains("update_channel.png")) {
-//                                Log.d(TAG, "mapsize:" + map.size());
-                                list.add(map);
-//                                Log.d(TAG, "mapsize:" + map.size());
-                                map=new HashMap<String, String>();
-                                //get query id
-                                while(true){
-                                    i++;
-                                    //Log.d(TAG, "i="+i+"line:"+items[i]);
-                                    if(i==items.length){
-                                        break;
-                                    }
-                                    line=items[i].trim();
-                                    if(line.contains("onclick=\"reviewOpen")){
+                int i=0;
+                while(i<items.length){
+                    line=items[i].trim();
+                    if(line.equals("<center>")){
+                        flag=true;
+                    }else if(line.equals("</center>")){
+                        map.put(names[j%5],save);
+                        save="";
+                        if(j%5==4){
+                            list.add(map);
+                            Log.d(TAG, "map size:"+map.size());
+                            map=new HashMap<String, String>();
+                        }
+                        j++;
+                        flag=false;
+                    }else if(flag){
+                        save+=line;
+                    }else if(line.contains("onclick=\"reviewOpen")){
                                         String queryidstr=line.substring(line.indexOf("(") + 1, line.indexOf(","));
 //                                        Log.d(TAG, "queryidstr:" + queryidstr);
                                         queryIds.add(Integer.parseInt(queryidstr));
-                                        break;
-                                    }
-                                }
-                                break;
-                            }else if(line.equals("</center>")){
-                                flag=false;
-                                //ret.add(save);
-//                                map.put(names[ret.size()%5],save);
-//                                Log.d(TAG, "j="+j);
-                                map.put(names[j++%5],save);
-                                save="";
-                                break;
-                            } else {
-                                if(flag){
-                                    save += line;
-                                }else{
-                                    Log.d(TAG, "not contain:"+line);
-                                }
-                            }
-                        }
+                    }else if(line.contains("onclick=\"location='reviewMainAction!queryWrod.action?id=")){
+                        String queryidstr=line.substring(line.indexOf("id=") + 3, line.indexOf("'\""));
+                                        Log.d(TAG, "queryidstr:" + queryidstr);
+                        queryIds.add(Integer.parseInt(queryidstr));
                     }
+                    i++;
                 }
+//                for(int i=0; i<items.length ;i++){
+//                    if(items[i].trim().equals("</html>")){
+//                        break;
+//                    }
+//                    if(items[i].contains("class=\"fixtableNopositionTd")){
+//
+////                        Log.d(TAG, "j is reset");
+//                        while(true){
+//                            i++;
+//                            //Log.d(TAG, "i="+i+"line:"+items[i]);
+//                            if(i==items.length){
+//                                break;
+//                            }
+//                            line=items[i].trim();
+//                            if(line.equals("<center>")||line.equals("")){
+//                                //skip
+//                                flag=true;
+//                            }else if (line.contains("update_channel.png")) {
+////                                Log.d(TAG, "mapsize:" + map.size());
+//                                list.add(map);
+////                                Log.d(TAG, "mapsize:" + map.size());
+//                                map=new HashMap<String, String>();
+//                                //get query id
+//                                while(true){
+//                                    i++;
+//                                    //Log.d(TAG, "i="+i+"line:"+items[i]);
+//                                    if(i==items.length){
+//                                        break;
+//                                    }
+//                                    line=items[i].trim();
+//                                    if(line.contains("onclick=\"reviewOpen")){
+//                                        String queryidstr=line.substring(line.indexOf("(") + 1, line.indexOf(","));
+////                                        Log.d(TAG, "queryidstr:" + queryidstr);
+//                                        queryIds.add(Integer.parseInt(queryidstr));
+//                                        break;
+//                                    }
+//                                }
+//                                break;
+//                            }else if(line.equals("</center>")){
+//                                flag=false;
+//                                //ret.add(save);
+////                                map.put(names[ret.size()%5],save);
+////                                Log.d(TAG, "j="+j);
+//                                map.put(names[j++%5],save);
+//                                save="";
+//                                break;
+//                            } else {
+//                                if(flag){
+//                                    save += line;
+//                                }else{
+//                                    Log.d(TAG, "not contain:"+line);
+//                                }
+//                            }
+//                        }
+//                    }
+//                }
                 Log.d(TAG, "new list title"+list.get(0).get("title"));
                 cprs.notifyListChange(list, queryIds);
                 cprs.makeToast("获取评论成功");
@@ -343,7 +376,7 @@ public class CommentHttpHelper {
                     params.put("hdnType", 3);
                     try{
                         File picFile=new File(filepath);
-                        params.put("fileUrl",picFile);
+                        params.put("fileUrlWrod",picFile);
                         Log.d(TAG, "create file success");
                     }catch (Exception e){
                         Log.d(TAG, "cannot open file!");
@@ -357,5 +390,68 @@ public class CommentHttpHelper {
                 }
             }
         }.start();
+    }
+    public static void downloadWordHelper(final int queryId, final String fileName, final CommentPanelRetSwitcher cprs, Activity act){
+        final FileAsyncHttpResponseHandler handler = new FileAsyncHttpResponseHandler(act) {
+            @Override
+            public void onSuccess(int statusCode, Header[] headers, File response) {
+                // Do something with the file `response`
+                File sdDir = null;
+                long length = 0;
+                String localPath = "", remotePath = response.getPath();
+                boolean sdCardExist = Environment.getExternalStorageState()
+                        .equals(android.os.Environment.MEDIA_MOUNTED); //判断sd卡是否存在
+                if (sdCardExist)
+                {
+                    sdDir = Environment.getExternalStorageDirectory();//获取跟目录
+                    localPath = sdDir.toString() + "/"+fileName;
+                } else {
+                    //TODO
+                    cprs.makeToast("SD卡不存在");
+                }
+                try {
+                    int bytesum = 0;
+                    int byteread = 0;
+                    File file = new File(remotePath);
+                    if (file.exists()) { //文件存在时
+                        FileInputStream inStream = new FileInputStream(remotePath); //读入原文件
+                        length = inStream.available();
+                        Log.d(TAG,"localPath:"+localPath);
+                        FileOutputStream fs = new FileOutputStream(localPath);
+                        byte[] buffer = new byte[4096];
+                        while ( (byteread = inStream.read(buffer)) != -1) {
+                            bytesum += byteread; //字节数 文件大小
+                            System.out.println(bytesum);
+                            fs.write(buffer, 0, byteread);
+                        }
+                        inStream.close();
+                    }
+                    cprs.makeToast("下载word成功，路径："+localPath);
+                }
+                catch (Exception e) {
+                    cprs.makeToast("下载word文档出错");
+                    e.printStackTrace();
+                }
+            }
+
+            public void onFailure(int statusCode, Header[] headers, Throwable throwable, File response) {
+                cprs.makeToast("下载word文档失败");
+            }
+        };
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    String tmpUrl=updateReviewUrl+"?id="+queryId;
+                    RequestParams params = new RequestParams();
+                    params.put("id", queryId);
+                    GlobalApp.user.get(tmpUrl, params, handler);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+
     }
 }

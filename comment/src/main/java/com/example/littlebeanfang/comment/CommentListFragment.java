@@ -157,38 +157,51 @@ public class CommentListFragment extends ListFragment {
 //            Log.d(TAG,"holder:"+holder);
 //            Log.d(TAG,"dataList:"+dataList);
 //            Log.d(TAG,"holder.type:"+holder.type);
-            holder.type.setText((String)dataList.get(position).get("type"));
+            final String type=(String)dataList.get(position).get("type");
+            holder.type.setText(type);
             holder.title.setText((String)dataList.get(position).get("title"));
             holder.docname.setText((String)dataList.get(position).get("docname"));
-            holder.relfile.setText((String)dataList.get(position).get("relfile"));
+            holder.relfile.setText((String) dataList.get(position).get("relfile"));
             holder.date.setText((String) dataList.get(position).get("date"));
             holder.edit.setTag(position);
+            if(type.equals("Word")){
+                holder.edit.setText("下载");
+            }else{
+                holder.edit.setText("编辑");
+            }
             holder.delete.setTag(position);
             holder.upload.setTag(position);
+            final ViewHolder finalHolder = holder;
             holder.edit.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //TODO: upload change to database
-                    editorDialogFragment dialogFragment=new editorDialogFragment();
-                    dialogFragment.show(getFragmentManager(), "editdialog");
-                    Log.d(TAG, dataList.get(position).get("title").toString());
-                    dialogFragment.setTitle(dataList.get(position).get("title").toString());
-                    Log.d(TAG, contents.get(queryId.get(position)));
-                    dialogFragment.setContent(contents.get(queryId.get(position)));
-                    dialogFragment.setQueryid(queryId.get(position));
+                    if (type.equals("Word")) {
+                        CommentPanelRetSwitcher cprs=(CommentPanelRetSwitcher)getActivity();
+                        cprs.downWord(queryId.get(position), finalHolder.docname.getText().toString());
+                    } else {
+                        editorDialogFragment dialogFragment = new editorDialogFragment();
+                        dialogFragment.show(getFragmentManager(), "editdialog");
+                        Log.d(TAG, dataList.get(position).get("title").toString());
+                        dialogFragment.setTitle(dataList.get(position).get("title").toString());
+                        Log.d(TAG, contents.get(queryId.get(position)));
+                        dialogFragment.setContent(contents.get(queryId.get(position)));
+                        dialogFragment.setQueryid(queryId.get(position));
+                    }
                 }
             });
             holder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
                     //TODO:upload change to database
-                    Log.d(TAG,"DeleteClickPosition:"+position);
+                    Log.d(TAG, "DeleteClickPosition:" + position);
                     AlertDialog.Builder builder = new AlertDialog.Builder(fcontext);
                     builder.setMessage("确认删除吗？");
-                    builder.setTitle("提示");builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
+                    builder.setTitle("提示");
+                    builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
-                            CommentPanelRetSwitcher cprs=(CommentPanelRetSwitcher)getActivity();
+                            CommentPanelRetSwitcher cprs = (CommentPanelRetSwitcher) getActivity();
                             cprs.deleteComment(queryId.get(position));
                             //wo you liu mang le
                             SystemClock.sleep(1000);
@@ -212,12 +225,12 @@ public class CommentListFragment extends ListFragment {
                     //TODO:upload change to database
                     UploadPicOrVideoDialogFragment dialogFragment = UploadPicOrVideoDialogFragment.newInstance();
                     dialogFragment.setQueryid(queryId.get(position));
-                    Log.d(TAG, "position="+position+", queryid="+queryId.get(position));
-                    for(int qid:queryId){
-                        Log.d(TAG, "qid:"+qid);
+                    Log.d(TAG, "position=" + position + ", queryid=" + queryId.get(position));
+                    for (int qid : queryId) {
+                        Log.d(TAG, "qid:" + qid);
                     }
                     dialogFragment.show(getFragmentManager(), "uploaddialog");
-                    Log.d(TAG,"UploadClickPostion:"+position);
+                    Log.d(TAG, "UploadClickPostion:" + position);
                 }
             });
             return convertView;

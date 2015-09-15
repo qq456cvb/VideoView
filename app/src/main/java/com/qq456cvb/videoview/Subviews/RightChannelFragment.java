@@ -35,6 +35,7 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
     private ChannelLoader channelLoader = new ChannelLoader(this);
     private View view;
 
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)

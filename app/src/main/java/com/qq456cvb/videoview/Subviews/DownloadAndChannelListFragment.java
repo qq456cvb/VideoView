@@ -5,16 +5,19 @@ import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Looper;
 import android.os.Message;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
 import com.qq456cvb.videoview.Activities.MainActivity;
+import com.qq456cvb.videoview.CustomWidgets.DateTimePickDialogUtil;
 import com.qq456cvb.videoview.R;
 import com.qq456cvb.videoview.Utils.UserClient;
 
@@ -30,6 +33,13 @@ import java.io.FileOutputStream;
 public class DownloadAndChannelListFragment extends Fragment {
     private LinearLayout linearLayoutMp4;
     private LinearLayout linearLayoutZip;
+
+    private TextView startDateTime;
+    private TextView endDateTime;
+
+    private String initStartDateTime = "2015-9-13 14:44"; // 初始化开始时间
+    private String initEndDateTime = "2015-9-13 14:46"; // 初始化结束时间
+
     public DownloadAndChannelListFragment() {
         // Required empty public constructor
     }
@@ -44,6 +54,30 @@ public class DownloadAndChannelListFragment extends Fragment {
         linearLayoutMp4= (LinearLayout) view.findViewById(R.id.ll_mp4download);
         linearLayoutZip= (LinearLayout) view.findViewById(R.id.ll_zipdownload);
 
+
+        startDateTime = (TextView) view.findViewById(R.id.starttime);
+        endDateTime = (TextView) view.findViewById(R.id.endtime);
+
+        startDateTime.setText(initStartDateTime);
+        endDateTime.setText(initEndDateTime);
+        startDateTime.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                DateTimePickDialogUtil dateTimePickDialog = new DateTimePickDialogUtil(
+                        DownloadAndChannelListFragment.this.getActivity(), startDateTime.getText().toString());
+                dateTimePickDialog.dateTimePickDialog(startDateTime);
+            }
+        });
+
+        endDateTime.setOnClickListener(new View.OnClickListener() {
+
+            public void onClick(View v) {
+                DateTimePickDialogUtil dateTimePickDialog = new DateTimePickDialogUtil(
+                        DownloadAndChannelListFragment.this.getActivity(), endDateTime.getText().toString());
+                dateTimePickDialog.dateTimePickDialog(endDateTime);
+            }
+        });
+
         final FileAsyncHttpResponseHandler handler = new FileAsyncHttpResponseHandler(DownloadAndChannelListFragment.this.getActivity()) {
             @Override
             public void onSuccess(int statusCode, Header[] headers, File response) {
@@ -56,7 +90,7 @@ public class DownloadAndChannelListFragment extends Fragment {
                 if (sdCardExist)
                 {
                     sdDir = Environment.getExternalStorageDirectory();//获取跟目录
-                    localPath = sdDir.toString() + "/test.mp4";
+                    localPath = sdDir.toString() + "/"+startDateTime.getText().toString()+"_"+endDateTime.getText().toString()+".mp4";
                 } else {
                     //TODO
                 }
@@ -74,6 +108,7 @@ public class DownloadAndChannelListFragment extends Fragment {
                             System.out.println(bytesum);
                             fs.write(buffer, 0, byteread);
                         }
+                        Toast.makeText(DownloadAndChannelListFragment.this.getActivity(), "已保存至"+localPath, Toast.LENGTH_SHORT).show();
                         inStream.close();
                     }
                 }
@@ -88,14 +123,26 @@ public class DownloadAndChannelListFragment extends Fragment {
                 Toast.makeText(DownloadAndChannelListFragment.this.getActivity(), "未知错误", Toast.LENGTH_SHORT).show();
             }
         };
+
         linearLayoutMp4.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RequestParams params = new RequestParams();
-                params.put("startTime", "2015-09-10 14:33:53");
-                params.put("endTime", "2015-09-10 14:35:58");
-                params.put("hdnType", "3");
-                UserClient.post("/stpy/videoDownloadAction!doDown.action?hdid=1", params, handler);
+                new Thread() {
+                    @Override
+                    public void run() {
+                        try {
+                            RequestParams params = new RequestParams();
+                            params.put("startTime", startDateTime.getText().toString() + ":00");
+                            params.put("endTime", endDateTime.getText().toString() + ":00");
+                            params.put("hdnType", "3");
+                            UserClient.post("/stpy/videoDownloadAction!doDown.action?hdid=1", params, handler);
+                            Looper.prepare();
+                            Toast.makeText(DownloadAndChannelListFragment.this.getActivity(), "请稍后", Toast.LENGTH_SHORT).show();
+                            Looper.loop();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }}.start();
             }
         });
         linearLayoutZip.setOnClickListener(new View.OnClickListener() {

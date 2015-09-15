@@ -15,6 +15,7 @@ import com.qq456cvb.videoview.R;
  */
 public class RightFragment extends Fragment {
 
+
     private RightChannelFragment rightChannelFragment = new RightChannelFragment();
     private View view;
     @Override

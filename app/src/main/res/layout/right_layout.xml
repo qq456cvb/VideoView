@@ -3,18 +3,10 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="列表在此"
-        android:id="@+id/right_title"
-        android:layout_gravity="center_horizontal"
-        android:textSize="40sp"
-        android:layout_weight="6" />
-
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/right_content"
         android:layout_weight="1"></FrameLayout>
+
 </LinearLayout>

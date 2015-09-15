@@ -55,6 +55,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
     private LinearLayout mContentMiddle;
     private FrameLayout mContentRight;
 
+
     public static Handler handler;
     public ProgressDialog progress;
 
@@ -80,6 +81,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
         mContentMain = (LinearLayout)findViewById(R.id.content_main);
         mContentMiddle = (LinearLayout)findViewById(R.id.content_middle);
         mContentRight = (FrameLayout)findViewById(R.id.content_right);
+
     }
 
     public void bindOnClickListeners() {
@@ -132,6 +134,8 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
                 transaction.commit();
             }
         });
+
+
     }
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {

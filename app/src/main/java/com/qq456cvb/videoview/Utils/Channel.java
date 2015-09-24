@@ -7,6 +7,8 @@ public class Channel {
     public final static int ZHONGYANG = 1;
     public final static int HUNAN = 2;
     private int category;
+    public String id;
+    public String hdnDyass;
     private String name;
     private String IP;
     private String multicastIP;

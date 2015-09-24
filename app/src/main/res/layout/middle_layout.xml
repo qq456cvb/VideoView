@@ -8,7 +8,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_weight="5"
-        android:gravity="center_vertical|center_horizontal">
+        android:gravity="center_vertical|center_horizontal"
+        android:id="@+id/tab_menu">
 
         <Button
             android:layout_width="wrap_content"
@@ -104,7 +105,7 @@
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="New Button"
+            android:text="中央"
             android:id="@+id/radio_1"
             android:background="#00ffffff"
             android:layout_weight="1"
@@ -114,8 +115,28 @@
         <Button
             android:layout_width="fill_parent"
             android:layout_height="wrap_content"
-            android:text="New Button"
+            android:text="省级"
             android:id="@+id/radio_2"
+            android:background="#00ffffff"
+            android:layout_weight="1"
+            android:textSize="30sp"
+            android:contentDescription="radio" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="地市"
+            android:id="@+id/radio_3"
+            android:background="#00ffffff"
+            android:layout_weight="1"
+            android:textSize="30sp"
+            android:contentDescription="radio" />
+
+        <Button
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:text="县级"
+            android:id="@+id/radio_4"
             android:background="#00ffffff"
             android:layout_weight="1"
             android:textSize="30sp"
@@ -129,7 +150,8 @@
         android:layout_weight="1"
         android:background="@drawable/vlcshape"
         android:layout_marginLeft="30dp"
-        android:layout_marginTop="20dp">
+        android:layout_marginTop="20dp"
+        android:id="@+id/vlc_container">
 
         <FrameLayout
             android:layout_width="match_parent"

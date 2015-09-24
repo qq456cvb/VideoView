@@ -15,19 +15,57 @@
             android:layout_width="match_parent"
             android:layout_height="75dp">
 
-            <TextView
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="starttime"
-                android:id="@+id/starttime"
-                android:layout_weight="6" />
+                android:layout_weight="6">
 
-            <TextView
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="开始时间："
+                    android:id="@+id/txt_starttime"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical"
+                    android:textSize="20dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="starttime"
+                    android:id="@+id/starttime"
+                    android:textSize="20dp"
+                    android:gravity="center_vertical"
+                    android:layout_weight="1" />
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:orientation="horizontal"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:text="starttime"
-                android:id="@+id/endtime"
-                android:layout_weight="6" />
+                android:layout_weight="6">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="结束时间："
+                    android:id="@+id/txt_endtime"
+                    android:gravity="center_vertical"
+                    android:layout_weight="1"
+                    android:textSize="20dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:text="starttime"
+                    android:id="@+id/endtime"
+                    android:gravity="center_vertical|center_horizontal"
+                    android:textSize="20dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
         </LinearLayout>
 
         <LinearLayout

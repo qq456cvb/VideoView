@@ -18,5 +18,7 @@ public class GlobalApp extends Application {
         super.onCreate();
         user = new UserClient();
         currentChannel = new Channel(1, "CCTV-1", "", "http://220.250.58.250:7000/D*5005*");
+        currentChannel.id = "1";
+        currentChannel.hdnDyass = "0";
     }
 }

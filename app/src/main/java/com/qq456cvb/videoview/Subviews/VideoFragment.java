@@ -20,6 +20,7 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.qq456cvb.videoview.Activities.MainActivity;
 import com.qq456cvb.videoview.R;
 
 import org.videolan.libvlc.EventHandler;
@@ -36,6 +37,7 @@ import java.lang.ref.WeakReference;
 public class VideoFragment extends Fragment implements SurfaceHolder.Callback, IVideoPlayer{
 
     private final static String TAG = "VideoFragment";
+    private int isFullscreen = 0;
     private String              urlToStream;
     private View view;
     // Display Surface
@@ -47,11 +49,13 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
 
     private FrameLayout vlcOverlay;
     private ImageView vlcButtonPlayPause;
+    private ImageView vlcButtonToggleFullscreen;
     private Handler handlerOverlay;
     private Runnable runnableOverlay;
     private Handler handlerSeekbar;
     private Runnable runnableSeekbar;
     private SeekBar vlcSeekbar;
+    private SeekBar vlcVolume;
     private TextView vlcDuration;
     private TextView overlayTitle;
 
@@ -59,7 +63,9 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
     private LibVLC libvlc;
     private int mVideoWidth;
     private int mVideoHeight;
-    private final static int VideoSizeChanged = -1;
+    public final static int VideoSizeChanged = -1;
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)
@@ -75,8 +81,11 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
         // OVERLAY / CONTROLS
         vlcOverlay = (FrameLayout) view.findViewById(R.id.vlc_overlay);
         vlcButtonPlayPause = (ImageView) view.findViewById(R.id.vlc_button_play_pause);
+        vlcButtonToggleFullscreen = (ImageView) view.findViewById(R.id.vlc_button_fullscreen);
         vlcSeekbar = (SeekBar) view.findViewById(R.id.vlc_seekbar);
+        vlcVolume = (SeekBar) view.findViewById(R.id.vlc_volume);
         vlcDuration = (TextView) view.findViewById(R.id.vlc_duration);
+        vlcDuration.setVisibility(View.INVISIBLE);
 
         overlayTitle = (TextView) view.findViewById(R.id.vlc_overlay_title);
         overlayTitle.setText(urlToStream);
@@ -86,10 +95,17 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
         return view;
     }
 
+
     @Override
     public void onHiddenChanged(boolean hidden) {
         Log.d("Video", String.valueOf(hidden));
+        if (hidden && libvlc != null) {
+            libvlc.pause();
+        } else if (!hidden && libvlc != null) {
+            libvlc.play();
+        }
     }
+
     private void showOverlay() {
         vlcOverlay.setVisibility(View.VISIBLE);
     }
@@ -113,6 +129,18 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
             }
         });
 
+        vlcButtonToggleFullscreen.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                libvlc.detachSurface();
+//                libvlc.attachSurface(((MainActivity)VideoFragment.this.getActivity()).mVideoFullscreen.getHolder().getSurface(), VideoFragment.this);
+                Message msg = Message.obtain(MainActivity.handler);
+                msg.what = MainActivity.TOGGLE_FULLSCREEN;
+                isFullscreen = isFullscreen ^ 1;
+                msg.arg1 = isFullscreen;
+                msg.sendToTarget();
+            }
+        });
         // SEEKBAR
         handlerSeekbar = new Handler();
         runnableSeekbar = new Runnable() {
@@ -151,6 +179,24 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
                 handlerOverlay.postDelayed(runnableOverlay, timeToDisappear);
+            }
+        });
+
+        vlcVolume.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                Log.v("NEW Volume", "pos is : " + progress);
+                libvlc.setVolume(progress);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
             }
         });
 
@@ -217,11 +263,13 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
     @Override
     public void onResume() {
         super.onResume();
+        libvlc.play();
     }
 
     @Override
     public void onPause() {
         super.onPause();
+        libvlc.pause();
         //releasePlayer();
     }
 
@@ -327,6 +375,7 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
             MediaList list = libvlc.getMediaList();
             list.clear();
             list.add(new Media(libvlc, LibVLC.PathToURI(media)), false);
+            libvlc.setVolume(50);
             libvlc.playIndex(0);
         } catch (Exception e) {
             Toast.makeText(VideoFragment.this.getActivity(), "Could not create Vlc Player", Toast.LENGTH_LONG).show();
@@ -339,10 +388,10 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
         EventHandler.getInstance().removeHandler(mHandler);
         if (libvlc == null)
             return;
-        libvlc.stop();
         libvlc.detachSurface();
         holder = null;
         libvlc.closeAout();
+        libvlc.destroy();
 
         mVideoWidth = 0;
         mVideoHeight = 0;
@@ -364,8 +413,6 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
      * Events
      * ***********
      */
-
-    private Handler mHandler = new MyHandler(this);
 
     private static class MyHandler extends Handler {
         private WeakReference<VideoFragment> mOwner;
@@ -404,5 +451,7 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
             }
         }
     }
+
+    public Handler mHandler = new MyHandler(this);
 
 }

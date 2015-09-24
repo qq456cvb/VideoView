@@ -1,204 +1,222 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".MainActivity"
     android:weightSum="1"
-    android:orientation="vertical"
     android:padding="0dp">
 
     <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="0.89">
+        android:layout_height="match_parent"
+        android:id="@+id/video_fullscreen"></FrameLayout>
 
-        <TextView
-            android:layout_width="fill_parent"
-            android:layout_height="fill_parent"
-            android:text="@string/title"
-            android:id="@+id/title"
-            android:textSize="40sp"
-            android:textStyle="bold"
-            android:textAlignment="center"
-            android:gravity="center_vertical|center_horizontal"
-            android:textColor="@android:color/white"
-            android:background="@drawable/titlepanelshape"
-            android:layout_marginRight="15dp"
-            android:layout_marginLeft="15dp" />
-    </FrameLayout>
-
-    <LinearLayout
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:id="@+id/content"
-        android:layout_weight="0.11"
-        android:orientation="horizontal"
-        android:baselineAligned="false">
+        android:layout_height="match_parent">
+
+        <LinearLayout android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+            android:id="@+id/content_main">
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:layout_weight="0.89"
+            android:id="@+id/content_top">
+
+            <TextView
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:text="@string/title"
+                android:id="@+id/title"
+                android:textSize="40sp"
+                android:textStyle="bold"
+                android:textAlignment="center"
+                android:gravity="center_vertical|center_horizontal"
+                android:textColor="@android:color/white"
+                android:background="@drawable/titlepanelshape"
+                android:layout_marginRight="15dp"
+                android:layout_marginLeft="15dp" />
+        </FrameLayout>
 
         <LinearLayout
-            android:orientation="vertical"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_gravity="center_vertical"
-            android:layout_weight="5"
-            android:background="@drawable/leftpanelshape"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp">
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/watchButton"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1"
-                android:background="#003091ff"
-                android:orientation="horizontal"
-                android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp"
-                android:clickable="true">
-                <ImageView
-                    android:id="@+id/watchImage"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:src="@drawable/watch_white"
-                    android:background="#00000000"
-                    android:layout_weight="1"
-                    android:clickable="false"
-                    android:layout_margin="20dp" />
-                <TextView
-                    android:id="@+id/watchText"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:text="视听"
-                    android:paddingLeft="20px"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical|left"
-                    android:textSize="30dp"
-                    android:textColor="#ffffffff" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/downloadButton"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1"
-                android:background="#003091ff"
-                android:orientation="horizontal"
-                android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp">
-                <ImageView
-                    android:id="@+id/downloadImage"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:src="@drawable/download_white"
-                    android:background="#00000000"
-                    android:layout_weight="1"
-                    android:clickable="false"
-                    android:layout_margin="20dp" />
-                <TextView
-                    android:id="@+id/downloadText"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:text="下载"
-                    android:paddingLeft="20px"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical|left"
-                    android:textSize="30dp"
-                    android:textColor="#ffffffff" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/commentButton"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1"
-                android:background="#003091ff"
-                android:orientation="horizontal"
-                android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp">
-                <ImageView
-                    android:id="@+id/commentImage"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:src="@drawable/comment_white"
-                    android:background="#00000000"
-                    android:layout_weight="1"
-                    android:clickable="false"
-                    android:layout_margin="20dp" />
-                <TextView
-                    android:id="@+id/commentText"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:text="评议"
-                    android:paddingLeft="20px"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical|left"
-                    android:textSize="30dp"
-                    android:textColor="#ffffffff" />
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="fill_parent"
-                android:layout_height="match_parent"
-                android:id="@+id/profileButton"
-                android:layout_gravity="center_horizontal"
-                android:layout_weight="1"
-                android:background="#003091ff"
-                android:orientation="horizontal"
-                android:layout_marginBottom="20dp"
-                android:layout_marginTop="20dp">
-                <ImageView
-                    android:id="@+id/profileImage"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:src="@drawable/profile_white"
-                    android:background="#00000000"
-                    android:layout_weight="1"
-                    android:clickable="false"
-                    android:layout_margin="20dp" />
-                <TextView
-                    android:id="@+id/profileText"
-                    android:layout_width="fill_parent"
-                    android:layout_height="fill_parent"
-                    android:text="我的"
-                    android:paddingLeft="20px"
-                    android:layout_weight="1"
-                    android:gravity="center_vertical|left"
-                    android:textSize="30dp"
-                    android:textColor="#ffffffff" />
-            </LinearLayout>
-        </LinearLayout>
-
-        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/content"
+            android:layout_weight="0.11"
             android:orientation="horizontal"
-            android:layout_width="fill_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:id="@+id/content_main"
-            android:baselineAligned="false"
-            android:layout_marginTop="20dp"
-            android:layout_marginBottom="20dp">
+            android:baselineAligned="false">
 
             <LinearLayout
                 android:orientation="vertical"
-                android:layout_width="match_parent"
+                android:layout_width="fill_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="3"
-                android:id="@+id/content_middle">
+                android:layout_gravity="center_vertical"
+                android:layout_weight="5"
+                android:background="@drawable/leftpanelshape"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp"
+                android:id="@+id/content_left">
 
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/watchButton"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp"
+                    android:clickable="true">
+                    <ImageView
+                        android:id="@+id/watchImage"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:src="@drawable/watch_white"
+                        android:background="#00000000"
+                        android:layout_weight="1"
+                        android:clickable="false"
+                        android:layout_margin="20dp" />
+                    <TextView
+                        android:id="@+id/watchText"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:text="视听"
+                        android:paddingLeft="20px"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|left"
+                        android:textSize="30dp"
+                        android:textColor="#ffffffff" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/downloadButton"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:background="#003091ff"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp">
+                    <ImageView
+                        android:id="@+id/downloadImage"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:src="@drawable/download_white"
+                        android:background="#00000000"
+                        android:layout_weight="1"
+                        android:clickable="false"
+                        android:layout_margin="20dp" />
+                    <TextView
+                        android:id="@+id/downloadText"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:text="下载"
+                        android:paddingLeft="20px"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|left"
+                        android:textSize="30dp"
+                        android:textColor="#ffffffff"
+                        android:autoText="false" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/commentButton"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:background="#003091ff"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp">
+                    <ImageView
+                        android:id="@+id/commentImage"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:src="@drawable/comment_white"
+                        android:background="#00000000"
+                        android:layout_weight="1"
+                        android:clickable="false"
+                        android:layout_margin="20dp" />
+                    <TextView
+                        android:id="@+id/commentText"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:text="评议"
+                        android:paddingLeft="20px"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|left"
+                        android:textSize="30dp"
+                        android:textColor="#ffffffff" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="fill_parent"
+                    android:layout_height="match_parent"
+                    android:id="@+id/profileButton"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_weight="1"
+                    android:background="#003091ff"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="20dp"
+                    android:layout_marginTop="20dp">
+                    <ImageView
+                        android:id="@+id/profileImage"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:src="@drawable/profile_white"
+                        android:background="#00000000"
+                        android:layout_weight="1"
+                        android:clickable="false"
+                        android:layout_margin="20dp" />
+                    <TextView
+                        android:id="@+id/profileText"
+                        android:layout_width="fill_parent"
+                        android:layout_height="fill_parent"
+                        android:text="我的"
+                        android:paddingLeft="20px"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical|left"
+                        android:textSize="30dp"
+                        android:textColor="#ffffffff" />
+                </LinearLayout>
             </LinearLayout>
 
-            <FrameLayout
-                android:layout_width="match_parent"
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_width="fill_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="5"
-                android:id="@+id/content_right"></FrameLayout>
+                android:layout_weight="1"
+                android:id="@+id/content_middle_and_right"
+                android:baselineAligned="false"
+                android:layout_marginTop="20dp"
+                android:layout_marginBottom="20dp">
+
+                <LinearLayout
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:id="@+id/content_middle">
+
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="5"
+                    android:id="@+id/content_right"></FrameLayout>
+
+            </LinearLayout>
 
         </LinearLayout>
 
     </LinearLayout>
+    </FrameLayout>
 
-</LinearLayout>
+</FrameLayout>

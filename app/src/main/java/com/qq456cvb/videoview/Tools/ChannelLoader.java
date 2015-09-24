@@ -36,14 +36,15 @@ public class ChannelLoader {
         this.listener = listener;
     }
 
-    public void getChannelsBycategory(final String category) {
+    public void getChannelsBycategory(final String category, final int type) {
         this.category = category;
         this.pages = 0;
         this.result.clear();
+        this.programmes.clear();
         final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, String response) {
                 pages = Integer.valueOf(response.substring(response.lastIndexOf("hdnPagetotal") + 21, response.lastIndexOf("hdnPagetotal") + 22));
-                getChannelsByPage(1);
+                getChannelsByPage(1, type);
             }
 
             public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
@@ -54,7 +55,7 @@ public class ChannelLoader {
             @Override
             public void run() {
                 try {
-                    UserClient.get("/stpy/audioVisualAction!queryChannleInfo.action?hdnType=3&channel=" + category, null, handler);
+                    UserClient.get("/stpy/audioVisualAction!queryChannleInfo.action?hdnType=" + type +"&channel=" + category, null, handler);
                 }
                 catch (Exception e) {
                     e.printStackTrace();
@@ -63,13 +64,13 @@ public class ChannelLoader {
         }.start();
     }
 
-    private void getChannelsByPage(final int page)
+    private void getChannelsByPage(final int page, final int type)
     {
         if (page <= pages) {
             final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
                 public void onSuccess(int statusCode, Header[] headers, String response) {
                     getChannelsFromSinglePage(response);
-                    getChannelsByPage(page+1);
+                    getChannelsByPage(page+1, type);
                 }
 
                 public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
@@ -83,7 +84,7 @@ public class ChannelLoader {
                         RequestParams params = new RequestParams();
                         params.put("channel", category);
                         params.put("hdnPageNo", page);
-                        params.put("hdnType", 3);
+                        params.put("hdnType", type);
                         UserClient.post("/stpy/ajaxVlcAction!channlePage.action", params, handler);
                     }
                     catch (Exception e) {
@@ -114,26 +115,14 @@ public class ChannelLoader {
                 String name = item.getString("channle");
                 String multicastIP = item.getString("zubo");
                 Channel channel = new Channel(1, name, "", multicastIP);
+                channel.id = item.getString("id");
+                channel.hdnDyass = item.getString("dypass");
                 result.add(channel);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
 
-        // legacy
-//        if (html.contains("id=\"channelName")) {
-//            int begin = html.indexOf("id=\"channelName");
-//            int end = begin + html.substring(html.indexOf("id=\"channelName")).indexOf("/li");
-//            String block = html.substring(begin, end);
-//            block = block.substring(block.indexOf("viewplay") + 10);
-//            String multicastIP = block.substring(0, block.indexOf("'"));
-//            block = block.substring(block.indexOf("setRadio") + 10);
-//            String name = block.substring(0, block.indexOf("'"));
-//            Channel channel = new Channel(1, name, "", multicastIP);
-//            result.add(channel);
-//            String test = html.substring(end);
-//            getChannelsFromSinglePage(test);
-//        }
     }
 
     private void getProgrammesByChannel (final Channel channel) {
@@ -179,7 +168,7 @@ public class ChannelLoader {
                 String starttime = item.getString("starttime");
                 Programme programme = new Programme();
                 programme.name = name;
-                programme.channel = channel;
+                programme.channel = getChannelByName(channel);
                 programme.starttime = starttime;
                 programmeArrayList.add(programme);
             }
@@ -187,5 +176,14 @@ public class ChannelLoader {
             e.printStackTrace();
         }
         programmes.add(programmeArrayList);
+    }
+
+    private Channel getChannelByName(String name) {
+        for (int i = 0; i < result.size(); i++) {
+            if (result.get(i).getName().equals(name)) {
+                return result.get(i);
+            }
+        }
+        return null;
     }
 }

@@ -38,7 +38,7 @@ public class RightFragment extends Fragment {
         transaction.commit();
     }
 
-    public void changeCategory(String category) {
-        rightChannelFragment.changeCategory(category);
+    public void changeCategory(String category, int type) {
+        rightChannelFragment.changeCategory(category, type);
     }
 }

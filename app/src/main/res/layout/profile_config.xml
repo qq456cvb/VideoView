@@ -137,7 +137,6 @@
             android:layout_height="fill_parent"
             android:id="@+id/newPwd"
             android:layout_weight="0"
-            android:text="test"
             android:gravity="center_vertical" />
 
         <TextView
@@ -171,7 +170,6 @@
             android:layout_height="fill_parent"
             android:id="@+id/newPwdCfm"
             android:layout_weight="0"
-            android:text="test"
             android:gravity="center_vertical" />
 
         <TextView

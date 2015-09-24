@@ -13,7 +13,7 @@ import java.util.ArrayList;
 /**
  * Created by qq456cvb on 9/14/15.
  */
-public class ImageLoader {
+public class ProfileImageLoader {
     private ArrayList<UserImage> result = new ArrayList<>();
     private OnLoadedListener listener;
 
@@ -21,7 +21,7 @@ public class ImageLoader {
         void onLoaded(ArrayList<UserImage> arrayList, int type);
     }
 
-    public ImageLoader(OnLoadedListener listener) {
+    public ProfileImageLoader(OnLoadedListener listener) {
         this.listener = listener;
     }
 
@@ -76,7 +76,7 @@ public class ImageLoader {
     }
 
     public void parseHtml(String html) {
-        if (html.contains("showimage")) {
+        if (html.contains("onclick=\"showimage\"")) {
             UserImage img = new UserImage();
             int begin = html.indexOf("onclick=\"showimage");
             int end = begin + html.substring(html.indexOf("onclick=\"showimage")).indexOf("/>");
@@ -94,13 +94,17 @@ public class ImageLoader {
         if (html.contains("class=\"image-zoom\"")) {
             UserImage img = new UserImage();
             int begin = html.indexOf("class=\"image-zoom\"");
-            int end = begin + html.substring(html.indexOf("class=\"image-zoom\"")).indexOf("/>");
+            int end = begin + html.substring(html.indexOf("class=\"image-zoom\"")).indexOf("provincialBox");
             String block = html.substring(begin, end);
             String url = block.substring(block.indexOf("href=\"")+6, block.substring(0, block.indexOf("rel=\"")).lastIndexOf("\""));
+            int valueStart = block.indexOf("value=")+7;
+            String provincial = block.substring(valueStart,
+                    valueStart+block.substring(valueStart, valueStart+10).indexOf("\""));
             img.setReviewId(id);
             img.setUrl(url);
+            img.setProvincial(provincial);
             result.add(img);
-            parseHtml(html.substring(end));
+            parseHtmlByReviewId(html.substring(end), id);
         }
     }
 }

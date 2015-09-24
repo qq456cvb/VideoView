@@ -27,4 +27,5 @@ dependencies {
     compile project(':sample')
     compile files('libs/ojdbc14.jar')
     compile files('libs/android-async-http-1.4.8.jar')
+    compile files('libs/volley.jar')
 }

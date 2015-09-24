@@ -1,26 +1,30 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@drawable/bj_chg">
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:id="@+id/login_username"
-        android:layout_gravity="center_horizontal"
-        android:text="ceshi" />
+        android:text="ceshi"
+        android:layout_marginTop="200dp"
+        android:layout_marginLeft="800dp" />
 
     <EditText
-        android:layout_width="match_parent"
+        android:layout_width="200dp"
         android:layout_height="wrap_content"
         android:id="@+id/login_password"
-        android:layout_gravity="center_horizontal"
-        android:text="1234" />
+        android:text="1234"
+        android:layout_marginLeft="800dp"
+        android:layout_marginTop="50dp" />
 
     <Button
-        android:layout_width="wrap_content"
+        android:layout_width="100dp"
         android:layout_height="wrap_content"
         android:text="登录"
         android:id="@+id/login_cfm"
-        android:layout_gravity="center_horizontal" />
+        android:layout_marginLeft="850dp"
+        android:layout_marginTop="50dp" />
 </LinearLayout>

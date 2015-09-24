@@ -8,5 +8,5 @@ public class Programme {
     public String starttime;
     public String name;
     public String url;
-    public String channel;
+    public Channel channel;
 }

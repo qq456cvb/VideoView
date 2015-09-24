@@ -144,45 +144,15 @@ public class DateTimePickDialogUtil implements DatePicker.OnDateChangedListener,
         String hourStr = initDateTime.substring(initDateTime.lastIndexOf(" ") + 1, initDateTime.lastIndexOf(":")); // 时
         String minuteStr = initDateTime.substring(initDateTime.lastIndexOf(":") + 1); // 分
 
-        int currentYear = Integer.valueOf(yearStr.trim()).intValue();
-        int currentMonth = Integer.valueOf(monthStr.trim()).intValue() - 1;
-        int currentDay = Integer.valueOf(dayStr.trim()).intValue();
-        int currentHour = Integer.valueOf(hourStr.trim()).intValue();
-        int currentMinute = Integer.valueOf(minuteStr.trim()).intValue();
+        int currentYear = Integer.valueOf(yearStr.trim());
+        int currentMonth = Integer.valueOf(monthStr.trim()) - 1;
+        int currentDay = Integer.valueOf(dayStr.trim());
+        int currentHour = Integer.valueOf(hourStr.trim());
+        int currentMinute = Integer.valueOf(minuteStr.trim());
 
         calendar.set(currentYear, currentMonth, currentDay, currentHour,
                 currentMinute);
         return calendar;
-    }
-
-    /**
-     * 截取子串
-     *
-     * @param srcStr
-     *            源串
-     * @param pattern
-     *            匹配模式
-     * @param indexOrLast
-     * @param frontOrBack
-     * @return
-     */
-    public static String spliteString(String srcStr, String pattern,
-                                      String indexOrLast, String frontOrBack) {
-        String result = "";
-        int loc = -1;
-        if (indexOrLast.equalsIgnoreCase("index")) {
-            loc = srcStr.indexOf(pattern); // 取得字符串第一次出现的位置
-        } else {
-            loc = srcStr.lastIndexOf(pattern); // 最后一个匹配串的位置
-        }
-        if (frontOrBack.equalsIgnoreCase("front")) {
-            if (loc != -1)
-                result = srcStr.substring(0, loc); // 截取子串
-        } else {
-            if (loc != -1)
-                result = srcStr.substring(loc + 1, srcStr.length()); // 截取子串
-        }
-        return result;
     }
 
 }

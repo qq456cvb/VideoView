@@ -4,8 +4,8 @@ import android.graphics.Color;
 import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AbsListView;
 import android.widget.BaseExpandableListAdapter;
+import android.widget.FrameLayout;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -14,7 +14,12 @@ import com.qq456cvb.videoview.Subviews.RightChannelFragment;
 import com.qq456cvb.videoview.Utils.Channel;
 import com.qq456cvb.videoview.Utils.Programme;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by qq456cvb on 8/27/15.
@@ -34,14 +39,15 @@ public class ChannelListAdapter extends BaseExpandableListAdapter {
     }
 
     //自己定义一个获得文字信息的方法
-    TextView getTextView() {
-        AbsListView.LayoutParams lp = new AbsListView.LayoutParams(
-        ViewGroup.LayoutParams.MATCH_PARENT, 150);
+    TextView getTextView(float fontSize) {
+        FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
+        ViewGroup.LayoutParams.MATCH_PARENT, 60);
+        lp.gravity = Gravity.CENTER;
         TextView textView = new TextView(rightChannelFragment.getActivity());
         textView.setLayoutParams(lp);
         textView.setGravity(Gravity.CENTER_VERTICAL);
         textView.setGravity(Gravity.CENTER_HORIZONTAL);
-        textView.setTextSize(40);
+        textView.setTextSize(fontSize);
         textView.setTextColor(Color.BLACK);
         return textView;
     }
@@ -106,18 +112,6 @@ public class ChannelListAdapter extends BaseExpandableListAdapter {
         View view = (rightChannelFragment.getActivity()).getLayoutInflater().inflate(R.layout.channel_list_item, null);
         final TextView textView = (TextView)view.findViewById(R.id.channel_item);
         textView.setText(getGroup(groupPosition).toString());
-//        view.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                rightChannelFragment.expandGroup(groupPosition);
-//            }
-//        });
-//        view.setOnTouchListener(new View.OnTouchListener() {
-//            @Override
-//            public boolean onTouch(View v, MotionEvent event) {
-//                return false;
-//            }
-//        });
         return view;
     }
 
@@ -127,9 +121,21 @@ public class ChannelListAdapter extends BaseExpandableListAdapter {
 
         LinearLayout ll = new LinearLayout(rightChannelFragment.getActivity());
         ll.setOrientation(LinearLayout.HORIZONTAL);
-        TextView textView = getTextView();
+        TextView textView = getTextView(20);
         textView.setText(getChild(groupPosition, childPosition)
-        .toString());
+                .toString());
+        Date date = new Date();
+        DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        try {
+            date = df.parse(programmes.get(groupPosition).get(childPosition).starttime);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        Date nowDate = Calendar.getInstance().getTime();
+        if (date.compareTo(nowDate) > 0) {
+            ll.setBackgroundColor(Color.GRAY);
+        }
+
         ll.addView(textView);
         return ll;
     }

@@ -29,6 +29,9 @@ import java.util.ArrayList;
  * Created by qq456cvb on 8/17/15.
  */
 public class RightChannelFragment extends Fragment implements ChannelLoader.OnLoadedListener {
+    public final static int TV = 3;
+    public final static int RADIO = 1;
+
     private ArrayList<String> channels = new ArrayList<>();
     private ChannelListAdapter channelListAdapter;
     private ExpandableListView channelList;
@@ -43,7 +46,7 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
 
         view = inflater.inflate(R.layout.right_layout_channel, container, false);
         channelList = (ExpandableListView) view.findViewById(R.id.list);
-        channelLoader.getChannelsBycategory("yangshi");
+        channelLoader.getChannelsBycategory("yangshi", TV);
 
         return view;
     }
@@ -88,15 +91,8 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
                     public void run() {
                         try {
                             Programme programme = channelListAdapter.getChildProgramme(groupPosition, childPosition);
-                            int id = Integer.valueOf(programme.channel.substring(5));
-                            if (id > 4) {
-                                id = id - 1;
-                            } else {
-                                if (id == 4) {
-                                    id = 7;
-                                }
-                            }
-                            UserClient.get("/stpy/ajaxVlcAction!getUrl.action?id=" + String.valueOf(id) + "&dateTime="+
+                            String id = programme.channel.id;
+                            UserClient.get("/stpy/ajaxVlcAction!getUrl.action?id=" + id + "&dateTime="+
                                     channelListAdapter.getChildProgramme(groupPosition, childPosition).starttime+"&hdnType=3&urlNext=1", null, handler);
                         } catch (Exception e) {
                             e.printStackTrace();
@@ -129,8 +125,8 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
         channelListAdapter.notifyDataSetChanged();
     }
 
-    public void changeCategory(String category) {
-        channelLoader.getChannelsBycategory(category);
+    public void changeCategory(String category, int type) {
+        channelLoader.getChannelsBycategory(category, type);
     }
 
     public void expandGroup(int groupPosition)

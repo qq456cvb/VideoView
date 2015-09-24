@@ -9,6 +9,6 @@
     <string name="refresh">Refresh</string>
     <string name="video">Video</string>
     <string name="title">网上视听评议系统</string>
-    <string name="default_url">http://220.250.58.250:7000/D*5005*</string>
+    <string name="default_url">http://120.40.101.185:7000/D*5005*</string>
     <string name="play_pause_button">play_pause_button</string>
 </resources>

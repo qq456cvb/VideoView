@@ -59,9 +59,9 @@ public class ProfileFragment extends Fragment {
         // add all the fragments
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.add(R.id.content_main, profileCommentFragment);
-        transaction.add(R.id.content_main, profileImageFragment);
-        transaction.add(R.id.content_main, profileConfigFragment);
+        transaction.add(R.id.content_middle_and_right, profileCommentFragment);
+        transaction.add(R.id.content_middle_and_right, profileImageFragment);
+        transaction.add(R.id.content_middle_and_right, profileConfigFragment);
         transaction.hide(profileCommentFragment);
         transaction.hide(profileImageFragment);
         transaction.hide(profileConfigFragment);

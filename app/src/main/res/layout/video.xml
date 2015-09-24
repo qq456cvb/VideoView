@@ -64,6 +64,29 @@
 
                     </LinearLayout>
 
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="50dp"
+                        android:text="音量"
+                        android:id="@+id/textView7"
+                        android:gravity="center_vertical"
+                        android:textColor="#ffffffff" />
+
+                    <SeekBar
+                        android:layout_width="200dp"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/vlc_volume"
+                        android:layout_gravity="center_vertical"
+                        android:max="100"
+                        android:progress="50" />
+
+                    <ImageView
+                        android:layout_width="50dp"
+                        android:layout_height="50dp"
+                        android:id="@+id/vlc_button_fullscreen"
+                        android:src="@drawable/ic_action_fullscreen"
+                        android:contentDescription="@string/play_pause_button" />
+
                 </LinearLayout>
 
                 <TextView

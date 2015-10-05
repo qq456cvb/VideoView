@@ -76,7 +76,7 @@ public class ProfileImageLoader {
     }
 
     public void parseHtml(String html) {
-        if (html.contains("onclick=\"showimage\"")) {
+        if (html.contains("onclick=\"showimage")) {
             UserImage img = new UserImage();
             int begin = html.indexOf("onclick=\"showimage");
             int end = begin + html.substring(html.indexOf("onclick=\"showimage")).indexOf("/>");

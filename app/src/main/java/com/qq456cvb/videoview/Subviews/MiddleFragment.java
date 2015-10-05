@@ -34,7 +34,7 @@ public class MiddleFragment extends Fragment {
     private Button radioButton;
     private LinearLayout tabMenu;
     private LinearLayout tabContainer;
-    private VideoFragment videoFragment = new VideoFragment();
+    private VideoFragment videoFragment;
 
 
     @Override
@@ -43,10 +43,27 @@ public class MiddleFragment extends Fragment {
     {
         layoutInflater = inflater;
         view = inflater.inflate(R.layout.middle_layout, container, false);
+        videoFragment = new VideoFragment();
         loadButtons();
         initView();
         bindOnClickListeners();
         return view;
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        videoFragment.onDestroy();
+
+//
+    }
+
+    public void togglePlay(boolean play) {
+        videoFragment.togglePlay(play);
+    }
+
+    public boolean isPlaying() {
+        return videoFragment.isPlaying();
     }
 
     public void loadButtons() {
@@ -78,6 +95,21 @@ public class MiddleFragment extends Fragment {
         transaction.add(R.id.video_fragment, videoFragment);
         transaction.commit();
     }
+    @Override
+    public void onPause() {
+        videoFragment.pause();
+        super.onPause();
+
+    }
+
+    @Override
+    public void onResume() {
+//        if (isAdded()) {
+//            videoFragment.resume();
+//        }
+        super.onResume();
+//
+    }
 
     public void bindOnClickListeners() {
         tvButton.setOnClickListener(new View.OnClickListener() {
@@ -91,6 +123,7 @@ public class MiddleFragment extends Fragment {
                 for (int i = 0; i < radios.size(); ++i) {
                     radios.get(i).setVisibility(View.GONE);
                 }
+                tvs.get(0).callOnClick();
             }
         });
         radioButton.setOnClickListener(new View.OnClickListener() {
@@ -104,63 +137,103 @@ public class MiddleFragment extends Fragment {
                 for (int i = 0; i < radios.size(); ++i) {
                     radios.get(i).setVisibility(View.VISIBLE);
                 }
+                radios.get(0).callOnClick();
             }
         });
         for (int i = 0; i < radios.size(); ++i) {
             final int inner_i = i;
-            radios.get(i).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(view.getContext(), "你点击了" + radios.get(inner_i).getText(), Toast.LENGTH_SHORT).show();
-                    highlightButton(inner_i, false);
-                    Message msg = Message.obtain(MainActivity.handler);
-                    msg.what = MainActivity.CHANNEL;
-                    msg.arg1 = RightChannelFragment.RADIO;
-                    Bundle bundle = new Bundle();
-                    bundle.putString("type", "list");
-                    if (radios.get(inner_i).getText().equals("中央")) {
-                        bundle.putString("value", "yangshi");
-                    } else if (radios.get(inner_i).getText().equals("省级")) {
-                        bundle.putString("value", "shengji");
-                    } else if (radios.get(inner_i).getText().equals("地市")) {
-                        bundle.putString("value", "dishi");
-                    } else if (radios.get(inner_i).getText().equals("县级")) {
-                        bundle.putString("value", "xianji");
+            if (!radios.get(i).getText().toString().equals("地市")) {
+                radios.get(i).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(view.getContext(), "你点击了" + radios.get(inner_i).getText(), Toast.LENGTH_SHORT).show();
+                        highlightButton(inner_i, false);
+                        Message msg = Message.obtain(MainActivity.handler);
+                        msg.what = MainActivity.CHANNEL;
+                        msg.arg1 = RightChannelFragment.RADIO;
+                        Bundle bundle = new Bundle();
+                        bundle.putString("type", "list");
+                        if (radios.get(inner_i).getText().equals("中央")) {
+                            bundle.putString("value", "yangshi");
+                        } else if (radios.get(inner_i).getText().equals("省级")) {
+                            bundle.putString("value", "shengji");
+                        } else if (radios.get(inner_i).getText().equals("地市")) {
+                            bundle.putString("value", "dishi");
+                        } else if (radios.get(inner_i).getText().equals("县级")) {
+                            bundle.putString("value", "xianji");
+                        }
+                        msg.setData(bundle);
+                        msg.sendToTarget();
                     }
-                    msg.setData(bundle);
-                    msg.sendToTarget();
-                }
-            });
+                });
+            }
+            if (radios.get(i).getText().toString().equals("地市")) {
+                radios.get(i).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(view.getContext(), "你点击了" + radios.get(inner_i).getText(), Toast.LENGTH_SHORT).show();
+                        highlightButton(inner_i, false);
+                        Message msg = Message.obtain(MainActivity.handler);
+                        msg.what = MainActivity.DISHI;
+                        msg.arg1 = RightChannelFragment.RADIO;
+                        Bundle bundle = new Bundle();
+                        bundle.putString("type", "list");
+                        bundle.putString("value", "dishi");
+                        msg.setData(bundle);
+                        msg.sendToTarget();
+                    }
+                });
+            }
         }
         for (int i = 0; i < tvs.size(); ++i) {
             final int inner_i = i;
-            tvs.get(i).setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Toast.makeText(view.getContext(), "你点击了" + tvs.get(inner_i).getText(), Toast.LENGTH_SHORT).show();
-                    highlightButton(inner_i, true);
-                    Message msg = Message.obtain(MainActivity.handler);
-                    msg.what = MainActivity.CHANNEL;
-                    msg.arg1 = RightChannelFragment.TV;
-                    Bundle bundle = new Bundle();
-                    bundle.putString("type", "list");
-                    if (tvs.get(inner_i).getText().equals("央视")) {
-                        bundle.putString("value", "yangshi");
-                    } else if (tvs.get(inner_i).getText().equals("卫视")) {
-                        bundle.putString("value", "weishi");
-                    } else if (tvs.get(inner_i).getText().equals("省级")) {
-                        bundle.putString("value", "shengji");
-                    } else if (tvs.get(inner_i).getText().equals("地市")) {
-                        bundle.putString("value", "dishi");
-                    } else if (tvs.get(inner_i).getText().equals("县级")) {
-                        bundle.putString("value", "xianji");
-                    } else if (tvs.get(inner_i).getText().equals("境外")) {
-                        bundle.putString("value", "jingwai");
+            if (!tvs.get(i).getText().toString().equals("地市")) {
+                tvs.get(i).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(view.getContext(), "你点击了" + tvs.get(inner_i).getText(), Toast.LENGTH_SHORT).show();
+                        highlightButton(inner_i, true);
+                        Message msg = Message.obtain(MainActivity.handler);
+                        msg.what = MainActivity.CHANNEL;
+                        msg.arg1 = RightChannelFragment.TV;
+                        Bundle bundle = new Bundle();
+                        bundle.putString("type", "list");
+                        if (tvs.get(inner_i).getText().equals("央视")) {
+                            bundle.putString("value", "yangshi");
+                        } else if (tvs.get(inner_i).getText().equals("卫视")) {
+                            bundle.putString("value", "weishi");
+                        } else if (tvs.get(inner_i).getText().equals("省级")) {
+                            bundle.putString("value", "shengji");
+                        } else if (tvs.get(inner_i).getText().equals("地市")) {
+                            bundle.putString("value", "dishi");
+                        } else if (tvs.get(inner_i).getText().equals("县级")) {
+                            bundle.putString("value", "xianji");
+                        } else if (tvs.get(inner_i).getText().equals("境外")) {
+                            bundle.putString("value", "jingwai");
+                        }
+                        msg.setData(bundle);
+                        msg.sendToTarget();
                     }
-                    msg.setData(bundle);
-                    msg.sendToTarget();
-                }
-            });
+                });
+
+            }
+            if (tvs.get(i).getText().toString().equals("地市")) {
+                tvs.get(i).setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Toast.makeText(view.getContext(), "你点击了" + tvs.get(inner_i).getText(), Toast.LENGTH_SHORT).show();
+                        highlightButton(inner_i, true);
+                        Message msg = Message.obtain(MainActivity.handler);
+                        msg.what = MainActivity.DISHI;
+                        msg.arg1 = RightChannelFragment.TV;
+                        Bundle bundle = new Bundle();
+                        bundle.putString("type", "list");
+                        bundle.putString("value", "dishi");
+                        msg.setData(bundle);
+                        msg.sendToTarget();
+                    }
+                });
+            }
         }
     }
 
@@ -207,4 +280,6 @@ public class MiddleFragment extends Fragment {
             radios.get(index).setTextColor(Color.BLUE);
         }
     }
+
+
 }

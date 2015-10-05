@@ -1,6 +1,8 @@
 package com.qq456cvb.videoview.Subviews.Profile;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -90,34 +92,50 @@ public class ProfileImageFragment extends Fragment implements ProfileImageLoader
         btnDelete.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                counter = 0;
-                final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
-                    public void onSuccess(int statusCode, Header[] headers, String response) {
-                        if (++counter == deleteList.size()) {
-                            profileImageLoader.getImagesByReviewId(reviewId);
-                        }
-                    }
-
-                    public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
-                        Log.d("test", "sssss");
-                    }
-                };
-                new Thread() {
+                AlertDialog.Builder builder = new AlertDialog.Builder(ProfileImageFragment.this.getActivity());
+                builder.setMessage("确认删除吗？");
+                builder.setTitle("提示");
+                builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
                     @Override
-                    public void run() {
-                        try {
-                            for (int i = 0; i < deleteList.size(); i++) {
-                                RequestParams params = new RequestParams();
-                                params.put("provincialBox", deleteList.get(i).getProvincial());
-                                params.put("reviewid", deleteList.get(i).getReviewId());
-                                UserClient.post(IMAGE_DELETE_URL, params, handler);
+                    public void onClick(DialogInterface dialog, int which) {
+                        counter = 0;
+                        final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
+                            public void onSuccess(int statusCode, Header[] headers, String response) {
+                                if (++counter == deleteList.size()) {
+                                    profileImageLoader.getImagesByReviewId(reviewId);
+                                }
                             }
-                        }
-                        catch (Exception e) {
-                            e.printStackTrace();
-                        }
+
+                            public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
+                                Log.d("test", "sssss");
+                            }
+                        };
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                try {
+                                    for (int i = 0; i < deleteList.size(); i++) {
+                                        RequestParams params = new RequestParams();
+                                        params.put("provincialBox", deleteList.get(i).getProvincial());
+                                        params.put("reviewid", deleteList.get(i).getReviewId());
+                                        UserClient.post(IMAGE_DELETE_URL, params, handler);
+                                    }
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }.start();
+                        dialog.dismiss();
                     }
-                }.start();
+                });
+                builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                builder.create().show();
+
             }
         });
     }

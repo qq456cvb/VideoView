@@ -1,6 +1,8 @@
 package com.qq456cvb.videoview.Adapters.Profile;
 
 import android.app.Activity;
+import android.app.DialogFragment;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,6 +12,7 @@ import android.widget.GridView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
+import com.qq456cvb.videoview.CustomWidgets.BigImageDialog;
 import com.qq456cvb.videoview.R;
 import com.qq456cvb.videoview.Subviews.Profile.ProfileImageFragment;
 import com.qq456cvb.videoview.Utils.UserImage;
@@ -36,12 +39,13 @@ public class ProfileImageSetAdapter extends ArrayAdapter<UserImage> {
 
 
     public View getView(final int position, View convertView, ViewGroup parent) {
-        Activity activity = (Activity) getContext();
+        final Activity activity = (Activity) getContext();
         final UserImage image = getItem(position);
         // Load the image and set it on the ImageView
         String imageUrl = image.getURL();
         imageUrl = imageUrl.replaceAll(" ", "%20");
         imageUrl = imageUrl.replaceAll("&amp;", "&");
+        final String url = imageUrl;
         final ViewHolder holder;
         if (convertView == null) {
             holder = new ViewHolder();
@@ -56,20 +60,30 @@ public class ProfileImageSetAdapter extends ArrayAdapter<UserImage> {
             holder = (ViewHolder) convertView.getTag();
         }
         holder.checkBox.setText("");
-
-        ImageLoader imLoader = new ImageLoader(profileImageFragment.mQueue, profileImageFragment.bitmapLruCache);
-        holder.imageView.setDefaultImageResId(R.drawable.ic_launcher);
-        holder.imageView.setErrorImageResId(R.drawable.ic_lock);
-        holder.imageView.setImageUrl(imageUrl, imLoader);
-        holder.imageView.setOnClickListener(new View.OnClickListener() {
+        holder.checkBox.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                holder.checkBox.setChecked(!holder.checkBox.isChecked());
                 if (holder.checkBox.isChecked()) {
                     profileImageFragment.addDelete(image);
                 } else {
                     profileImageFragment.popDelete(image);
                 }
+            }
+        });
+
+        final ImageLoader imLoader = new ImageLoader(profileImageFragment.mQueue, profileImageFragment.bitmapLruCache);
+        holder.imageView.setDefaultImageResId(R.drawable.my_loading);
+        holder.imageView.setErrorImageResId(R.drawable.error);
+        holder.imageView.setImageUrl(imageUrl, imLoader);
+        holder.imageView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Bundle bundle = new Bundle();
+                bundle.putString("url", url);
+                DialogFragment dialogFragment=new BigImageDialog();
+                dialogFragment.setArguments(bundle);
+                dialogFragment.show(activity.getFragmentManager(), "bigImage");
+
             }
         });
         return convertView;

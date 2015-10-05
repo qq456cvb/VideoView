@@ -52,8 +52,8 @@ public class ProfileImageAdapter extends ArrayAdapter<UserImage> {
             holder = (ViewHolder) convertView.getTag();
         }
         ImageLoader imLoader = new ImageLoader(profileImageFragment.mQueue, profileImageFragment.bitmapLruCache);
-        holder.imageView.setDefaultImageResId(R.drawable.ic_launcher);
-        holder.imageView.setErrorImageResId(R.drawable.ic_lock);
+        holder.imageView.setDefaultImageResId(R.drawable.my_loading);
+        holder.imageView.setErrorImageResId(R.drawable.error);
         holder.imageView.setImageUrl(imageUrl, imLoader);
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override

@@ -4,6 +4,7 @@ import android.app.Fragment;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.util.Log;
@@ -21,6 +22,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.qq456cvb.videoview.Activities.MainActivity;
+import com.qq456cvb.videoview.Application.GlobalApp;
 import com.qq456cvb.videoview.R;
 
 import org.videolan.libvlc.EventHandler;
@@ -29,7 +31,10 @@ import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
 import org.videolan.libvlc.MediaList;
 
+import java.io.File;
 import java.lang.ref.WeakReference;
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
 
 /**
  * Created by qq456cvb on 8/17/15.
@@ -50,6 +55,7 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
     private FrameLayout vlcOverlay;
     private ImageView vlcButtonPlayPause;
     private ImageView vlcButtonToggleFullscreen;
+    private ImageView vlcButtonSnapshot;
     private Handler handlerOverlay;
     private Runnable runnableOverlay;
     private Handler handlerSeekbar;
@@ -86,9 +92,12 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
         vlcVolume = (SeekBar) view.findViewById(R.id.vlc_volume);
         vlcDuration = (TextView) view.findViewById(R.id.vlc_duration);
         vlcDuration.setVisibility(View.INVISIBLE);
+        vlcSeekbar.setVisibility(View.INVISIBLE);
+        vlcButtonSnapshot = (ImageView)view.findViewById(R.id.vlc_button_snapshot);
 
         overlayTitle = (TextView) view.findViewById(R.id.vlc_overlay_title);
         overlayTitle.setText(urlToStream);
+        overlayTitle.setVisibility(View.INVISIBLE);
 
         // AUTOSTART
         playMovie();
@@ -96,14 +105,24 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
     }
 
 
-    @Override
-    public void onHiddenChanged(boolean hidden) {
-        Log.d("Video", String.valueOf(hidden));
-        if (hidden && libvlc != null) {
-            libvlc.pause();
-        } else if (!hidden && libvlc != null) {
-            libvlc.play();
+    public void togglePlay(boolean play) {
+        Log.d("Video", String.valueOf(play));
+        if (!play && libvlc != null) {
+//            libvlc.detachSurface();
+            if (libvlc.isPlaying()) {
+                libvlc.pause();
+                vlcButtonPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_play_over_video));
+            }
+        } else if (play && libvlc != null) {
+            if (!libvlc.isPlaying()) {
+                libvlc.play();
+                vlcButtonPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_pause_over_video));
+            }
         }
+    }
+
+    public boolean isPlaying() {
+        return libvlc.isPlaying();
     }
 
     private void showOverlay() {
@@ -126,6 +145,29 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
                     libvlc.play();
                     vlcButtonPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_pause_over_video));
                 }
+            }
+        });
+
+        vlcButtonSnapshot.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                File sdDir = null;
+                long length = 0;
+                String localPath = "";
+                boolean sdCardExist = Environment.getExternalStorageState()
+                        .equals(android.os.Environment.MEDIA_MOUNTED); //判断sd卡是否存在
+                if (sdCardExist)
+                {
+                    sdDir = Environment.getExternalStorageDirectory();//获取跟目录
+                    String dateNow;
+                    SimpleDateFormat sdf = new SimpleDateFormat(" yyyy-MM-dd HH:mm:ss");
+                    dateNow = sdf.format(Calendar.getInstance().getTime());
+                    localPath = sdDir.toString() + "/" + GlobalApp.currentChannel.getName() + dateNow + ".jpg";
+                } else {
+                    //TODO
+                }
+                libvlc.takeSnapShot(localPath, 800, 600);
+                Toast.makeText(VideoFragment.this.getActivity(), "已保存至" + localPath, Toast.LENGTH_SHORT).show();
             }
         });
 
@@ -191,12 +233,12 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
 
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
+                handlerOverlay.removeCallbacks(runnableOverlay);
             }
 
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
+                handlerOverlay.postDelayed(runnableOverlay, timeToDisappear);
             }
         });
 
@@ -260,16 +302,22 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
         setSize(mVideoWidth, mVideoHeight);
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-        libvlc.play();
+//    @Override
+    public void resume() {
+//        super.onResume();
+        if (!libvlc.isPlaying()) {
+            libvlc.play();
+            vlcButtonPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_pause_over_video));
+        }
     }
 
-    @Override
-    public void onPause() {
-        super.onPause();
-        libvlc.pause();
+//    @Override
+    public void pause() {
+//        super.onPause();
+        if (libvlc.isPlaying()) {
+            libvlc.pause();
+            vlcButtonPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_play_over_video));
+        }
         //releasePlayer();
     }
 
@@ -362,8 +410,8 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
             }
             // Create a new media player
             libvlc = LibVLC.getInstance();
-            libvlc.setHardwareAcceleration(LibVLC.HW_ACCELERATION_AUTOMATIC);
-            libvlc.eventVideoPlayerActivityCreated(true);
+//            libvlc.setHardwareAcceleration(LibVLC.HW_ACCELERATION_AUTOMATIC);
+//            libvlc.eventVideoPlayerActivityCreated(true);
             libvlc.setSubtitlesEncoding("");
             libvlc.setAout(LibVLC.AOUT_OPENSLES);
             libvlc.setChroma("RV32");
@@ -388,6 +436,9 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
         EventHandler.getInstance().removeHandler(mHandler);
         if (libvlc == null)
             return;
+        libvlc.stop();
+        libvlc.clearBuffer();
+        libvlc.getMediaList().clear();
         libvlc.detachSurface();
         holder = null;
         libvlc.closeAout();
@@ -398,9 +449,19 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
     }
 
     public void changeSrc(String src) {
+        if (src.contains("upload") || src.contains("VIDEO")) {
+            vlcDuration.setVisibility(View.VISIBLE);
+            vlcSeekbar.setVisibility(View.VISIBLE);
+        } else {
+            vlcDuration.setVisibility(View.INVISIBLE);
+            vlcSeekbar.setVisibility(View.INVISIBLE);
+        }
+        if (libvlc.isPlaying()) {
+            libvlc.pause();
+        }
         libvlc.stop();
         libvlc.clearBuffer();
-        LibVLC.restart(view.getContext());
+//        LibVLC.restart(view.getContext());
         libvlc.getMediaList().clear();
         libvlc.getMediaList().add(new Media(libvlc, LibVLC.PathToURI(src)), false);
         libvlc.playIndex(0);
@@ -443,9 +504,9 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
                 case EventHandler.MediaPlayerPositionChanged:
 //                    Log.d(TAG, "Position changed!");
                     break;
-                case EventHandler.MediaPlayerBuffering:
-                    Log.d(TAG, "MediaPlayerBuffering");
-                    break;
+//                case EventHandler.MediaPlayerBuffering:
+//                    Log.d(TAG, "MediaPlayerBuffering");
+//                    break;
                 default:
                     break;
             }

@@ -14,6 +14,7 @@ import com.example.littlebeanfang.comment.CommentListFragment;
 import com.qq456cvb.videoview.R;
 import com.qq456cvb.videoview.Subviews.Profile.ProfileConfigFragment;
 import com.qq456cvb.videoview.Subviews.Profile.ProfileImageFragment;
+import com.qq456cvb.videoview.Subviews.Profile.ProfileVideoFragment;
 
 import jp.wasabeef.sample.CommentPanelRetSwitcher;
 
@@ -33,8 +34,9 @@ public class ProfileFragment extends Fragment {
     private OnProfileListener onProfileListener;
 //    private ProfileReviewFragment profileReviewFragment;
     public CommentListFragment profileCommentFragment = new CommentListFragment();
-    private ProfileImageFragment profileImageFragment = new ProfileImageFragment();
+    public ProfileImageFragment profileImageFragment = new ProfileImageFragment();
     private ProfileConfigFragment profileConfigFragment = new ProfileConfigFragment();
+    private ProfileVideoFragment profileVideoFragment;
     private View mView;
 
     @Override
@@ -79,7 +81,13 @@ public class ProfileFragment extends Fragment {
         profileVideoButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                onProfileListener.clearFragments();
+                clearFragments();
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction transaction = fm.beginTransaction();
+                profileVideoFragment = new ProfileVideoFragment();
+                transaction.add(R.id.content_middle_and_right, profileVideoFragment);
+                transaction.commit();
             }
         });
 
@@ -128,6 +136,9 @@ public class ProfileFragment extends Fragment {
         transaction.hide(profileCommentFragment);
         transaction.hide(profileImageFragment);
         transaction.hide(profileConfigFragment);
+        if (profileVideoFragment != null) {
+            transaction.remove(profileVideoFragment);
+        }
         transaction.commit();
     }
 }

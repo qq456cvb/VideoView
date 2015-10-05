@@ -32,7 +32,6 @@ public class TrackInfo {
     public int Id;
     public String Codec;
     public String Language;
-    public int Bitrate;
 
     /* Video */
     public int Height;

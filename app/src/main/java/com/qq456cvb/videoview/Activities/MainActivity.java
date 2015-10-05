@@ -3,13 +3,13 @@ package com.qq456cvb.videoview.Activities;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
-import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
 import android.os.SystemClock;
 import android.support.v4.app.FragmentActivity;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -24,6 +24,7 @@ import com.qq456cvb.videoview.Subviews.CommentAndChannelListFragment;
 import com.qq456cvb.videoview.Subviews.DownloadAndChannelListFragment;
 import com.qq456cvb.videoview.Subviews.MiddleFragment;
 import com.qq456cvb.videoview.Subviews.ProfileFragment;
+import com.qq456cvb.videoview.Subviews.RightChannelFragment;
 import com.qq456cvb.videoview.Subviews.RightFragment;
 import com.qq456cvb.videoview.Subviews.VideoFragment;
 import com.qq456cvb.videoview.Utils.Channel;
@@ -38,15 +39,17 @@ import jp.wasabeef.sample.commentPanelFragment;
 public class MainActivity extends FragmentActivity implements ProfileFragment.OnProfileListener, CommentPanelRetSwitcher {
 
     public final static String TAG = "MainActivity";
+    public final static int DISHI = 0;
     public final static int CHANNEL = 1;
     public final static int MYCOMMENT = 2;
     public final static int EDITCOMMENT = 3;
     public final static int PROGRAMME = 4;
     public final static int TOGGLE_FULLSCREEN = 5;
+    private long mExitTime = 0;
 
     private RightFragment mRightFragment = new RightFragment();
-    private MiddleFragment mMiddleFragment = new MiddleFragment();
-    private ProfileFragment mProfileFragment = new ProfileFragment();
+    private MiddleFragment mMiddleFragment;
+    public ProfileFragment mProfileFragment = new ProfileFragment();
     private CommentAndChannelListFragment comchanFragment = new CommentAndChannelListFragment();
     private commentPanelFragment commentPanelFragment = new commentPanelFragment();
     private DownloadAndChannelListFragment downloadAndChannelListFragment = new DownloadAndChannelListFragment();
@@ -65,22 +68,37 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
     public static Handler handler;
     public ProgressDialog progress;
 
-
+    private boolean lastPlaying = true;
+    private LinearLayout lastButton;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        this.setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_REVERSE_LANDSCAPE);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
         setHandler();
         findViews();
+        lastButton = mWatchButton;
         bindOnClickListeners();
 
         // default layout
         setDefaultFragment();
     }
 
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            if ((System.currentTimeMillis() - mExitTime) > 2000) {
+                Object mHelperUtils;
+                Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                mExitTime = System.currentTimeMillis();
+
+            } else {
+                finish();
+            }
+            return true;
+        }
+        return super.onKeyDown(keyCode, event);
+    }
 
     public void findViews() {
         mWatchButton = (LinearLayout)findViewById(R.id.watchButton);
@@ -92,19 +110,29 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
         mContentTop = (FrameLayout)findViewById(R.id.content_top);
         mContentLeft = (LinearLayout)findViewById(R.id.content_left);
         mContentMiddleAndRight = (LinearLayout)findViewById(R.id.content_middle_and_right);
+
     }
 
     public void bindOnClickListeners() {
+
         mWatchButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                lastButton.setBackgroundColor(0x003091ff);
+                resetCatagory();
+                lastButton = mWatchButton;
                 clearFragments();
+//                if (lastPlaying && lastButton == mProfileButton) {
+//                    mMiddleFragment.togglePlay(true);
+//                }
+                GlobalApp.currentChannel.resetChannel();
                 mWatchButton.setBackgroundColor(0xff1945ff);
                 mContentMiddle.setVisibility(View.VISIBLE);
                 mContentRight.setVisibility(View.VISIBLE);
+                mMiddleFragment = new MiddleFragment();
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction transaction = fm.beginTransaction();
-                transaction.show(mMiddleFragment);
+                transaction.add(R.id.content_middle, mMiddleFragment);
                 transaction.show(mRightFragment);
                 transaction.commit();
             }
@@ -112,13 +140,21 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
         mDownloadButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                lastButton.setBackgroundColor(0x003091ff);
+                resetCatagory();
+                lastButton = mDownloadButton;
                 clearFragments();
+//                if (lastPlaying && lastButton == mProfileButton) {
+//                    mMiddleFragment.togglePlay(true);
+//                }
+                GlobalApp.currentChannel.resetChannel();
                 mDownloadButton.setBackgroundColor(0xff1945ff);
                 mContentMiddle.setVisibility(View.VISIBLE);
                 mContentRight.setVisibility(View.VISIBLE);
+                mMiddleFragment = new MiddleFragment();
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction transaction = fm.beginTransaction();
-                transaction.show(mMiddleFragment);
+                transaction.add(R.id.content_middle, mMiddleFragment);
                 transaction.show(downloadAndChannelListFragment);
                 transaction.commit();
             }
@@ -126,13 +162,21 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
         mCommentButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                lastButton.setBackgroundColor(0x003091ff);
+                resetCatagory();
+                lastButton = mCommentButton;
                 clearFragments();
+//                if (lastPlaying && lastButton == mProfileButton) {
+//                    mMiddleFragment.togglePlay(true);
+//                }
+                GlobalApp.currentChannel.resetChannel();
                 mCommentButton.setBackgroundColor(0xff1945ff);
                 mContentMiddle.setVisibility(View.VISIBLE);
                 mContentRight.setVisibility(View.VISIBLE);
+                mMiddleFragment = new MiddleFragment();
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction transaction = fm.beginTransaction();
-                transaction.show(mMiddleFragment);
+                transaction.add(R.id.content_middle, mMiddleFragment);
                 transaction.show(comchanFragment);
                 transaction.commit();
             }
@@ -140,7 +184,10 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
         mProfileButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                lastButton.setBackgroundColor(0x003091ff);
+                lastButton = mProfileButton;
                 clearFragments();
+                mProfileFragment.clearFragments();
                 mProfileButton.setBackgroundColor(0xff1945ff);
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction transaction = fm.beginTransaction();
@@ -165,6 +212,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
 
     private void setDefaultFragment()
     {
+        mMiddleFragment = new MiddleFragment();
         // add all the fragments
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
@@ -172,7 +220,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
         transaction.add(R.id.content_right, mRightFragment);
         transaction.add(R.id.content_middle_and_right, mProfileFragment);
         transaction.add(R.id.content_right, commentPanelFragment);
-        transaction.add(R.id.content_right,comchanFragment);
+        transaction.add(R.id.content_right, comchanFragment);
         transaction.add(R.id.content_right, downloadAndChannelListFragment);
         transaction.hide(mProfileFragment);
         transaction.hide(mMiddleFragment);
@@ -184,15 +232,20 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
         transaction.show(mRightFragment);
         transaction.commit();
 
+        mWatchButton.setBackgroundColor(0x003091ff);
+        mCommentButton.setBackgroundColor(0x003091ff);
+        mDownloadButton.setBackgroundColor(0x003091ff);
+        mProfileButton.setBackgroundColor(0x003091ff);
         mWatchButton.setBackgroundColor(0xff1945ff);
     }
 
-    public void clearFragments()
-    {
+    public void clearFragments() {
         mProfileFragment.clearFragments();
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.hide(mMiddleFragment);
+        if (mMiddleFragment != null) {
+            transaction.remove(mMiddleFragment);
+        }
         transaction.hide(mRightFragment);
         transaction.hide(comchanFragment);
         transaction.hide(commentPanelFragment);
@@ -200,23 +253,52 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
         transaction.hide(mProfileFragment);
         transaction.commit();
 
-        mWatchButton.setBackgroundColor(0x003091ff);
-        mCommentButton.setBackgroundColor(0x003091ff);
-        mDownloadButton.setBackgroundColor(0x003091ff);
-        mProfileButton.setBackgroundColor(0x003091ff);
+
         // hide all the fragment container
         mContentMiddle.setVisibility(View.GONE);
         mContentRight.setVisibility(View.GONE);
+    }
+
+    public void resetCatagory() {
+        if (lastButton == mWatchButton) {
+            mRightFragment.getRightChannelFragment().changeCategory("yangshi", 3);
+        } else if (lastButton == mDownloadButton) {
+            downloadAndChannelListFragment.getRightChannelFragment().changeCategory("yangshi", 3);
+        } else if (lastButton == mCommentButton) {
+            comchanFragment.getRightChannelFragment().changeCategory("yangshi", 3);
+        }
+    }
+    public RightChannelFragment getRightChannelFragment() {
+        if (lastButton == mWatchButton) {
+            return mRightFragment.getRightChannelFragment();
+        } else if (lastButton == mDownloadButton) {
+            return downloadAndChannelListFragment.getRightChannelFragment();
+        } else if (lastButton == mCommentButton) {
+            return comchanFragment.getRightChannelFragment();
+        } else {
+            return null;
+        }
     }
 
     public void setHandler() {
         handler = new Handler() {
             public void handleMessage(Message message) {
                 switch (message.what) {
+                    case DISHI: {
+                        String type = message.getData().getString("type");
+                        if (type.equals("list")) {
+                            getRightChannelFragment().changeDishi(message.arg1);
+                        }
+                        else if (type.equals("play")) {
+                            mMiddleFragment.changeSrc(message.getData().getString("value"));
+                            GlobalApp.currentChannel = (Channel)message.obj;
+                        }
+                        break;
+                    }
                     case CHANNEL: {
                         String type = message.getData().getString("type");
                         if (type.equals("list")) {
-                            mRightFragment.changeCategory(message.getData().getString("value"), message.arg1);
+                            getRightChannelFragment().changeCategory(message.getData().getString("value"), message.arg1);
                         }
                         else if (type.equals("play")) {
                             mMiddleFragment.changeSrc(message.getData().getString("value"));
@@ -227,7 +309,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
                     case PROGRAMME: {
                         String type = message.getData().getString("type");
                         if (type.equals("list")) {
-                            mRightFragment.changeCategory(message.getData().getString("value"), message.arg1);
+                            getRightChannelFragment().changeCategory(message.getData().getString("value"), message.arg1);
                         }
                         else if (type.equals("play")) {
                             mMiddleFragment.changeSrc(message.getData().getString("value"));
@@ -244,14 +326,18 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
                         break;
                     }
                     case EDITCOMMENT:{
-                        clearFragments();
-                        mContentMiddle.setVisibility(View.VISIBLE);
-                        mContentRight.setVisibility(View.VISIBLE);
+                        mProfileFragment.clearFragments();
                         FragmentManager fm = getFragmentManager();
                         FragmentTransaction transaction = fm.beginTransaction();
-                        transaction.show(mMiddleFragment);
+                        transaction.hide(mRightFragment);
+                        transaction.hide(comchanFragment);
+                        transaction.hide(downloadAndChannelListFragment);
+                        transaction.hide(mProfileFragment);
                         transaction.show(commentPanelFragment);
                         transaction.commit();
+//                        mContentMiddle.setVisibility(View.VISIBLE);
+//                        mContentRight.setVisibility(View.VISIBLE);
+
                         break;
                     }
                     case TOGGLE_FULLSCREEN: {

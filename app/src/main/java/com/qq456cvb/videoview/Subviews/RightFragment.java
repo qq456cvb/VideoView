@@ -18,6 +18,12 @@ public class RightFragment extends Fragment {
 
     private RightChannelFragment rightChannelFragment = new RightChannelFragment();
     private View view;
+
+    public RightChannelFragment getRightChannelFragment() {
+        return rightChannelFragment;
+    }
+
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState)

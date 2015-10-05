@@ -41,27 +41,51 @@ public class ChannelLoader {
         this.pages = 0;
         this.result.clear();
         this.programmes.clear();
-        final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
-            public void onSuccess(int statusCode, Header[] headers, String response) {
-                pages = Integer.valueOf(response.substring(response.lastIndexOf("hdnPagetotal") + 21, response.lastIndexOf("hdnPagetotal") + 22));
-                getChannelsByPage(1, type);
-            }
+        if (category.equals("dishi")) {
 
-            public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
-                Log.d("test", "sssss");
-            }
-        };
-        new Thread() {
-            @Override
-            public void run() {
-                try {
-                    UserClient.get("/stpy/audioVisualAction!queryChannleInfo.action?hdnType=" + type +"&channel=" + category, null, handler);
+            final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
+                public void onSuccess(int statusCode, Header[] headers, String response) {
+                    pages = Integer.valueOf(response.substring(response.lastIndexOf("hdnPagetotal") + 21, response.lastIndexOf("hdnPagetotal") + 22));
+                    getChannelsByPage(1, type);
                 }
-                catch (Exception e) {
-                    e.printStackTrace();
+
+                public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
+                    Log.d("test", "sssss");
                 }
-            }
-        }.start();
+            };
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        UserClient.get("/stpy/videoDownloadAction!queryChannleInfo.action?hdnType=3&channel=dishi", null, handler);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        } else {
+            final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
+                public void onSuccess(int statusCode, Header[] headers, String response) {
+                    pages = Integer.valueOf(response.substring(response.lastIndexOf("hdnPagetotal") + 21, response.lastIndexOf("hdnPagetotal") + 22));
+                    getChannelsByPage(1, type);
+                }
+
+                public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
+                    Log.d("test", "sssss");
+                }
+            };
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        UserClient.get("/stpy/audioVisualAction!queryChannleInfo.action?hdnType=" + type + "&channel=" + category, null, handler);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        }
     }
 
     private void getChannelsByPage(final int page, final int type)
@@ -117,6 +141,7 @@ public class ChannelLoader {
                 Channel channel = new Channel(1, name, "", multicastIP);
                 channel.id = item.getString("id");
                 channel.hdnDyass = item.getString("dypass");
+                channel.hdnType = item.getString("type");
                 result.add(channel);
             }
         } catch (JSONException e) {
@@ -155,6 +180,9 @@ public class ChannelLoader {
     }
 
     private void parseProgrammes(String html) {
+        if (!html.contains(":")) {
+            return;
+        }
         ArrayList<Programme> programmeArrayList = new ArrayList<>();
         html = html.replace("\\", "");
         html = html.substring(2, html.length() - 2);
@@ -162,7 +190,8 @@ public class ChannelLoader {
             JSONArray jsonArray = new JSONArray(html); //数据直接为一个数组形式，所以可以直接 用android提供的框架JSONArray读取JSON数据，转换成Array
 
             for (int i = 0; i < jsonArray.length(); i++) {
-                JSONObject item = jsonArray.getJSONObject(i); //每条记录又由几个Object对象组成
+                JSONObject item = jsonArray.getJSONObject(i); //每条记录又由
+                // 几个Object对象组成
                 String channel = item.getString("channle");
                 String name = item.getString("program");
                 String starttime = item.getString("starttime");

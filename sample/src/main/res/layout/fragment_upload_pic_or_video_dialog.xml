@@ -64,7 +64,7 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="no file selected!"
+                    android:text="未选择文件"
                     android:id="@+id/tv_uploadselectfile"
                     android:textSize="25dp" />
 

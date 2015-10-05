@@ -25,7 +25,6 @@ import android.os.Build;
 import android.util.Log;
 import android.view.Surface;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Map;
 
@@ -37,17 +36,6 @@ public class LibVLC {
 
     public static final int VOUT_ANDROID_SURFACE = 0;
     public static final int VOUT_OPEGLES2 = 1;
-
-    public static final int HW_ACCELERATION_AUTOMATIC = -1;
-    public static final int HW_ACCELERATION_DISABLED = 0;
-    public static final int HW_ACCELERATION_DECODING = 1;
-    public static final int HW_ACCELERATION_FULL = 2;
-
-    public static final int INPUT_NAV_ACTIVATE = 0;
-    public static final int INPUT_NAV_UP = 1;
-    public static final int INPUT_NAV_DOWN = 2;
-    public static final int INPUT_NAV_LEFT = 3;
-    public static final int INPUT_NAV_RIGHT = 4;
 
     private static LibVLC sInstance;
 
@@ -64,15 +52,15 @@ public class LibVLC {
     private StringBuffer mDebugLogBuffer;
     private boolean mIsBufferingLog = false;
 
-    private AudioOutput mAout;
+    private Aout mAout;
 
     /** Keep screen bright */
     //private WakeLock mWakeLock;
 
     /** Settings */
-    private int hardwareAcceleration = HW_ACCELERATION_AUTOMATIC;
+    private boolean iomx = false;
     private String subtitlesEncoding = "";
-    private int aout = AOUT_AUDIOTRACK_JAVA;//LibVlcUtil.isGingerbreadOrLater() ? AOUT_OPENSLES : AOUT_AUDIOTRACK_JAVA;
+    private int aout = LibVlcUtil.isGingerbreadOrLater() ? AOUT_OPENSLES : AOUT_AUDIOTRACK_JAVA;
     private int vout = VOUT_ANDROID_SURFACE;
     private boolean timeStretching = false;
     private int deblocking = -1;
@@ -81,24 +69,12 @@ public class LibVLC {
     private float[] equalizer = null;
     private boolean frameSkip = false;
     private int networkCaching = 0;
-    private boolean httpReconnect = false;
-
-    /** Path of application-specific cache */
-    private String mCachePath = "";
-
-    /** Native crash handler */
-    private OnNativeCrashListener mOnNativeCrashListener;
 
     /** Check in libVLC already initialized otherwise crash */
     private boolean mIsInitialized = false;
     public native void attachSurface(Surface surface, IVideoPlayer player);
 
     public native void detachSurface();
-
-    public native void attachSubtitlesSurface(Surface surface);
-    public native void detachSubtitlesSurface();
-
-    public native void eventVideoPlayerActivityCreated(boolean created);
 
     /* Load library before object instantiation */
     static {
@@ -107,16 +83,10 @@ public class LibVLC {
                 System.loadLibrary("iomx-gingerbread");
             else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.HONEYCOMB_MR2)
                 System.loadLibrary("iomx-hc");
-            else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR1)
-                System.loadLibrary("iomx-ics");
             else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.JELLY_BEAN_MR2)
-                System.loadLibrary("iomx-jbmr2");
-            else if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.KITKAT)
-                System.loadLibrary("iomx-kk");
+                System.loadLibrary("iomx-ics");
         } catch (Throwable t) {
-            // No need to warn if it isn't found, when we intentionally don't build these except for debug
-            if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
-                Log.w(TAG, "Unable to load the iomx library: " + t);
+            Log.w(TAG, "Unable to load the iomx library: " + t);
         }
         try {
             System.loadLibrary("vlcjni");
@@ -166,7 +136,7 @@ public class LibVLC {
      * It is private because this class is a singleton.
      */
     private LibVLC() {
-        mAout = new AudioOutput();
+        mAout = new Aout();
     }
 
     /**
@@ -175,7 +145,7 @@ public class LibVLC {
      * destroy() before exiting.
      */
     @Override
-    protected void finalize() {
+    public void finalize() {
         if (mLibVlcInstance != 0) {
             Log.d(TAG, "LibVLC is was destroyed yet before finalize()");
             destroy();
@@ -246,20 +216,12 @@ public class LibVLC {
      * those get/is* are called from native code to get settings values.
      */
 
-    public int getHardwareAcceleration() {
-        return this.hardwareAcceleration;
+    public boolean useIOMX() {
+        return iomx;
     }
 
-    public void setHardwareAcceleration(int hardwareAcceleration) {
-        if (hardwareAcceleration < 0) {
-            // Automatic mode: activate MediaCodec opaque direct rendering for 4.3 and above.
-            if (LibVlcUtil.isJellyBeanMR2OrLater())
-                this.hardwareAcceleration = HW_ACCELERATION_FULL;
-            else
-                this.hardwareAcceleration = HW_ACCELERATION_DISABLED;
-        }
-        else
-            this.hardwareAcceleration = hardwareAcceleration;
+    public void setIomx(boolean iomx) {
+        this.iomx = iomx;
     }
 
     public String getSubtitlesEncoding() {
@@ -276,7 +238,7 @@ public class LibVLC {
 
     public void setAout(int aout) {
         if (aout < 0)
-            this.aout = LibVlcUtil.isICSOrLater() ? AOUT_OPENSLES : AOUT_AUDIOTRACK_JAVA;
+            this.aout = LibVlcUtil.isGingerbreadOrLater() ? AOUT_OPENSLES : AOUT_AUDIOTRACK_JAVA;
         else
             this.aout = aout;
     }
@@ -313,12 +275,9 @@ public class LibVLC {
             LibVlcUtil.MachineSpecs m = LibVlcUtil.getMachineSpecs();
             if( (m.hasArmV6 && !(m.hasArmV7)) || m.hasMips )
                 ret = 4;
-            else if(m.frequency >= 1200 && m.processors > 2)
+            else if(m.bogoMIPS > 1200 && m.processors > 2)
                 ret = 1;
-            else if(m.bogoMIPS >= 1200 && m.processors > 2) {
-                ret = 1;
-                Log.d(TAG, "Used bogoMIPS due to lack of frequency info");
-            } else
+            else
                 ret = 3;
         } else if(deblocking > 4) { // sanity check
             ret = 3;
@@ -379,14 +338,6 @@ public class LibVLC {
         this.networkCaching = networkcaching;
     }
 
-    public boolean getHttpReconnect() {
-        return httpReconnect;
-    }
-
-    public void setHttpReconnect(boolean httpReconnect) {
-        this.httpReconnect = httpReconnect;
-    }
-
     /**
      * Initialize the libVLC class.
      *
@@ -402,9 +353,6 @@ public class LibVLC {
                 Log.e(TAG, LibVlcUtil.getErrorMsg());
                 throw new LibVlcException();
             }
-
-            File cacheDir = context.getCacheDir();
-            mCachePath = (cacheDir != null) ? cacheDir.getAbsolutePath() : null;
             nativeInit();
             mMediaList = mPrimaryList = new MediaList(this);
             setEventHandler(EventHandler.getInstance());
@@ -480,6 +428,20 @@ public class LibVLC {
     public void playMRL(String mrl) {
         // index=-1 will return options from libvlc instance without relying on MediaList
         String[] options = mMediaList.getMediaOptions(-1);
+        mInternalMediaPlayerIndex = 0;
+        playMRL(mLibVlcInstance, mrl, options);
+    }
+
+    
+    
+    /**
+     * Play an MRL directly.
+     *
+     * @param mrl MRL of the media to play.
+     */
+    public void playMyMRL(String mrl) {
+        // index=-1 will return options from libvlc instance without relying on MediaList
+        String[] options = new String[0]; 
         mInternalMediaPlayerIndex = 0;
         playMRL(mLibVlcInstance, mrl, options);
     }
@@ -574,11 +536,6 @@ public class LibVLC {
     public native void stop();
 
     /**
-     * Get player state.
-     */
-    public native int getPlayerState();
-
-    /**
      * Gets volume as integer
      */
     public native int getVolume();
@@ -657,8 +614,6 @@ public class LibVLC {
 
     public native Map<Integer,String> getAudioTrackDescription();
 
-    public native Map<String, Object> getStats();
-
     public native int getAudioTrack();
 
     public native int setAudioTrack(int index);
@@ -676,8 +631,6 @@ public class LibVLC {
     public native int getSpuTracksCount();
 
     public static native String nativeToURI(String path);
-    
-    public native static void sendMouseEvent( int action, int button, int x, int y);
 
     /**
      * Quickly converts path to URIs, which are mandatory in libVLC.
@@ -726,28 +679,24 @@ public class LibVLC {
     public native String[] getPresets();
 
     public native float[] getPreset(int index);
-
-    public static interface OnNativeCrashListener {
-        public void onNativeCrash();
+    
+    public native boolean takeSnapShot( int num, String file, int width, int height);
+    
+    public native boolean videoRecordStart(String path);
+    
+    public native boolean videoRecordStop();
+    
+    public native boolean videoIsRecording();
+    
+    public native boolean videoIsRecordable();
+    
+    public native int getState();
+    
+    
+    
+    public boolean takeSnapShot(String file, int width, int height) {
+        return takeSnapShot(0, file, width, height);
     }
-
-    public void setOnNativeCrashListener(OnNativeCrashListener l) {
-        mOnNativeCrashListener = l;
-    }
-
-    private void onNativeCrash() {
-        if (mOnNativeCrashListener != null)
-            mOnNativeCrashListener.onNativeCrash();
-    }
-
-    public String getCachePath() {
-        return mCachePath;
-    }
-
-    public native int getTitle();
-    public native void setTitle(int title);
-    public native int getChapterCountForTitle(int title);
-    public native int getTitleCount();
-    public native void playerNavigate(int navigate);
-
+    
+    
 }

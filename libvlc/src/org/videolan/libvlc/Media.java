@@ -3,19 +3,19 @@
  *****************************************************************************
  * Copyright © 2011-2013 VLC authors and VideoLAN
  *
- * This program is free software; you can redistribute it and/or modify it
- * under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation; either version 2.1 of the License, or
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
- * GNU Lesser General Public License for more details.
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
  *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this program; if not, write to the Free Software Foundation,
- * Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston MA 02110-1301, USA.
  *****************************************************************************/
 
 package org.videolan.libvlc;
@@ -25,6 +25,7 @@ import java.lang.reflect.Method;
 import java.util.HashSet;
 import java.util.Locale;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.util.Log;
 
@@ -38,16 +39,16 @@ public class Media implements Comparable<Media> {
 
     static {
         String[] video_extensions = {
-                ".3g2", ".3gp", ".3gp2", ".3gpp", ".amv", ".asf", ".avi", ".divx", ".drc", ".dv",
-                ".f4v", ".flv", ".gvi", ".gxf", ".ismv", ".iso", ".m1v", ".m2v", ".m2t", ".m2ts",
-                ".m4v", ".mkv", ".mov", ".mp2", ".mp2v", ".mp4", ".mp4v", ".mpe", ".mpeg",
+                ".3g2", ".3gp", ".3gp2", ".3gpp", ".amv", ".asf", ".avi", ".divx", "drc", ".dv",
+                ".f4v", ".flv", ".gvi", ".gxf", ".iso", ".m1v", ".m2v", ".m2t", ".m2ts", ".m4v",
+                ".mkv", ".mov", ".mp2", ".mp2v", ".mp4", ".mp4v", ".mpe", ".mpeg",
                 ".mpeg1", ".mpeg2", ".mpeg4", ".mpg", ".mpv2", ".mts", ".mtv", ".mxf", ".mxg",
-                ".nsv", ".nut", ".nuv", ".ogm", ".ogv", ".ogx", ".ps", ".rec", ".rm", ".rmvb",
-                ".tod", ".ts", ".tts", ".vob", ".vro", ".webm", ".wm", ".wmv", ".wtv", ".xesc" };
+                ".nsv", ".nuv", ".ogm", ".ogv", ".ogx", ".ps", ".rec", ".rm", ".rmvb", ".tod",
+                ".ts", ".tts", ".vob", ".vro", ".webm", ".wm", ".wmv", ".wtv", ".xesc" };
 
         String[] audio_extensions = {
                 ".3ga", ".a52", ".aac", ".ac3", ".adt", ".adts", ".aif", ".aifc", ".aiff", ".amr",
-                ".aob", ".ape", ".awb", ".caf", ".dts", ".flac", ".it", ".m4a", ".m4b", ".m4p",
+                ".aob", ".ape", ".awb", ".caf", ".dts", ".flac", ".it", ".m4a", ".m4p",
                 ".mid", ".mka", ".mlp", ".mod", ".mpa", ".mp1", ".mp2", ".mp3", ".mpc", ".mpga",
                 ".oga", ".ogg", ".oma", ".opus", ".ra", ".ram", ".rmi", ".s3m", ".spx", ".tta",
                 ".voc", ".vqf", ".w64", ".wav", ".wma", ".wv", ".xa", ".xm" };
@@ -169,7 +170,7 @@ public class Media implements Comparable<Media> {
         if (mType == TYPE_ALL) {
             int dotIndex = mLocation.lastIndexOf(".");
             if (dotIndex != -1) {
-                String fileExt = mLocation.substring(dotIndex).toLowerCase(Locale.ENGLISH);
+                String fileExt = mLocation.substring(dotIndex);
                 if( Media.VIDEO_EXTENSIONS.contains(fileExt) ) {
                     mType = TYPE_VIDEO;
                 } else if (Media.AUDIO_EXTENSIONS.contains(fileExt)) {
@@ -206,7 +207,7 @@ public class Media implements Comparable<Media> {
      * hard-coded dependency gracefully for 3rd party libvlc apps while still
      * maintaining good l10n in VLC for Android.
      *
-     * @see org.videolan.vlc.util.Util#getValue(String, int)
+     * @see org.videolan.vlc.Util#getValue(String, int)
      *
      * @param string The default string
      * @param type Alias for R.string.xxx
@@ -325,7 +326,7 @@ public class Media implements Comparable<Media> {
      * Returns the raw picture object. Likely to be NULL in VLC for Android
      * due to lazy-loading.
      *
-     * Use {@link org.videolan.vlc.util.Bitmap#getPictureFromCache(Media)} instead.
+     * Use {@link org.videolan.vlc.Util#getPictureFromCache(Media)} instead.
      *
      * @return The raw picture or NULL
      */
@@ -336,7 +337,7 @@ public class Media implements Comparable<Media> {
     /**
      * Sets the raw picture object.
      *
-     * In VLC for Android, use {@link org.videolan.vlc.MediaDatabase#setPicture(Media, Bitmap)} instead.
+     * In VLC for Android, use {@link org.videolan.vlc.Util#setPicture(Context, Media, Bitmap)} instead.
      *
      * @param p
      */
@@ -356,13 +357,10 @@ public class Media implements Comparable<Media> {
         if (mTitle != null && mType != TYPE_VIDEO)
             return mTitle;
         else {
-            String fileName = getFileName();
-            if (fileName == null)
-                return "";
-            int end = fileName.lastIndexOf(".");
+            int end = getFileName().lastIndexOf(".");
             if (end <= 0)
-                return fileName;
-            return fileName.substring(0, end);
+                return getFileName();
+            return getFileName().substring(0, end);
         }
     }
 
@@ -375,7 +373,7 @@ public class Media implements Comparable<Media> {
     }
 
     public String getGenre() {
-        if(getValueWrapper(null, UnknownStringType.Genre).equals(mGenre))
+        if(mGenre == getValueWrapper(null, UnknownStringType.Genre))
             return mGenre;
         else if( mGenre.length() > 1)/* Make genres case insensitive via normalisation */
             return Character.toUpperCase(mGenre.charAt(0)) + mGenre.substring(1).toLowerCase(Locale.getDefault());

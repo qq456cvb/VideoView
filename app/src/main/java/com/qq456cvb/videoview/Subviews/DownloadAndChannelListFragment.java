@@ -3,6 +3,9 @@ package com.qq456cvb.videoview.Subviews;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.app.PendingIntent;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
@@ -13,36 +16,40 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.loopj.android.http.FileAsyncHttpResponseHandler;
-import com.loopj.android.http.RequestParams;
+import com.loopj.android.http.AsyncHttpResponseHandler;
 import com.qq456cvb.videoview.Activities.MainActivity;
 import com.qq456cvb.videoview.Application.GlobalApp;
 import com.qq456cvb.videoview.CustomWidgets.DatePickDialog;
 import com.qq456cvb.videoview.CustomWidgets.DateTimePickDialogUtil;
 import com.qq456cvb.videoview.R;
 import com.qq456cvb.videoview.Utils.Channel;
+import com.qq456cvb.videoview.Utils.MyNotification;
 import com.qq456cvb.videoview.Utils.UserClient;
 
 import org.apache.http.Header;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 /**
  * Created by qq456cvb on 9/13/15.
  */
 public class DownloadAndChannelListFragment extends Fragment {
+    private RightChannelFragment rightChannelFragment = new RightChannelFragment();
+
     private LinearLayout linearLayoutMp4;
     private LinearLayout linearLayoutZip;
 
+    private String type = "";
     private TextView startDateTime;
     private TextView endDateTime;
-
-    private String initStartDateTime = "2015-09-13 14:44"; // 初始化开始时间
-    private String initEndDateTime = "2015-09-13 14:46"; // 初始化结束时间
+    MyNotification myNotification;
+    private String initStartDateTime; // 初始化开始时间
+    private String initEndDateTime; // 初始化结束时间
 
     public String chooseDates;
 
@@ -50,13 +57,20 @@ public class DownloadAndChannelListFragment extends Fragment {
         // Required empty public constructor
     }
 
-
+    public RightChannelFragment getRightChannelFragment() {
+        return rightChannelFragment;
+    }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    public View onCreateView(final LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
         View view=inflater.inflate(R.layout.fragment_download_and_channel_list, container, false);
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm");
+
+        initStartDateTime = sdf.format(Calendar.getInstance().getTime());
+        initEndDateTime = initStartDateTime;
+
         linearLayoutMp4= (LinearLayout) view.findViewById(R.id.ll_mp4download);
         linearLayoutZip= (LinearLayout) view.findViewById(R.id.ll_zipdownload);
 
@@ -85,50 +99,87 @@ public class DownloadAndChannelListFragment extends Fragment {
         });
 
 
-        final FileAsyncHttpResponseHandler handler = new FileAsyncHttpResponseHandler(DownloadAndChannelListFragment.this.getActivity()) {
+        final AsyncHttpResponseHandler handler = new AsyncHttpResponseHandler() {
+            private int times = 0;
             @Override
-            public void onSuccess(int statusCode, Header[] headers, File response) {
+            public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
                 // Do something with the file `response`
-                File sdDir = null;
+                String localPath = "";
+                myNotification.changeProgressStatus(100, 0);
                 long length = 0;
-                String localPath = "", remotePath = response.getPath();
+                File sdDir = null;
                 boolean sdCardExist = Environment.getExternalStorageState()
                         .equals(android.os.Environment.MEDIA_MOUNTED); //判断sd卡是否存在
                 if (sdCardExist)
                 {
                     sdDir = Environment.getExternalStorageDirectory();//获取跟目录
-                    localPath = sdDir.toString() + "/"+startDateTime.getText().toString()+"_"+endDateTime.getText().toString()+".mp4";
+                    if (type.equals("3")) {
+                        localPath = sdDir.toString() + "/" + startDateTime.getText().toString() + "_" + endDateTime.getText().toString() + ".mp4";
+                    } else {
+                        localPath = sdDir.toString() + "/" + startDateTime.getText().toString() + "_" + endDateTime.getText().toString() + ".mp3";
+                    }
                 } else {
                     //TODO
                 }
                 try {
                     int bytesum = 0;
                     int byteread = 0;
-                    File file = new File(remotePath);
-                    if (file.exists()) { //文件存在时
-                        FileInputStream inStream = new FileInputStream(remotePath); //读入原文件
-                        length = inStream.available();
-                        FileOutputStream fs = new FileOutputStream(localPath);
-                        byte[] buffer = new byte[1024];
-                        while ( (byteread = inStream.read(buffer)) != -1) {
-                            bytesum += byteread; //字节数 文件大小
-                            System.out.println(bytesum);
-                            fs.write(buffer, 0, byteread);
+                    ByteArrayInputStream inStream = new ByteArrayInputStream(responseBody); //读入原文件
+                    length = inStream.available();
+                    FileOutputStream fs = new FileOutputStream(localPath);
+                    byte[] buffer = new byte[1024];
+                    while ((byteread = inStream.read(buffer)) != -1) {
+                        bytesum += byteread; //字节数 文件大小
+                        fs.write(buffer, 0, byteread);
 //                            Toast.makeText(DownloadAndChannelListFragment.this.getActivity(), "已下载:"+String.valueOf(bytesum/1000)+"/"+String.valueOf(length/1000)+"KB", Toast.LENGTH_SHORT).show();
-                        }
-                        Toast.makeText(DownloadAndChannelListFragment.this.getActivity(), "已保存至"+localPath, Toast.LENGTH_SHORT).show();
-                        inStream.close();
                     }
+                    final String inner_path = localPath;
+                    DownloadAndChannelListFragment.this.getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(DownloadAndChannelListFragment.this.getActivity(), "已保存至" + inner_path, Toast.LENGTH_LONG).show();
+                        }
+                    });
+                    inStream.close();
+//                    Intent intent = new Intent(DownloadAndChannelListFragment.this.getActivity(), DownloadService.class);
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("url", remotePath);
+//                    bundle.putString("local", localPath);
+//                    intent.putExtras(bundle);
+//                    DownloadAndChannelListFragment.this.getActivity().startService(intent);
+//                }
                 }
                 catch (Exception e) {
-                    System.out.println("复制单个文件操作出错");
+                    System.out.println("下载出错");
                     e.printStackTrace();
 
                 }
             }
 
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, File response) {
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable throwable) {
                 Toast.makeText(DownloadAndChannelListFragment.this.getActivity(), "未知错误", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public void onProgress(long bytesWritten, long totalSize) {
+                // TODO Auto-generated method stub
+                times++;
+                super.onProgress(bytesWritten, totalSize);
+                int count = (int) ((bytesWritten * 1.0 / totalSize) * 100);
+                if (times > 128) {
+                    myNotification.changeProgressStatus(count, 0);
+                    times = 0;
+                }
+                // 上传进度显示
+//                progress.setProgress(count);
+//                Log.e("上传 Progress>>>>>", bytesWritten + " / " + totalSize);
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // TODO Auto-generated method stub
+                super.onRetry(retryNo);
+                // 返回重试次数
             }
         };
 
@@ -139,14 +190,55 @@ public class DownloadAndChannelListFragment extends Fragment {
                     @Override
                     public void run() {
                         try {
+                            Intent intent = new Intent(Intent.ACTION_VIEW);
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                            intent.setType ("video/mp4");
+
+                            intent.setData(Uri.parse(""));
+                            PendingIntent updatePendingIntent = PendingIntent.getActivity(DownloadAndChannelListFragment.this.getActivity(),0,intent,0);
+                            myNotification = new MyNotification(DownloadAndChannelListFragment.this.getActivity(), updatePendingIntent,1);
+                            myNotification.showCustomizeNotification(R.drawable.ic_launcher, "视频下载", R.layout.notification);
                             Channel channel = GlobalApp.currentChannel;
-                            String id = channel.id;
-                            RequestParams params = new RequestParams();
-                            params.put("startTime", startDateTime.getText().toString() + ":00");
-                            params.put("endTime", endDateTime.getText().toString() + ":00");
-                            params.put("hdnType", "3");
-                            params.put("hdnDypass", channel.hdnDyass);
-                            UserClient.post("/stpy/videoDownloadAction!doDown.action?hdid=" + id, params, handler);
+//                            String id = channel.id;
+//                            RequestParams params = new RequestParams();
+//                            params.put("startTime", startDateTime.getText().toString() + ":00");
+//                            params.put("endTime", endDateTime.getText().toString() + ":00");
+//                            params.put("hdnType", channel.hdnType);
+//                            type = channel.hdnType;
+//                            params.put("hdnDypass", channel.hdnDyass);
+//                            UserClient.post("/stpy/videoDownloadAction!doDown.action?hdid=" + id, params, handler);
+                            String hdid = "hdid=" + channel.id;
+//                            String dateBegin = "dateBegin=" + chooseDates.replaceAll(";", "%3B");
+                            String sstartTime = "startTime=" + (startDateTime.getText().toString() + ":00").replaceAll(" ","+").replaceAll(":", "%3A");
+                            String sendTime = "endTime=" + (endDateTime.getText().toString() + ":00").replaceAll(" ", "+").replaceAll(":", "%3A");
+                            String hdnType = "hdnType=" + channel.hdnType;
+                            String hdnDypass = "hdnDypass=" + channel.hdnDyass;
+                            type = channel.hdnType;
+                            String url = "/stpy/videoDownloadAction!doDown.action?" + hdid + "&" + sstartTime
+                                    + "&" + sendTime + "&" + hdnType + "&" + hdnDypass;
+                            String localPath = "";
+                            long length = 0;
+                            File sdDir = null;
+                            boolean sdCardExist = Environment.getExternalStorageState()
+                                    .equals(android.os.Environment.MEDIA_MOUNTED); //判断sd卡是否存在
+                            if (sdCardExist)
+                            {
+                                sdDir = Environment.getExternalStorageDirectory();//获取跟目录
+                                if (type == "3") {
+                                    localPath = sdDir.toString() + "/" + startDateTime.getText().toString() + "_" + endDateTime.getText().toString() + ".mp4";
+                                } else {
+                                    localPath = sdDir.toString() + "/" + startDateTime.getText().toString() + "_" + endDateTime.getText().toString() + ".mp3";
+                                }
+                            } else {
+                                //TODO
+                            }
+                            UserClient.get(url, null, handler);
+                            DownloadAndChannelListFragment.this.getActivity().runOnUiThread(new Runnable() {
+                                @Override
+                                public void run() {
+                                    Toast.makeText(DownloadAndChannelListFragment.this.getActivity(), "请稍后", Toast.LENGTH_SHORT).show();
+                                }
+                            });
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -162,13 +254,14 @@ public class DownloadAndChannelListFragment extends Fragment {
                 DatePickDialog dateTimePickDialog = new DatePickDialog(
                         DownloadAndChannelListFragment.this.getActivity(),str);
                 dateTimePickDialog.dateTimePickDialog(DownloadAndChannelListFragment.this);
+
+
             }
         });
         FragmentManager fm=getActivity().getFragmentManager();
         FragmentTransaction ft=fm.beginTransaction();
-        //TODO:change to the current fragment
-        RightChannelFragment rcf=new RightChannelFragment();
-        ft.replace(R.id.downloadChannelFragment,rcf);
+
+        ft.replace(R.id.downloadChannelFragment,rightChannelFragment);
         ft.commit();
         return view;
     }
@@ -182,68 +275,113 @@ public class DownloadAndChannelListFragment extends Fragment {
         msg.sendToTarget();
     }
 
+
     public void manyDownload() {
-        final FileAsyncHttpResponseHandler handler = new FileAsyncHttpResponseHandler(DownloadAndChannelListFragment.this.getActivity()) {
-            @Override
-            public void onSuccess(int statusCode, Header[] headers, File response) {
-                // Do something with the file `response`
-                File sdDir = null;
-                long length = 0;
-                String localPath = "", remotePath = response.getPath();
-                boolean sdCardExist = Environment.getExternalStorageState()
-                        .equals(android.os.Environment.MEDIA_MOUNTED); //判断sd卡是否存在
-                if (sdCardExist)
-                {
-                    sdDir = Environment.getExternalStorageDirectory();//获取跟目录
-                    localPath = sdDir.toString() + "/"+chooseDates+".mp4";
-                } else {
-                    //TODO
-                }
-                try {
-                    int bytesum = 0;
-                    int byteread = 0;
-                    File file = new File(remotePath);
-                    if (file.exists()) { //文件存在时
-                        FileInputStream inStream = new FileInputStream(remotePath); //读入原文件
+        final AsyncHttpResponseHandler handler = new AsyncHttpResponseHandler() {
+            private int times = 0;
+                @Override
+                public void onSuccess(int statusCode, Header[] headers, byte[] responseBody) {
+                    // Do something with the file `response`
+                    String localPath = "";
+                    long length = 0;
+                    File sdDir = null;
+                    boolean sdCardExist = Environment.getExternalStorageState()
+                            .equals(android.os.Environment.MEDIA_MOUNTED); //判断sd卡是否存在
+                    if (sdCardExist)
+                    {
+                        sdDir = Environment.getExternalStorageDirectory();//获取跟目录
+                        localPath = sdDir.toString() + "/"+chooseDates+" "+startDateTime.getText().toString().substring(11)+"_"+endDateTime.getText().toString().substring(11)+".zip";
+                    } else {
+                        //TODO
+                    }
+                    try {
+                        int bytesum = 0;
+                        int byteread = 0;
+                        ByteArrayInputStream inStream = new ByteArrayInputStream(responseBody); //读入原文件
                         length = inStream.available();
                         FileOutputStream fs = new FileOutputStream(localPath);
                         byte[] buffer = new byte[1024];
-                        while ( (byteread = inStream.read(buffer)) != -1) {
+                        while ((byteread = inStream.read(buffer)) != -1) {
                             bytesum += byteread; //字节数 文件大小
-                            System.out.println(bytesum);
                             fs.write(buffer, 0, byteread);
 //                            Toast.makeText(DownloadAndChannelListFragment.this.getActivity(), "已下载:"+String.valueOf(bytesum/1000)+"/"+String.valueOf(length/1000)+"KB", Toast.LENGTH_SHORT).show();
                         }
-                        Toast.makeText(DownloadAndChannelListFragment.this.getActivity(), "已保存至"+localPath, Toast.LENGTH_SHORT).show();
+                        final String inner_path = localPath;
+                        DownloadAndChannelListFragment.this.getActivity().runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(DownloadAndChannelListFragment.this.getActivity(), "已保存至" + inner_path, Toast.LENGTH_LONG).show();
+                            }
+                        });
                         inStream.close();
+//                    Intent intent = new Intent(DownloadAndChannelListFragment.this.getActivity(), DownloadService.class);
+//                    Bundle bundle = new Bundle();
+//                    bundle.putString("url", remotePath);
+//                    bundle.putString("local", localPath);
+//                    intent.putExtras(bundle);
+//                    DownloadAndChannelListFragment.this.getActivity().startService(intent);
+//                }
+                    }
+                    catch (Exception e) {
+                        System.out.println("下载出错");
+                        e.printStackTrace();
+
                     }
                 }
-                catch (Exception e) {
-                    System.out.println("复制单个文件操作出错");
-                    e.printStackTrace();
 
-                }
+            public void onFailure(int statusCode, Header[] headers, byte[] responseBody, Throwable throwable) {
+                Toast.makeText(DownloadAndChannelListFragment.this.getActivity(), "未知错误", Toast.LENGTH_SHORT).show();
             }
 
-            public void onFailure(int statusCode, Header[] headers, Throwable throwable, File response) {
-                Toast.makeText(DownloadAndChannelListFragment.this.getActivity(), "未知错误", Toast.LENGTH_SHORT).show();
+            @Override
+            public void onProgress(long bytesWritten, long totalSize) {
+                // TODO Auto-generated method stub
+                times++;
+                super.onProgress(bytesWritten, totalSize);
+                int count = (int) ((bytesWritten * 1.0 / totalSize) / 1000);
+                if (times > 128) {
+                    myNotification.changeProgressStatus(count, 1);
+                    times = 0;
+                }
+                // 上传进度显示
+//                progress.setProgress(count);
+//                Log.e("上传 Progress>>>>>", bytesWritten + " / " + totalSize);
+            }
+
+            @Override
+            public void onRetry(int retryNo) {
+                // TODO Auto-generated method stub
+                super.onRetry(retryNo);
+                // 返回重试次数
             }
         };
         new Thread() {
             @Override
             public void run() {
                 try {
+
+                    Intent intent = new Intent(Intent.ACTION_VIEW);
+                    intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+                    intent.setType("video/mp4");
+                    PendingIntent updatePendingIntent = PendingIntent.getActivity(DownloadAndChannelListFragment.this.getActivity(),0,intent,0);
+                    myNotification = new MyNotification(DownloadAndChannelListFragment.this.getActivity(), updatePendingIntent,1);
+                    myNotification.showCustomizeNotification(R.drawable.ic_launcher, "视频下载", R.layout.notification);
                     Channel channel = GlobalApp.currentChannel;
-                    String id = channel.id;
-                    RequestParams params = new RequestParams();
-                    params.put("sstartTime", startDateTime.getText().toString() + ":00");
-                    params.put("sendTime", endDateTime.getText().toString() + ":00");
-                    params.put("dateBegin", chooseDates);
-                    params.put("hdnType", "3");
-                    params.put("calendarYear", "2015");
-                    params.put("calendarMonth", "8");
-                    params.put("hdnDypass", channel.hdnDyass);
-                    UserClient.post("/stpy/videoDownloadAction!manydownload.action?hdid=" + id, params, handler);
+                    String hdid = "hdid=" + channel.id;
+                    String dateBegin = "dateBegin=" + chooseDates.replaceAll(";", "%3B");
+                    String sstartTime = "sstartTime=" + (startDateTime.getText().toString() + ":00").substring(11).replaceAll(":", "%3A");
+                    String sendTime = "sendTime=" + (endDateTime.getText().toString() + ":00").substring(11).replaceAll(":", "%3A");
+                    String hdnType = "hdnType=" + channel.hdnType;
+                    String hdnDypass = "hdnDypass=" + channel.hdnDyass;
+                    String url = "/stpy/videoDownloadAction!manydownload.action?" + hdid + "&" + dateBegin + "&" + sstartTime
+                            + "&" + sendTime + "&" + hdnType + "&" + hdnDypass;
+                    UserClient.get(url, null, handler);
+                    DownloadAndChannelListFragment.this.getActivity().runOnUiThread(new Runnable() {
+                        @Override
+                        public void run() {
+                            Toast.makeText(DownloadAndChannelListFragment.this.getActivity(), "请稍后", Toast.LENGTH_SHORT).show();
+                        }
+                    });
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

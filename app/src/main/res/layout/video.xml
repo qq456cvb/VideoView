@@ -30,62 +30,69 @@
                 android:padding="10dp">
 
                 <LinearLayout
-                    android:orientation="horizontal"
-                    android:layout_width="fill_parent"
+                    android:orientation="vertical"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_gravity="center_horizontal|bottom"
-                    android:gravity="center_vertical">
+                    android:layout_gravity="center_horizontal|bottom">
 
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:id="@+id/vlc_button_play_pause"
-                        android:src="@drawable/ic_action_pause_over_video"
-                        android:contentDescription="@string/play_pause_button" />
+                    <SeekBar
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:id="@+id/vlc_seekbar" />
 
                     <LinearLayout
-                        android:orientation="vertical"
-                        android:layout_width="0dp"
-                        android:layout_height="fill_parent"
-                        android:layout_weight="1">
+                        android:orientation="horizontal"
+                        android:layout_width="fill_parent"
+                        android:layout_height="wrap_content"
+                        android:gravity="center_vertical">
 
-                        <SeekBar
-                            android:layout_width="fill_parent"
-                            android:layout_height="wrap_content"
-                            android:id="@+id/vlc_seekbar" />
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:id="@+id/vlc_button_play_pause"
+                            android:src="@drawable/ic_action_pause_over_video"
+                            android:contentDescription="@string/play_pause_button" />
 
                         <TextView
-                            android:layout_width="fill_parent"
+                            android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:textAppearance="?android:attr/textAppearanceSmall"
                             android:text="00:00 / 00:00"
                             android:textColor="@android:color/white"
-                            android:id="@+id/vlc_duration" />
+                            android:id="@+id/vlc_duration"
+                            android:layout_weight="1" />
+
+                        <TextView
+                            android:layout_width="wrap_content"
+                            android:layout_height="50dp"
+                            android:text="音量"
+                            android:id="@+id/textView7"
+                            android:gravity="center_vertical"
+                            android:textColor="#ffffffff" />
+
+                        <SeekBar
+                            android:layout_width="200dp"
+                            android:layout_height="wrap_content"
+                            android:id="@+id/vlc_volume"
+                            android:layout_gravity="center_vertical"
+                            android:max="100"
+                            android:progress="50" />
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:id="@+id/vlc_button_snapshot"
+                            android:src="@android:drawable/ic_menu_camera"
+                            android:contentDescription="@string/play_pause_button" />
+
+                        <ImageView
+                            android:layout_width="50dp"
+                            android:layout_height="50dp"
+                            android:id="@+id/vlc_button_fullscreen"
+                            android:src="@drawable/ic_action_fullscreen"
+                            android:contentDescription="@string/play_pause_button" />
 
                     </LinearLayout>
-
-                    <TextView
-                        android:layout_width="wrap_content"
-                        android:layout_height="50dp"
-                        android:text="音量"
-                        android:id="@+id/textView7"
-                        android:gravity="center_vertical"
-                        android:textColor="#ffffffff" />
-
-                    <SeekBar
-                        android:layout_width="200dp"
-                        android:layout_height="wrap_content"
-                        android:id="@+id/vlc_volume"
-                        android:layout_gravity="center_vertical"
-                        android:max="100"
-                        android:progress="50" />
-
-                    <ImageView
-                        android:layout_width="50dp"
-                        android:layout_height="50dp"
-                        android:id="@+id/vlc_button_fullscreen"
-                        android:src="@drawable/ic_action_fullscreen"
-                        android:contentDescription="@string/play_pause_button" />
 
                 </LinearLayout>
 

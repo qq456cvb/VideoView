@@ -21,10 +21,14 @@ import com.qq456cvb.videoview.R;
 public class CommentAndChannelListFragment extends Fragment {
     private LinearLayout ll_comchanMycomment;
     private LinearLayout ll_comchanEditcomment;
+    private RightChannelFragment rightChannelFragment = new RightChannelFragment();
     public CommentAndChannelListFragment() {
         // Required empty public constructor
     }
 
+    public RightChannelFragment getRightChannelFragment() {
+        return rightChannelFragment;
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,10 +52,8 @@ public class CommentAndChannelListFragment extends Fragment {
         });
         FragmentManager fm=getActivity().getFragmentManager();
         FragmentTransaction ft=fm.beginTransaction();
-        //TODO: channel fragment may be changed later
-        //TODO(youyang): use the current right channel fragment, not a new one.
-        RightChannelFragment rcf=new RightChannelFragment();
-        ft.replace(R.id.fl_channelfrag,rcf);
+
+        ft.replace(R.id.fl_channelfrag,rightChannelFragment);
         ft.commit();
         return view;
     }

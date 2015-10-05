@@ -12,6 +12,7 @@ public class Channel {
     private String name;
     private String IP;
     private String multicastIP;
+    public String hdnType;
 
     public Channel(int category, String name, String IP, String multicastIP) {
         this.category = category;
@@ -23,6 +24,9 @@ public class Channel {
         return multicastIP;
     }
 
+    public void setMulticastIP(String ip) {
+        this.multicastIP = ip;
+    }
     public int getcategory() {
         return category;
     }
@@ -35,5 +39,17 @@ public class Channel {
         return name;
     }
 
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void resetChannel() {
+        this.setcategory(1);
+        this.setName("CCTV-1");
+        this.setMulticastIP("http://220.250.58.250:7000/D*5005*");
+        this.id = "1";
+        this.hdnDyass = "0";
+        this.hdnType = "3";
+    }
     // TODO: too lazy to write getters and setters.
 }

@@ -73,14 +73,7 @@ public class ProfileImageFragment extends Fragment implements ProfileImageLoader
             public void handleMessage(Message message) {
                 btnDelete.setVisibility(View.VISIBLE);
                 reviewId = (String)message.obj;
-                switch (message.arg1) {
-                    case 0:
-                        profileImageLoader.getImagesByReviewId((String)message.obj);
-                        break;
-                    case 1:
-                        profileImageLoader.getImagesByReviewId((String)message.obj);
-                        break;
-                }
+                profileImageLoader.getSecondImagesByReviewId((String)message.obj);
             }
         };
         mQueue = Volley.newRequestQueue(this.getActivity());
@@ -102,7 +95,8 @@ public class ProfileImageFragment extends Fragment implements ProfileImageLoader
                         final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
                             public void onSuccess(int statusCode, Header[] headers, String response) {
                                 if (++counter == deleteList.size()) {
-                                    profileImageLoader.getImagesByReviewId(reviewId);
+                                    deleteList.clear();
+                                    profileImageLoader.getSecondImagesByReviewId(reviewId);
                                 }
                             }
 

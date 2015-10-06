@@ -29,9 +29,15 @@ public class ChannelListAdapter extends BaseExpandableListAdapter {
     private RightChannelFragment rightChannelFragment;
     private ArrayList<Channel> channels;
     private ArrayList<ArrayList<Programme>> programmes;
+    public int currGroup = -1, currChild = -1;
+
     public ChannelListAdapter(RightChannelFragment rightChannelFragment, ArrayList<Channel> channels) {
         this.rightChannelFragment = rightChannelFragment;
         this.channels = channels;
+    }
+
+    public ArrayList<ArrayList<Programme>> getProgrammes() {
+        return this.programmes;
     }
 
     public void updateProgramme (ArrayList<ArrayList<Programme>> programmes) {
@@ -110,6 +116,11 @@ public class ChannelListAdapter extends BaseExpandableListAdapter {
     public View getGroupView(final int groupPosition, boolean isExpanded,
             final View convertView, ViewGroup parent) {
         View view = (rightChannelFragment.getActivity()).getLayoutInflater().inflate(R.layout.channel_list_item, null);
+        if (isExpanded) {
+            view.setBackgroundColor(0xFFEE4029);
+        } else {
+            view.setBackgroundColor(0x00000000);
+        }
         final TextView textView = (TextView)view.findViewById(R.id.channel_item);
         textView.setText(getGroup(groupPosition).toString());
         return view;
@@ -131,11 +142,15 @@ public class ChannelListAdapter extends BaseExpandableListAdapter {
         } catch (ParseException e) {
             e.printStackTrace();
         }
+        if (currGroup == groupPosition && currChild == childPosition) {
+            ll.setBackgroundColor(0xFFEE4029);
+        } else {
+            ll.setBackgroundColor(0x00000000);
+        }
         Date nowDate = Calendar.getInstance().getTime();
         if (date.compareTo(nowDate) > 0) {
             ll.setBackgroundColor(Color.GRAY);
         }
-
         ll.addView(textView);
         return ll;
     }

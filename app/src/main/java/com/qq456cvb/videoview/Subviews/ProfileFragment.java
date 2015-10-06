@@ -31,12 +31,13 @@ public class ProfileFragment extends Fragment {
     private ImageView profileReviewButton;
     private ImageView profileConfigButton;
     private ImageView profilePictureButton;
+    private ImageView profileLocalButton;
     private OnProfileListener onProfileListener;
 //    private ProfileReviewFragment profileReviewFragment;
     public CommentListFragment profileCommentFragment = new CommentListFragment();
     public ProfileImageFragment profileImageFragment = new ProfileImageFragment();
     private ProfileConfigFragment profileConfigFragment = new ProfileConfigFragment();
-    private ProfileVideoFragment profileVideoFragment;
+    public ProfileVideoFragment profileVideoFragment;
     private View mView;
 
     @Override
@@ -75,6 +76,7 @@ public class ProfileFragment extends Fragment {
         profileReviewButton = (ImageView)mView.findViewById(R.id.profile_article_img);
         profileConfigButton = (ImageView)mView.findViewById(R.id.profile_config_img);
         profilePictureButton = (ImageView)mView.findViewById(R.id.profile_picture_img);
+        profileLocalButton = (ImageView)mView.findViewById(R.id.profile_local_img);
     }
 
     private void bindOnClickListeners() {
@@ -85,7 +87,10 @@ public class ProfileFragment extends Fragment {
                 clearFragments();
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction transaction = fm.beginTransaction();
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("online", true);
                 profileVideoFragment = new ProfileVideoFragment();
+                profileVideoFragment.setArguments(bundle);
                 transaction.add(R.id.content_middle_and_right, profileVideoFragment);
                 transaction.commit();
             }
@@ -128,6 +133,28 @@ public class ProfileFragment extends Fragment {
                 transaction.commit();
             }
         });
+
+        profileLocalButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onProfileListener.clearFragments();
+                clearFragments();
+                FragmentManager fm = getFragmentManager();
+                FragmentTransaction transaction = fm.beginTransaction();
+                Bundle bundle = new Bundle();
+                bundle.putBoolean("online", false);
+                profileVideoFragment = new ProfileVideoFragment();
+                profileVideoFragment.setArguments(bundle);
+                transaction.add(R.id.content_middle_and_right, profileVideoFragment);
+                transaction.commit();
+            }
+        });
+    }
+
+    public void toggleFullscreen(boolean fullscreen) {
+        if (profileVideoFragment != null) {
+            profileVideoFragment.toggleFullscreen(fullscreen);
+        }
     }
 
     public void clearFragments() {

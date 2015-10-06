@@ -5,7 +5,6 @@ import android.app.Fragment;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.os.Message;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -104,7 +103,7 @@ public class WordUploadFragment extends Fragment {
                     selectFileName=fileName;
                     Log.d(TAG, "select file:" + fileName);
                 }else{
-                    Toast.makeText(getActivity().getApplicationContext(),"请选择正确格式的word文档",Toast.LENGTH_LONG);
+                    Toast.makeText(getActivity().getApplicationContext(),"请选择正确格式的word文档",Toast.LENGTH_LONG).show();
                 }
 
 //                Intent intent = new Intent(getActivity(), UploadServices.class);

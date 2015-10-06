@@ -5,15 +5,17 @@
 
     <TextView
         android:layout_width="match_parent"
-        android:layout_height="50dp"
+        android:layout_height="60dp"
         android:text="New Text"
         android:id="@+id/video_url"
         android:gravity="center_vertical|center_horizontal"
-        android:textSize="25dp" />
+        android:textSize="25dp"
+        android:layout_weight="1" />
 
-    <Button
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:text="删除"
-        android:id="@+id/video_delete" />
+    <CheckBox
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/video_delete"
+        android:layout_weight="4" />
+
 </LinearLayout>

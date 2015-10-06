@@ -7,6 +7,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.GridView;
+import android.widget.TextView;
 
 import com.android.volley.toolbox.ImageLoader;
 import com.android.volley.toolbox.NetworkImageView;
@@ -31,6 +32,7 @@ public class ProfileImageAdapter extends ArrayAdapter<UserImage> {
 
     class ViewHolder{
         public NetworkImageView imageView;
+        public TextView textView;
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
@@ -47,6 +49,7 @@ public class ProfileImageAdapter extends ArrayAdapter<UserImage> {
             LayoutInflater inflater = activity.getLayoutInflater();
             convertView = inflater.inflate(R.layout.profile_image_grid_item, null);
             holder.imageView = (NetworkImageView) convertView.findViewById(R.id.network_image_view);
+            holder.textView = (TextView)convertView.findViewById(R.id.grid_item_text);
             convertView.setTag(holder);
         } else {
             holder = (ViewHolder) convertView.getTag();
@@ -64,7 +67,7 @@ public class ProfileImageAdapter extends ArrayAdapter<UserImage> {
                 msg.sendToTarget();
             }
         });
-
+        holder.textView.setText(image.getDescription());
         return convertView;
     }
 

@@ -1,6 +1,8 @@
 package com.qq456cvb.videoview.Tools;
 
+import android.app.Fragment;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
@@ -46,7 +48,12 @@ public class ChannelLoader {
             final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
                 public void onSuccess(int statusCode, Header[] headers, String response) {
                     pages = Integer.valueOf(response.substring(response.lastIndexOf("hdnPagetotal") + 21, response.lastIndexOf("hdnPagetotal") + 22));
-                    getChannelsByPage(1, type);
+                    if (pages != 0) {
+                        getChannelsByPage(1, type);
+                    } else {
+                        Toast.makeText(((Fragment) listener).getActivity(), "数据菜集中", Toast.LENGTH_SHORT).show();
+                        listener.onLoaded(result);
+                    }
                 }
 
                 public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
@@ -68,7 +75,12 @@ public class ChannelLoader {
             final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
                 public void onSuccess(int statusCode, Header[] headers, String response) {
                     pages = Integer.valueOf(response.substring(response.lastIndexOf("hdnPagetotal") + 21, response.lastIndexOf("hdnPagetotal") + 22));
-                    getChannelsByPage(1, type);
+                    if (pages != 0) {
+                        getChannelsByPage(1, type);
+                    } else {
+                        Toast.makeText(((Fragment) listener).getActivity(), "数据菜集中", Toast.LENGTH_SHORT).show();
+                        listener.onLoaded(result);
+                    }
                 }
 
                 public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
@@ -147,7 +159,6 @@ public class ChannelLoader {
         } catch (JSONException e) {
             e.printStackTrace();
         }
-
     }
 
     private void getProgrammesByChannel (final Channel channel) {
@@ -170,7 +181,7 @@ public class ChannelLoader {
             @Override
             public void run() {
                 try {
-                    UserClient.get("/stpy/ajaxVlcAction!queryEpgInfo.action?channel=" + channel.getName() + "& dateTime = ", null, handler);
+                    UserClient.get("/stpy/ajaxVlcAction!queryEpgInfo.action?channel=" + channel.getName() + "&dateTime=", null, handler);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -181,6 +192,8 @@ public class ChannelLoader {
 
     private void parseProgrammes(String html) {
         if (!html.contains(":")) {
+            ArrayList<Programme> programmeArrayList = new ArrayList<>();
+            programmes.add(programmeArrayList);
             return;
         }
         ArrayList<Programme> programmeArrayList = new ArrayList<>();

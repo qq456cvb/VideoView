@@ -15,6 +15,7 @@ import com.loopj.android.http.TextHttpResponseHandler;
 import com.qq456cvb.videoview.Activities.MainActivity;
 import com.qq456cvb.videoview.Adapters.Channel.ChannelListAdapter;
 import com.qq456cvb.videoview.Adapters.Channel.DishiListAdapter;
+import com.qq456cvb.videoview.Application.GlobalApp;
 import com.qq456cvb.videoview.R;
 import com.qq456cvb.videoview.Tools.ChannelLoader;
 import com.qq456cvb.videoview.Utils.Channel;
@@ -22,6 +23,7 @@ import com.qq456cvb.videoview.Utils.Programme;
 import com.qq456cvb.videoview.Utils.UserClient;
 
 import org.apache.http.Header;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -33,13 +35,18 @@ import java.util.ArrayList;
 public class RightChannelFragment extends Fragment implements ChannelLoader.OnLoadedListener {
     public final static int TV = 3;
     public final static int RADIO = 1;
+    private static int counter = 0;
 
     private ArrayList<String> channels = new ArrayList<>();
+    private ArrayList<Channel> origins = new ArrayList<>();
+    private ArrayList<ArrayList<Programme>> restore = new ArrayList<>();
     private ChannelListAdapter channelListAdapter;
     private DishiListAdapter dishiListAdapter;
     private ExpandableListView channelList;
     private ChannelLoader channelLoader = new ChannelLoader(this);
+    private int groupIndex = 0;
     private View view;
+    private int type = 0; // 0 means manually expand, 1 means auto expand
     ProgressDialog pdl;
 
 
@@ -50,30 +57,53 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
 
         view = inflater.inflate(R.layout.right_layout_channel, container, false);
         channelList = (ExpandableListView) view.findViewById(R.id.list);
+        channelListAdapter = new ChannelListAdapter(this, origins);
+        channelList.setAdapter(channelListAdapter);
+
         pdl = ProgressDialog.show(this.getActivity(), "获取中...", "请等待...", true, false);
         channelLoader.getChannelsBycategory("yangshi", TV);
+
 
         return view;
     }
 
-    public void onLoaded(ArrayList<Channel> channels) {
-        channelListAdapter = new ChannelListAdapter(this, channels);
-        channelList.setAdapter(channelListAdapter);
+    public void onLoaded(final ArrayList<Channel> channels) {
+//        channelListAdapter = new ChannelListAdapter(this, channels);
+//        channelList.setAdapter(channelListAdapter);
+        expandGroup(groupIndex, false);
+        if (channels.isEmpty()) {
+            origins.clear();
+            origins.addAll(channels);
+            channelListAdapter.notifyDataSetChanged();
+            pdl.dismiss();
+            return;
+        }
+        origins.clear();
+        origins.addAll(channels);
+        channelListAdapter.notifyDataSetChanged();
 
-        Message msg = Message.obtain(MainActivity.handler);
-        msg.what = MainActivity.CHANNEL;
-        Bundle bundle = new Bundle();
-        bundle.putString("type", "play");
-        bundle.putString("value", channels.get(0).getMulticastIP());
-        msg.obj = channels.get(0);
-        msg.setData(bundle);
-        msg.sendToTarget();
+        synchronized (this) {
+            if (counter == 0 || counter > 2) {
+                Message msg = Message.obtain(MainActivity.handler);
+                msg.what = MainActivity.CHANNEL;
+                Bundle bundle = new Bundle();
+                bundle.putString("type", "play");
+                bundle.putString("value", channels.get(0).getMulticastIP());
+                bundle.putFloat("startTime", 0);
+                msg.obj = channels.get(0);
+                msg.setData(bundle);
+                msg.sendToTarget();
+            }
+        }
+        counter++;
 
         channelList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
             @Override
             public boolean onChildClick(ExpandableListView parent, View v,
                                         final int groupPosition, final int childPosition, long id) {
-
+                channelListAdapter.currGroup = groupPosition;
+                channelListAdapter.currChild = childPosition;
+                channelListAdapter.notifyDataSetChanged();
                 Toast.makeText(RightChannelFragment.this.getActivity(),
                         "你点击了" + channelListAdapter.getChild(groupPosition, childPosition),
                         Toast.LENGTH_SHORT).show();
@@ -84,11 +114,14 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
                             response = response.substring(1, response.length() - 1);
                             try {
                                 JSONObject obj = new JSONObject(response);
+                                float startTime = obj.getInt("startTime");
+                                float timeLength = obj.getInt("timeLength");
                                 Message msg = Message.obtain(MainActivity.handler);
                                 msg.what = MainActivity.PROGRAMME;
                                 Bundle bundle = new Bundle();
                                 bundle.putString("type", "play");
                                 bundle.putString("value", obj.getString("url"));
+                                bundle.putFloat("startTime", startTime / timeLength);
 //                        msg.obj = channelListAdapter.getGroupChannel(groupPosition);
                                 msg.setData(bundle);
                                 msg.sendToTarget();
@@ -109,7 +142,8 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
                             Programme programme = channelListAdapter.getChildProgramme(groupPosition, childPosition);
                             String id = programme.channel.id;
                             UserClient.get("/stpy/ajaxVlcAction!getUrl.action?id=" + id + "&dateTime=" +
-                                    channelListAdapter.getChildProgramme(groupPosition, childPosition).starttime + "&hdnType=3&urlNext=1", null, handler);
+                                    channelListAdapter.getChildProgramme(groupPosition, childPosition).starttime + "&hdnType="
+                                    + GlobalApp.currentChannel.hdnType + "&urlNext=1", null, handler);
                         } catch (Exception e) {
                             e.printStackTrace();
                         }
@@ -121,14 +155,30 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
         channelList.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
             @Override
             public void onGroupExpand(int groupPosition) {
+                if (groupPosition != groupIndex && channelListAdapter.getChildrenCount(groupPosition) > 0) {
+                    expandGroup(groupIndex, false);
+                }
+                if (type == 1) {
+                    type = 0;
+                    return;
+                } else {
+                    if (!restore.isEmpty()) {
+                        channelListAdapter.getProgrammes().clear();
+                        channelListAdapter.getProgrammes().addAll(restore);
+                        channelListAdapter.notifyDataSetChanged();
+                        restore.clear();
+                    }
+                }
                 Toast.makeText(RightChannelFragment.this.getActivity(),
                         "你点击了" + channelListAdapter.getGroup(groupPosition),
                         Toast.LENGTH_SHORT).show();
+                groupIndex = groupPosition;
                 Message msg = Message.obtain(MainActivity.handler);
                 msg.what = MainActivity.CHANNEL;
                 Bundle bundle = new Bundle();
                 bundle.putString("type", "play");
                 bundle.putString("value", channelListAdapter.getGroupChannel(groupPosition).getMulticastIP());
+                bundle.putFloat("startTime", 0);
                 msg.obj = channelListAdapter.getGroupChannel(groupPosition);
                 msg.setData(bundle);
                 msg.sendToTarget();
@@ -144,7 +194,67 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
 
     public void changeCategory(String category, int type) {
         pdl = ProgressDialog.show(this.getActivity(), "获取中...", "请等待...", true, false);
+        restore.clear();
         channelLoader.getChannelsBycategory(category, type);
+    }
+
+    private void parseProgrammes(String html) {
+        if (!html.contains(":")) {
+            return;
+        }
+        ArrayList<Programme> programmeArrayList = new ArrayList<>();
+        html = html.replace("\\", "");
+        html = html.substring(2, html.length() - 2);
+        try {
+            JSONArray jsonArray = new JSONArray(html); //数据直接为一个数组形式，所以可以直接 用android提供的框架JSONArray读取JSON数据，转换成Array
+
+            for (int i = 0; i < jsonArray.length(); i++) {
+                JSONObject item = jsonArray.getJSONObject(i); //每条记录又由
+                // 几个Object对象组成
+                String name = item.getString("program");
+                String starttime = item.getString("starttime");
+                Programme programme = new Programme();
+                programme.name = name;
+                programme.starttime = starttime;
+                programmeArrayList.add(programme);
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        channelListAdapter.getProgrammes().set(groupIndex, programmeArrayList);
+        channelListAdapter.notifyDataSetChanged();
+    }
+
+    public void loadHistoryEDG(final Channel channel, final String time) {
+        pdl = ProgressDialog.show(this.getActivity(), "获取中...", "请等待...", true, false);
+        final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
+            public void onSuccess(int statusCode, Header[] headers, String response) {
+                if (response.contains(":")) {
+                    if (restore.isEmpty()) {
+                        restore = (ArrayList<ArrayList<Programme>>) channelListAdapter.getProgrammes().clone();
+                    }
+                    parseProgrammes(response);
+                    type = 1;
+                    expandGroup(groupIndex, true);
+                }
+                pdl.dismiss();
+            }
+
+            public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
+                Log.d("test", "sssss");
+            }
+        };
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    UserClient.get("/stpy/ajaxVlcAction!queryEpgInfo.action?channel="+channel.getName()+"&dateTime="+time, null, handler);
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 
     public void changeDishi(int type) {
@@ -164,6 +274,7 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
         Bundle bundle = new Bundle();
         bundle.putString("type", "play");
         bundle.putString("value", channels.get(0).get(0).getMulticastIP());
+        bundle.putFloat("startTime", 0);
         msg.obj = channels.get(0).get(0);
         msg.setData(bundle);
         msg.sendToTarget();
@@ -187,6 +298,7 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
                 Bundle bundle = new Bundle();
                 bundle.putString("type", "play");
                 bundle.putString("value", dishiListAdapter.getChildChannel(groupPosition, childPosition).getMulticastIP());
+                bundle.putFloat("startTime", 0);
                 msg.obj = dishiListAdapter.getChildChannel(groupPosition, childPosition);
                 msg.setData(bundle);
                 msg.sendToTarget();
@@ -196,9 +308,9 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
         });
     }
 
-    public void expandGroup(int groupPosition)
+    public void expandGroup(int groupPosition, boolean expand)
     {
-        if(channelList.isGroupExpanded(groupPosition))
+        if(!expand)
             channelList.collapseGroup(groupPosition);
         else
             channelList.expandGroup(groupPosition);

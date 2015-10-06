@@ -35,7 +35,8 @@
             android:layout_height="fill_parent"
             android:text="New Text"
             android:id="@+id/username"
-            android:gravity="center_vertical" />
+            android:gravity="center_vertical"
+            android:textSize="20dp" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -259,13 +260,13 @@
             android:gravity="left|center_vertical"
             android:paddingLeft="20dp" />
 
-        <EditText
-            android:layout_width="200dp"
+        <TextView
+            android:layout_width="300dp"
             android:layout_height="fill_parent"
+            android:text="New Text"
             android:id="@+id/depart"
-            android:layout_weight="0"
-            android:text="test"
-            android:gravity="center_vertical" />
+            android:gravity="center_vertical"
+            android:textSize="20dp" />
 
     </LinearLayout>
 
@@ -285,13 +286,13 @@
             android:gravity="left|center_vertical"
             android:paddingLeft="20dp" />
 
-        <EditText
+        <TextView
             android:layout_width="200dp"
             android:layout_height="fill_parent"
+            android:text="New Text"
             android:id="@+id/role"
-            android:layout_weight="0"
-            android:text="test"
-            android:gravity="center_vertical" />
+            android:gravity="center_vertical"
+            android:textSize="20dp" />
 
     </LinearLayout>
 
@@ -300,7 +301,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingLeft="250dp"
-        android:paddingRight="150dp">
+        android:paddingRight="150dp"
+        android:layout_marginBottom="10dp">
 
         <TextView
             android:layout_width="200dp"
@@ -312,26 +314,23 @@
             android:paddingLeft="20dp" />
 
         <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/editText"
-            android:layout_weight="1" />
-
-        <EditText
             android:layout_width="match_parent"
-            android:layout_height="100dp"
+            android:layout_height="120dp"
             android:id="@+id/remark"
             android:layout_weight="0"
             android:text="test"
-            android:gravity="top|left" />
+            android:gravity="top|left"
+            android:inputType="textMultiLine"
+            android:background="@drawable/border_slim"
+            android:layout_marginBottom="20dp"
+            android:textSize="20dp" />
 
     </LinearLayout>
 
     <LinearLayout
         android:orientation="horizontal"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="0.1"
+        android:layout_height="wrap_content"
         android:gravity="bottom|right">
 
         <Button

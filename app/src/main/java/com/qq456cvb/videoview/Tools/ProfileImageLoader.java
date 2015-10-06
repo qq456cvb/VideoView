@@ -16,6 +16,7 @@ import java.util.ArrayList;
 public class ProfileImageLoader {
     private ArrayList<UserImage> result = new ArrayList<>();
     private OnLoadedListener listener;
+    private int pages;
 
     public interface OnLoadedListener {
         void onLoaded(ArrayList<UserImage> arrayList, int type);
@@ -26,11 +27,16 @@ public class ProfileImageLoader {
     }
 
     public void getImages() {
+        pages = 0;
         result.clear();
         final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, String response) {
-                parseHtml(response);
-                listener.onLoaded(result, 0);
+                pages = Integer.valueOf(response.substring(response.indexOf("页/ 共") + 4, response.indexOf("页/ 共") + 5));
+                if (pages != 0) {
+                    getFirstImagesByPage(1);
+                } else {
+                    listener.onLoaded(result, 0);
+                }
             }
 
             public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
@@ -50,12 +56,17 @@ public class ProfileImageLoader {
         }.start();
     }
 
-    public void getImagesByReviewId(final String id) {
+    public void getSecondImagesByReviewId(final String id) {
+        pages = 0;
         result.clear();
         final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, String response) {
-                parseHtmlByReviewId(response, id);
-                listener.onLoaded(result, 1);
+                pages = Integer.valueOf(response.substring(response.indexOf("页/ 共") + 4, response.indexOf("页/ 共") + 5));
+                if (pages != 0) {
+                    getSecondImagesByPage(1, id);
+                } else {
+                    listener.onLoaded(result, 1);
+                }
             }
 
             public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
@@ -75,7 +86,35 @@ public class ProfileImageLoader {
         }.start();
     }
 
-    public void parseHtml(String html) {
+    public void getFirstImagesByPage(final int page) {
+        if (page <= pages) {
+            final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
+                public void onSuccess(int statusCode, Header[] headers, String response) {
+                    getFirstImagesBySinglePage(response);
+                    getFirstImagesByPage(page+1);
+                }
+
+                public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
+                    Log.d("test", "sssss");
+                }
+            };
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        UserClient.get("/stpy/imageMainAction!queryVideoImagePage.action?pageResult.pageNo=" + String.valueOf(page), null, handler);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        } else {
+            listener.onLoaded(result, 0);
+        }
+    }
+
+    private void getFirstImagesBySinglePage (String html){
         if (html.contains("onclick=\"showimage")) {
             UserImage img = new UserImage();
             int begin = html.indexOf("onclick=\"showimage");
@@ -83,14 +122,48 @@ public class ProfileImageLoader {
             String block = html.substring(begin, end);
             String reviewId = block.substring(block.indexOf("(")+1, block.indexOf(");"));
             String url = block.substring(block.indexOf("src=\"")+5, block.lastIndexOf("\""));
+            int a = html.indexOf("<p style=\"height: 10px;font-size: 20px;\">")+41;
+            int b = html.indexOf("张");
+            String description = (html.substring(a, b+1
+            )).replace("\t", "").replace("\n", "").replace("\r", "");
+            img.setDescription(description);
             img.setReviewId(reviewId);
             img.setUrl(url);
             result.add(img);
-            parseHtml(html.substring(end));
+            getFirstImagesBySinglePage(html.substring(b + 5));
         }
     }
 
-    public void parseHtmlByReviewId(String html, String id) {
+    public void getSecondImagesByPage(final int page, final String id) {
+        if (page <= pages) {
+            final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
+                public void onSuccess(int statusCode, Header[] headers, String response) {
+                    getSecondImagesBySinglePage(response, id);
+                    getSecondImagesByPage(page + 1, id);
+                }
+
+                public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
+                    Log.d("test", "sssss");
+                }
+            };
+            new Thread() {
+                @Override
+                public void run() {
+                    try {
+                        UserClient.get("/stpy/showImageAction!showimagepage.action?pageResult.pageNo=" + String.valueOf(page)
+                                + "&reviewid=" + id, null, handler);
+                    }
+                    catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+            }.start();
+        } else {
+            listener.onLoaded(result, 1);
+        }
+    }
+
+    private void getSecondImagesBySinglePage(String html, String id) {
         if (html.contains("class=\"image-zoom\"")) {
             UserImage img = new UserImage();
             int begin = html.indexOf("class=\"image-zoom\"");
@@ -104,7 +177,7 @@ public class ProfileImageLoader {
             img.setUrl(url);
             img.setProvincial(provincial);
             result.add(img);
-            parseHtmlByReviewId(html.substring(end), id);
+            getSecondImagesBySinglePage(html.substring(end), id);
         }
     }
 }

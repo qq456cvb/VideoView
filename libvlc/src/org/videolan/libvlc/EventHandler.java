@@ -20,11 +20,11 @@
 
 package org.videolan.libvlc;
 
-import java.util.ArrayList;
-
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+
+import java.util.ArrayList;
 
 public class EventHandler {
 
@@ -42,7 +42,7 @@ public class EventHandler {
     //public static final int MediaPlayerMediaChanged         = 0x100;
     //public static final int MediaPlayerNothingSpecial       = 0x101;
     //public static final int MediaPlayerOpening              = 0x102;
-    //public static final int MediaPlayerBuffering            = 0x103;
+    public static final int MediaPlayerBuffering            = 0x103;
     public static final int MediaPlayerPlaying                = 0x104;
     public static final int MediaPlayerPaused                 = 0x105;
     public static final int MediaPlayerStopped                = 0x106;

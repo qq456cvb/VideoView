@@ -1,8 +1,10 @@
 package com.qq456cvb.videoview.Subviews;
 
 import android.app.Fragment;
+import android.content.Intent;
 import android.content.res.Configuration;
 import android.graphics.PixelFormat;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
@@ -29,7 +31,6 @@ import org.videolan.libvlc.EventHandler;
 import org.videolan.libvlc.IVideoPlayer;
 import org.videolan.libvlc.LibVLC;
 import org.videolan.libvlc.Media;
-import org.videolan.libvlc.MediaList;
 
 import java.io.File;
 import java.lang.ref.WeakReference;
@@ -39,16 +40,17 @@ import java.util.Calendar;
 /**
  * Created by qq456cvb on 8/17/15.
  */
-public class VideoFragment extends Fragment implements SurfaceHolder.Callback, IVideoPlayer{
+public class VideoFragment extends Fragment implements SurfaceHolder.Callback, IVideoPlayer {
 
     private final static String TAG = "VideoFragment";
     private int isFullscreen = 0;
-    private String              urlToStream;
+    private String urlToStream = "";
     private View view;
     // Display Surface
     private LinearLayout vlcContainer;
     private SurfaceView mSurface;
-    private SurfaceHolder       holder;
+    private SurfaceHolder holder;
+    private static int index = 0;
 
     // Overlay / Controls
 
@@ -64,6 +66,7 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
     private SeekBar vlcVolume;
     private TextView vlcDuration;
     private TextView overlayTitle;
+    private FrameLayout radioBg;
 
     // media player
     private LibVLC libvlc;
@@ -74,9 +77,8 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState)
-    {
-        urlToStream = getResources().getString(R.string.default_url);
+                             Bundle savedInstanceState) {
+//        urlToStream = getResources().getString(R.string.default_url);
         view = inflater.inflate(R.layout.video, container, false);
 
         // VLC
@@ -93,11 +95,13 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
         vlcDuration = (TextView) view.findViewById(R.id.vlc_duration);
         vlcDuration.setVisibility(View.INVISIBLE);
         vlcSeekbar.setVisibility(View.INVISIBLE);
-        vlcButtonSnapshot = (ImageView)view.findViewById(R.id.vlc_button_snapshot);
+        vlcButtonSnapshot = (ImageView) view.findViewById(R.id.vlc_button_snapshot);
+        radioBg = (FrameLayout)view.findViewById(R.id.radio_img);
+        radioBg.setVisibility(View.INVISIBLE);
 
         overlayTitle = (TextView) view.findViewById(R.id.vlc_overlay_title);
         overlayTitle.setText(urlToStream);
-        overlayTitle.setVisibility(View.INVISIBLE);
+//        overlayTitle.setVisibility(View.INVISIBLE);
 
         // AUTOSTART
         playMovie();
@@ -133,6 +137,13 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
         vlcOverlay.setVisibility(View.GONE);
     }
 
+    public void toggleFullscreen() {
+        Message msg = Message.obtain(MainActivity.handler);
+        msg.what = MainActivity.TOGGLE_FULLSCREEN;
+        isFullscreen = isFullscreen ^ 1;
+        msg.arg1 = isFullscreen;
+        msg.sendToTarget();
+    }
     private void setupControls() {
         // PLAY PAUSE
         vlcButtonPlayPause.setOnClickListener(new View.OnClickListener() {
@@ -162,11 +173,15 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
                     String dateNow;
                     SimpleDateFormat sdf = new SimpleDateFormat(" yyyy-MM-dd HH:mm:ss");
                     dateNow = sdf.format(Calendar.getInstance().getTime());
-                    localPath = sdDir.toString() + "/" + GlobalApp.currentChannel.getName() + dateNow + ".jpg";
+                    localPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/" + GlobalApp.currentChannel.getName() + dateNow + ".jpg";
                 } else {
                     //TODO
                 }
                 libvlc.takeSnapShot(localPath, 800, 600);
+                Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
+                Uri uri = Uri.fromFile(new File(localPath));
+                intent.setData(uri);
+                VideoFragment.this.getActivity().sendBroadcast(intent);
                 Toast.makeText(VideoFragment.this.getActivity(), "已保存至" + localPath, Toast.LENGTH_SHORT).show();
             }
         });
@@ -176,11 +191,7 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
             public void onClick(View v) {
 //                libvlc.detachSurface();
 //                libvlc.attachSurface(((MainActivity)VideoFragment.this.getActivity()).mVideoFullscreen.getHolder().getSurface(), VideoFragment.this);
-                Message msg = Message.obtain(MainActivity.handler);
-                msg.what = MainActivity.TOGGLE_FULLSCREEN;
-                isFullscreen = isFullscreen ^ 1;
-                msg.arg1 = isFullscreen;
-                msg.sendToTarget();
+                toggleFullscreen();
             }
         });
         // SEEKBAR
@@ -189,8 +200,8 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
             @Override
             public void run() {
                 if (libvlc != null) {
-                    long curTime = libvlc.getTime();
-                    long totalTime = (long) (curTime / libvlc.getPosition());
+                    long totalTime = libvlc.getLength();
+                    long curTime = (long) (totalTime * libvlc.getPosition());
                     int minutes = (int) (curTime / (60 * 1000));
                     int seconds = (int) ((curTime / 1000) % 60);
                     int endMinutes = (int) (totalTime / (60 * 1000));
@@ -203,7 +214,7 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
             }
         };
 
-        final long timeToDisappear = 3000;
+        final long timeToDisappear = 5000;
         runnableSeekbar.run();
         vlcSeekbar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
@@ -414,17 +425,17 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
 //            libvlc.eventVideoPlayerActivityCreated(true);
             libvlc.setSubtitlesEncoding("");
             libvlc.setAout(LibVLC.AOUT_OPENSLES);
+//            libvlc.setVout(LibVLC.VOUT_OPEGLES2);
             libvlc.setChroma("RV32");
-            LibVLC.restart(view.getContext());
+//            LibVLC.restart(view.getContext());
 //            libvlc.setNetworkCaching(20000);
             EventHandler.getInstance().addHandler(mHandler);
             holder.setFormat(PixelFormat.RGBX_8888);
             holder.setKeepScreenOn(true);
-            MediaList list = libvlc.getMediaList();
-            list.clear();
-            list.add(new Media(libvlc, LibVLC.PathToURI(media)), false);
-            libvlc.setVolume(50);
-            libvlc.playIndex(0);
+//            MediaList list = libvlc.getMediaList();
+//            list.clear();
+//            list.add(new Media(libvlc, LibVLC.PathToURI(media)), false);
+//            libvlc.playIndex(0);
         } catch (Exception e) {
             Toast.makeText(VideoFragment.this.getActivity(), "Could not create Vlc Player", Toast.LENGTH_LONG).show();
         }
@@ -448,25 +459,43 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
         mVideoHeight = 0;
     }
 
-    public void changeSrc(String src) {
-        if (src.contains("upload") || src.contains("VIDEO")) {
-            vlcDuration.setVisibility(View.VISIBLE);
-            vlcSeekbar.setVisibility(View.VISIBLE);
-        } else {
-            vlcDuration.setVisibility(View.INVISIBLE);
-            vlcSeekbar.setVisibility(View.INVISIBLE);
-        }
-        if (libvlc.isPlaying()) {
-            libvlc.pause();
-        }
-        libvlc.stop();
-        libvlc.clearBuffer();
-//        LibVLC.restart(view.getContext());
-        libvlc.getMediaList().clear();
-        libvlc.getMediaList().add(new Media(libvlc, LibVLC.PathToURI(src)), false);
-        libvlc.playIndex(0);
+    public void changeSrc(String src, float startTime) {
+        synchronized (this) {
+            if (src.contains(".mp4") || src.contains(".mp3")) {
+                vlcDuration.setVisibility(View.VISIBLE);
+                vlcSeekbar.setVisibility(View.VISIBLE);
+            } else {
+                vlcDuration.setVisibility(View.INVISIBLE);
+                vlcSeekbar.setVisibility(View.INVISIBLE);
+            }
+            if (src.contains("G*") || src.contains(".mp3")) {
+                radioBg.setVisibility(View.VISIBLE);
+            } else {
+                radioBg.setVisibility(View.INVISIBLE);
+            }
+            if (libvlc.isPlaying()) {
+                libvlc.pause();
+            }
+            libvlc.stop();
+            // TODO: confusing, change source sometimes makes app crash.
+            LibVLC.restart(view.getContext());
+
+            libvlc.getPrimaryMediaList().clear();
+            libvlc.getPrimaryMediaList().add(new Media(libvlc, LibVLC.PathToURI(src)), false);
+            libvlc.playIndex(0);
+//            Handler handler = new Handler();
+//            Runnable runnable = new Runnable() {
+//                @Override
+//                public void run() {
+//                    libvlc.setVolume(vlcVolume.getProgress());
+//                }
+//            };
+//            handler.postDelayed(runnable, 1000);
+            libvlc.setPosition(startTime);
+            vlcButtonPlayPause.setImageDrawable(getResources().getDrawable(R.drawable.ic_action_pause_over_video));
 //        libvlc.pause();
-        overlayTitle.setText(src);
+            overlayTitle.setText(src);
+        }
     }
 
     /**
@@ -475,7 +504,7 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
      * ***********
      */
 
-    private static class MyHandler extends Handler {
+    private class MyHandler extends Handler {
         private WeakReference<VideoFragment> mOwner;
 
         public MyHandler(VideoFragment owner) {
@@ -496,17 +525,28 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
             Bundle b = msg.getData();
             switch (b.getInt("event")) {
                 case EventHandler.MediaPlayerEndReached:
-                    player.releasePlayer();
+//                    player.releasePlayer();
                     break;
-                case EventHandler.MediaPlayerPlaying:
+                case EventHandler.MediaPlayerPlaying: {
+                    Log.d(TAG, "playing changed!");
+                    Handler handler = new Handler();
+                    Runnable runnable = new Runnable() {
+                        @Override
+                        public void run() {
+                            libvlc.setVolume(vlcVolume.getProgress());
+                        }
+                    };
+                    handler.postDelayed(runnable, 1000);
+                    break;
+                }
                 case EventHandler.MediaPlayerPaused:
                 case EventHandler.MediaPlayerStopped:
                 case EventHandler.MediaPlayerPositionChanged:
-//                    Log.d(TAG, "Position changed!");
+                    Log.d(TAG, "Position changed!");
                     break;
-//                case EventHandler.MediaPlayerBuffering:
-//                    Log.d(TAG, "MediaPlayerBuffering");
-//                    break;
+                case EventHandler.MediaPlayerBuffering:
+                    Log.d(TAG, "MediaPlayerBuffering");
+                    break;
                 default:
                     break;
             }

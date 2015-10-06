@@ -39,7 +39,12 @@ public class DateTimePickDialogUtil implements DatePicker.OnDateChangedListener,
     private String dateTime;
     private String initDateTime;
     private Activity activity;
+    private OnDateSelectListener onDateSelectListener;
+    public int tag = 0;
 
+    public interface OnDateSelectListener {
+        void OnDateComplete(String dateTime);
+    }
     /**
      * 日期时间弹出选择框构造函数
      *
@@ -48,7 +53,8 @@ public class DateTimePickDialogUtil implements DatePicker.OnDateChangedListener,
      * @param initDateTime
      *            初始日期时间值，作为弹出窗口的标题和日期时间初始值
      */
-    public DateTimePickDialogUtil(Activity activity, String initDateTime) {
+    public DateTimePickDialogUtil(Activity activity, OnDateSelectListener listener, String initDateTime) {
+        this.onDateSelectListener = listener;
         this.activity = activity;
         this.initDateTime = initDateTime;
 
@@ -95,6 +101,9 @@ public class DateTimePickDialogUtil implements DatePicker.OnDateChangedListener,
                 .setPositiveButton("确定", new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int whichButton) {
                         onDateChanged(null, 0, 0, 0);
+                        if (tag == 0) {
+                            onDateSelectListener.OnDateComplete(dateTime);
+                        }
                         inputDate.setText(dateTime);
                     }
                 })

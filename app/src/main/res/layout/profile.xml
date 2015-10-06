@@ -108,4 +108,30 @@
             android:textSize="40sp"
             android:gravity="center_horizontal" />
     </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="1" >
+
+        <ImageView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:id="@+id/profile_local_img"
+            android:src="@drawable/profile_video"
+            android:layout_weight="1"
+            android:layout_marginTop="200dp" />
+
+        <TextView
+            android:layout_width="fill_parent"
+            android:layout_height="fill_parent"
+            android:text="本地"
+            android:id="@+id/profile_local_txt"
+            android:layout_weight="2"
+            android:textStyle="bold"
+            android:textColor="#ff4488ff"
+            android:textSize="40sp"
+            android:gravity="center_horizontal" />
+    </LinearLayout>
 </LinearLayout>

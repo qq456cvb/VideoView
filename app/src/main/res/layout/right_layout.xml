@@ -3,6 +3,31 @@
     android:orientation="vertical" android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_weight="6" >
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="开始时间："
+            android:id="@+id/txt_history_start"
+            android:layout_weight="1"
+            android:gravity="center_vertical"
+            android:textSize="20dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:text="starttime"
+            android:id="@+id/txt_history"
+            android:textSize="30dp"
+            android:gravity="center_vertical"
+            android:layout_weight="0.4" />
+    </LinearLayout>
+
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

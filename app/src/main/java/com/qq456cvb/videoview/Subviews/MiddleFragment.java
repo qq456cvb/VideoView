@@ -34,7 +34,7 @@ public class MiddleFragment extends Fragment {
     private Button radioButton;
     private LinearLayout tabMenu;
     private LinearLayout tabContainer;
-    private VideoFragment videoFragment;
+    public VideoFragment videoFragment;
 
 
     @Override
@@ -237,8 +237,8 @@ public class MiddleFragment extends Fragment {
         }
     }
 
-    public void changeSrc(String src) {
-        videoFragment.changeSrc(src);
+    public void changeSrc(String src, float startTime) {
+        videoFragment.changeSrc(src, startTime);
     }
 
     public void toggleFullscreen(boolean fullscreen) {

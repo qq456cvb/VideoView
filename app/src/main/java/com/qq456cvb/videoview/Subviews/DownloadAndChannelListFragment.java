@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Message;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,6 +18,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.loopj.android.http.AsyncHttpResponseHandler;
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.qq456cvb.videoview.Activities.MainActivity;
 import com.qq456cvb.videoview.Application.GlobalApp;
 import com.qq456cvb.videoview.CustomWidgets.DatePickDialog;
@@ -27,6 +29,8 @@ import com.qq456cvb.videoview.Utils.MyNotification;
 import com.qq456cvb.videoview.Utils.UserClient;
 
 import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -38,8 +42,8 @@ import java.util.Date;
 /**
  * Created by qq456cvb on 9/13/15.
  */
-public class DownloadAndChannelListFragment extends Fragment {
-    private RightChannelFragment rightChannelFragment = new RightChannelFragment();
+public class DownloadAndChannelListFragment extends Fragment implements DateTimePickDialogUtil.OnDateSelectListener {
+    private RightChannelFragment rightChannelFragment  = new RightChannelFragment();
 
     private LinearLayout linearLayoutMp4;
     private LinearLayout linearLayoutZip;
@@ -59,6 +63,48 @@ public class DownloadAndChannelListFragment extends Fragment {
 
     public RightChannelFragment getRightChannelFragment() {
         return rightChannelFragment;
+    }
+
+    public void OnDateComplete(final String dateTime) {
+        final String convertDateTime = (dateTime+":00").replace(" ", "%20");
+        final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
+            public void onSuccess(int statusCode, Header[] headers, String response) {
+                response = response.replace("\\", "");
+                response = response.substring(1, response.length() - 1);
+                try {
+                    JSONObject jsonObject = new JSONObject(response);
+                    float startTime = jsonObject.getInt("startTime");
+                    float timeLength = jsonObject.getInt("timeLength");
+                    Message msg = Message.obtain(MainActivity.handler);
+                    msg.what = MainActivity.CHANNEL;
+                    Bundle bundle = new Bundle();
+                    bundle.putString("type", "play");
+                    bundle.putString("value", jsonObject.getString("url"));
+                    bundle.putFloat("startTime", startTime / timeLength);
+                    msg.obj = GlobalApp.currentChannel;
+                    msg.setData(bundle);
+                    msg.sendToTarget();
+                    rightChannelFragment.loadHistoryEDG(GlobalApp.currentChannel, convertDateTime);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+            }
+
+            public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
+                Log.d("test", "sssss");
+            }
+        };
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    UserClient.get("/stpy/ajaxVlcAction!getUrl.action?id=" + GlobalApp.currentChannel.id + "" +
+                            "&dateTime=" + convertDateTime + "&hdnType=" + GlobalApp.currentChannel.hdnType + "&urlNext=1", null, handler);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
     }
 
     @Override
@@ -84,8 +130,9 @@ public class DownloadAndChannelListFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 DateTimePickDialogUtil dateTimePickDialog = new DateTimePickDialogUtil(
-                        DownloadAndChannelListFragment.this.getActivity(), startDateTime.getText().toString());
+                        DownloadAndChannelListFragment.this.getActivity(), DownloadAndChannelListFragment.this, startDateTime.getText().toString());
                 dateTimePickDialog.dateTimePickDialog(startDateTime);
+                dateTimePickDialog.tag = 0;
             }
         });
 
@@ -93,10 +140,12 @@ public class DownloadAndChannelListFragment extends Fragment {
 
             public void onClick(View v) {
                 DateTimePickDialogUtil dateTimePickDialog = new DateTimePickDialogUtil(
-                        DownloadAndChannelListFragment.this.getActivity(), endDateTime.getText().toString());
+                        DownloadAndChannelListFragment.this.getActivity(), DownloadAndChannelListFragment.this, endDateTime.getText().toString());
                 dateTimePickDialog.dateTimePickDialog(endDateTime);
+                dateTimePickDialog.tag = 1;
             }
         });
+
 
 
         final AsyncHttpResponseHandler handler = new AsyncHttpResponseHandler() {
@@ -107,16 +156,20 @@ public class DownloadAndChannelListFragment extends Fragment {
                 String localPath = "";
                 myNotification.changeProgressStatus(100, 0);
                 long length = 0;
-                File sdDir = null;
+                File sdDir = null, videoPath = null;
                 boolean sdCardExist = Environment.getExternalStorageState()
                         .equals(android.os.Environment.MEDIA_MOUNTED); //判断sd卡是否存在
                 if (sdCardExist)
                 {
                     sdDir = Environment.getExternalStorageDirectory();//获取跟目录
+                    videoPath = new File(sdDir.toString() + "/stpy/video");
+                    if (!videoPath.exists()) {
+                        videoPath.mkdirs();
+                    }
                     if (type.equals("3")) {
-                        localPath = sdDir.toString() + "/" + startDateTime.getText().toString() + "_" + endDateTime.getText().toString() + ".mp4";
+                        localPath = videoPath.toString() + "/" +GlobalApp.currentChannel.getName()+"_"+ startDateTime.getText().toString() + "_" + endDateTime.getText().toString() + ".mp4";
                     } else {
-                        localPath = sdDir.toString() + "/" + startDateTime.getText().toString() + "_" + endDateTime.getText().toString() + ".mp3";
+                        localPath = videoPath.toString() + "/" +GlobalApp.currentChannel.getName()+"_"+ startDateTime.getText().toString() + "_" + endDateTime.getText().toString() + ".mp3";
                     }
                 } else {
                     //TODO
@@ -140,14 +193,6 @@ public class DownloadAndChannelListFragment extends Fragment {
                             Toast.makeText(DownloadAndChannelListFragment.this.getActivity(), "已保存至" + inner_path, Toast.LENGTH_LONG).show();
                         }
                     });
-                    inStream.close();
-//                    Intent intent = new Intent(DownloadAndChannelListFragment.this.getActivity(), DownloadService.class);
-//                    Bundle bundle = new Bundle();
-//                    bundle.putString("url", remotePath);
-//                    bundle.putString("local", localPath);
-//                    intent.putExtras(bundle);
-//                    DownloadAndChannelListFragment.this.getActivity().startService(intent);
-//                }
                 }
                 catch (Exception e) {
                     System.out.println("下载出错");
@@ -199,14 +244,6 @@ public class DownloadAndChannelListFragment extends Fragment {
                             myNotification = new MyNotification(DownloadAndChannelListFragment.this.getActivity(), updatePendingIntent,1);
                             myNotification.showCustomizeNotification(R.drawable.ic_launcher, "视频下载", R.layout.notification);
                             Channel channel = GlobalApp.currentChannel;
-//                            String id = channel.id;
-//                            RequestParams params = new RequestParams();
-//                            params.put("startTime", startDateTime.getText().toString() + ":00");
-//                            params.put("endTime", endDateTime.getText().toString() + ":00");
-//                            params.put("hdnType", channel.hdnType);
-//                            type = channel.hdnType;
-//                            params.put("hdnDypass", channel.hdnDyass);
-//                            UserClient.post("/stpy/videoDownloadAction!doDown.action?hdid=" + id, params, handler);
                             String hdid = "hdid=" + channel.id;
 //                            String dateBegin = "dateBegin=" + chooseDates.replaceAll(";", "%3B");
                             String sstartTime = "startTime=" + (startDateTime.getText().toString() + ":00").replaceAll(" ","+").replaceAll(":", "%3A");
@@ -216,22 +253,6 @@ public class DownloadAndChannelListFragment extends Fragment {
                             type = channel.hdnType;
                             String url = "/stpy/videoDownloadAction!doDown.action?" + hdid + "&" + sstartTime
                                     + "&" + sendTime + "&" + hdnType + "&" + hdnDypass;
-                            String localPath = "";
-                            long length = 0;
-                            File sdDir = null;
-                            boolean sdCardExist = Environment.getExternalStorageState()
-                                    .equals(android.os.Environment.MEDIA_MOUNTED); //判断sd卡是否存在
-                            if (sdCardExist)
-                            {
-                                sdDir = Environment.getExternalStorageDirectory();//获取跟目录
-                                if (type == "3") {
-                                    localPath = sdDir.toString() + "/" + startDateTime.getText().toString() + "_" + endDateTime.getText().toString() + ".mp4";
-                                } else {
-                                    localPath = sdDir.toString() + "/" + startDateTime.getText().toString() + "_" + endDateTime.getText().toString() + ".mp3";
-                                }
-                            } else {
-                                //TODO
-                            }
                             UserClient.get(url, null, handler);
                             DownloadAndChannelListFragment.this.getActivity().runOnUiThread(new Runnable() {
                                 @Override
@@ -266,6 +287,7 @@ public class DownloadAndChannelListFragment extends Fragment {
         return view;
     }
 
+
     private void sendMessageToMainActivity(int messageType, Bundle bundle){
         Message msg = Message.obtain(MainActivity.handler);
         msg.what = messageType;
@@ -284,13 +306,17 @@ public class DownloadAndChannelListFragment extends Fragment {
                     // Do something with the file `response`
                     String localPath = "";
                     long length = 0;
-                    File sdDir = null;
+                    File sdDir = null, videoPath = null;
                     boolean sdCardExist = Environment.getExternalStorageState()
                             .equals(android.os.Environment.MEDIA_MOUNTED); //判断sd卡是否存在
                     if (sdCardExist)
                     {
                         sdDir = Environment.getExternalStorageDirectory();//获取跟目录
-                        localPath = sdDir.toString() + "/"+chooseDates+" "+startDateTime.getText().toString().substring(11)+"_"+endDateTime.getText().toString().substring(11)+".zip";
+                        videoPath = new File(sdDir.toString() + "/stpy/video");
+                        if (!videoPath.exists()) {
+                            videoPath.mkdirs();
+                        }
+                        localPath = videoPath.toString() + "/"+GlobalApp.currentChannel.getName()+"_"+chooseDates+" "+startDateTime.getText().toString().substring(11)+"_"+endDateTime.getText().toString().substring(11)+".zip";
                     } else {
                         //TODO
                     }

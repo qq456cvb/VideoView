@@ -31,8 +31,8 @@ public class ProfileConfigFragment extends Fragment {
     private EditText phone;
     private EditText mail;
     private EditText remark;
-    private EditText depart;
-    private EditText role;
+    private TextView depart;
+    private TextView role;
     private Button confirm;
     private Button cancel;
     private View view;
@@ -67,8 +67,8 @@ public class ProfileConfigFragment extends Fragment {
         phone = (EditText)view.findViewById(R.id.phone);
         mail = (EditText)view.findViewById(R.id.mail);
         remark = (EditText)view.findViewById(R.id.remark);
-        depart = (EditText)view.findViewById(R.id.depart);
-        role = (EditText)view.findViewById(R.id.role);
+        depart = (TextView)view.findViewById(R.id.depart);
+        role = (TextView)view.findViewById(R.id.role);
         confirm = (Button)view.findViewById(R.id.configConfirm);
         cancel = (Button)view.findViewById(R.id.configCancel);
     }
@@ -172,7 +172,9 @@ public class ProfileConfigFragment extends Fragment {
         userClient.remark = sub.substring(sub.indexOf("(0,300)\">")+9, sub.indexOf("</textarea>"));
         sub = html.substring(html.indexOf("<input type=\"hidden\" name=\"id\" value="));
         userClient.id = sub.substring(sub.indexOf("value=")+7, sub.indexOf("/>")-1);
-        userClient.department = "福建省广播电视节目收听收看中心";
-        userClient.role = "评议员";
+        sub = html.substring(html.indexOf("<option"));
+        userClient.department = sub.substring(sub.indexOf(">")+1, sub.indexOf("</option>")).replace("\t", "").replace("\r", "").replace("\n", "");
+        sub = html.substring(html.indexOf("selected=\"selected\""));
+        userClient.role = sub.substring(sub.indexOf(">")+1, sub.indexOf("</option>")).replace("\t", "").replace("\r", "").replace("\n", "");
     }
 }

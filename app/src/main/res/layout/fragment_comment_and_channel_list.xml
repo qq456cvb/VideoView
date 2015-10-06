@@ -13,6 +13,30 @@
         <LinearLayout
             android:orientation="horizontal"
             android:layout_width="match_parent"
+            android:layout_height="75dp">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="开始时间："
+                android:id="@+id/txt_com_startTime"
+                android:layout_weight="1"
+                android:gravity="center_vertical"
+                android:textSize="20dp" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="starttime"
+                android:id="@+id/txt_com_history"
+                android:textSize="30dp"
+                android:gravity="center_vertical"
+                android:layout_weight="0.4" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
             android:layout_height="75dp"
             android:gravity="center_vertical|center_horizontal"
             android:layout_marginTop="30dp">

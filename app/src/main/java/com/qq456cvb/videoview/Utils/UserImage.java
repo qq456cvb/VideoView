@@ -9,6 +9,7 @@ public class UserImage {
     private String reviewId;
     private String userId;
     private String provincial; //TODO: what's this???
+    private String description;
 
     public String getURL() {
         return url;
@@ -17,6 +18,12 @@ public class UserImage {
         this.url = url;
     }
 
+    public void setDescription(String description) {
+        this.description = description;
+    }
+    public String getDescription() {
+        return this.description;
+    }
     public String getUserId() {
         return userId;
     }

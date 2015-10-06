@@ -46,6 +46,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
     public final static int PROGRAMME = 4;
     public final static int TOGGLE_FULLSCREEN = 5;
     private long mExitTime = 0;
+    private boolean isFullscreen = false;
 
     private RightFragment mRightFragment = new RightFragment();
     private MiddleFragment mMiddleFragment;
@@ -87,15 +88,25 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
 
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
-            if ((System.currentTimeMillis() - mExitTime) > 2000) {
-                Object mHelperUtils;
-                Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
-                mExitTime = System.currentTimeMillis();
+            if (!isFullscreen) {
+                if ((System.currentTimeMillis() - mExitTime) > 2000) {
+                    Object mHelperUtils;
+                    Toast.makeText(this, "再按一次退出程序", Toast.LENGTH_SHORT).show();
+                    mExitTime = System.currentTimeMillis();
 
+                } else {
+                    finish();
+                }
+                return true;
             } else {
-                finish();
+                if (mMiddleFragment.videoFragment != null) {
+                    mMiddleFragment.videoFragment.toggleFullscreen();
+                }
+                if (mProfileFragment.profileVideoFragment != null && mProfileFragment.profileVideoFragment.videoFragment != null) {
+                    mProfileFragment.profileVideoFragment.videoFragment.toggleFullscreen();
+                }
+                return true;
             }
-            return true;
         }
         return super.onKeyDown(keyCode, event);
     }
@@ -119,8 +130,9 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
             @Override
             public void onClick(View v) {
                 lastButton.setBackgroundColor(0x003091ff);
-                resetCatagory();
+
                 lastButton = mWatchButton;
+                resetCatagory();
                 clearFragments();
 //                if (lastPlaying && lastButton == mProfileButton) {
 //                    mMiddleFragment.togglePlay(true);
@@ -141,8 +153,9 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
             @Override
             public void onClick(View v) {
                 lastButton.setBackgroundColor(0x003091ff);
-                resetCatagory();
+
                 lastButton = mDownloadButton;
+                resetCatagory();
                 clearFragments();
 //                if (lastPlaying && lastButton == mProfileButton) {
 //                    mMiddleFragment.togglePlay(true);
@@ -163,8 +176,9 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
             @Override
             public void onClick(View v) {
                 lastButton.setBackgroundColor(0x003091ff);
-                resetCatagory();
+
                 lastButton = mCommentButton;
+                resetCatagory();
                 clearFragments();
 //                if (lastPlaying && lastButton == mProfileButton) {
 //                    mMiddleFragment.togglePlay(true);
@@ -224,12 +238,10 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
         transaction.add(R.id.content_right, downloadAndChannelListFragment);
         transaction.hide(mProfileFragment);
         transaction.hide(mMiddleFragment);
-        transaction.hide(mRightFragment);
         transaction.hide(commentPanelFragment);
         transaction.hide(comchanFragment);
         transaction.hide(downloadAndChannelListFragment);
         transaction.show(mMiddleFragment);
-        transaction.show(mRightFragment);
         transaction.commit();
 
         mWatchButton.setBackgroundColor(0x003091ff);
@@ -290,7 +302,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
                             getRightChannelFragment().changeDishi(message.arg1);
                         }
                         else if (type.equals("play")) {
-                            mMiddleFragment.changeSrc(message.getData().getString("value"));
+                            mMiddleFragment.changeSrc(message.getData().getString("value"), message.getData().getFloat("startTime"));
                             GlobalApp.currentChannel = (Channel)message.obj;
                         }
                         break;
@@ -301,7 +313,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
                             getRightChannelFragment().changeCategory(message.getData().getString("value"), message.arg1);
                         }
                         else if (type.equals("play")) {
-                            mMiddleFragment.changeSrc(message.getData().getString("value"));
+                            mMiddleFragment.changeSrc(message.getData().getString("value"), message.getData().getFloat("startTime"));
                             GlobalApp.currentChannel = (Channel)message.obj;
                         }
                         break;
@@ -312,7 +324,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
                             getRightChannelFragment().changeCategory(message.getData().getString("value"), message.arg1);
                         }
                         else if (type.equals("play")) {
-                            mMiddleFragment.changeSrc(message.getData().getString("value"));
+                            mMiddleFragment.changeSrc(message.getData().getString("value"), message.getData().getFloat("startTime"));
                         }
                         break;
                     }
@@ -350,6 +362,8 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
                             mContentMiddleAndRight.setLayoutParams(p);
                             mContentMiddleAndRight.requestLayout();
                             mMiddleFragment.toggleFullscreen(true);
+                            mProfileFragment.toggleFullscreen(true);
+                            isFullscreen = true;
                         } else if (message.arg1 == 0) {
                             mContentRight.setVisibility(View.VISIBLE);
                             mContentTop.setVisibility(View.VISIBLE);
@@ -358,8 +372,9 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
                             p.setMargins(0, 20, 0, 20);
                             mContentMiddleAndRight.setLayoutParams(p);
                             mContentMiddleAndRight.requestLayout();
-                            mContentMiddleAndRight.requestLayout();
                             mMiddleFragment.toggleFullscreen(false);
+                            mProfileFragment.toggleFullscreen(false);
+                            isFullscreen = false;
                         }
                     }
                     default:

@@ -15,6 +15,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@+id/network_image_view"
         android:layout_centerHorizontal="true"
-        >
+        android:textSize="25dp"
+        android:textStyle="bold">
     </TextView>
 </RelativeLayout>

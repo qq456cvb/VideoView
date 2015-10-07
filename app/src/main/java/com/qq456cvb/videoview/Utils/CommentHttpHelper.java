@@ -31,6 +31,7 @@ public class CommentHttpHelper {
     private static String TAG="CommentHttpHelper";
     private static String addReviewUrl= "/stpy/reviewAction!addReview.action?hdPageNo=1";
     private static String getReviewUrl="/stpy/reviewMainAction!queryReviewMain.action";
+    private static String getReviewPageUrl="/stpy/reviewMainAction!queryReviewPage.action";
     private static String editReviewUrl="/stpy/ajaxReviewAction!queryReviewById.action";
     private static String updateReviewUrl="/stpy/reviewMainAction!updateReviewInfo.action";
     private static String deleteReviewUrl="/stpy/reviewMainAction!deleteReview.action";
@@ -64,7 +65,7 @@ public class CommentHttpHelper {
                     params.put("checkedimgindex", 2);
                     params.put("radioReview", 1);
                     params.put("reviewMapping.name",title);
-                    params.put("reviewMapping.remark",content);
+                    params.put("reviewMapping.remark", content);
                     params.put("hdnPageNo", 1);
                     params.put("hdnType", 3);
                     GlobalApp.user.post(addReviewUrl, params, handler);
@@ -77,12 +78,59 @@ public class CommentHttpHelper {
     }
 
     public static void getCommentHelper(final CommentPanelRetSwitcher cprs){
-//        final ArrayList<String> ret=new ArrayList<String>();
-        final ArrayList<Integer> queryIds=new ArrayList<Integer>();
-        int count=0;
-        final ArrayList<HashMap<String, String>> list=new ArrayList<HashMap<String, String>>();
         final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, String response) {
+//                Log.d("Total", "getCommentHelper statusCode:" + statusCode + ", response:" + response);
+                String[] items=response.split("\n");
+                String line;
+                String totalpage="1";
+                int i=0;
+                String totallinestart="<span style=\"color: #6A6565;\">页/ 共";
+                String totallineend="页 </span>";
+                while(i<items.length){
+                    line=items[i].trim();
+//                    Log.d("Total",line);
+                    if(line.startsWith(totallinestart)){
+//                        Log.d("Total","find start"+line);
+                        totalpage=line.substring(line.indexOf(totallinestart)+totallinestart.length(),line.indexOf(totallineend));
+//                        Log.d("Total","line:"+line+"\n"+"totalpage:"+totalpage);
+                        break;
+                    }
+                    i++;
+                }
+                int total=Integer.parseInt(totalpage);
+                Log.d("Total","totalint:"+total);
+                getCommentPageHelper(cprs, total);
+            }
+
+            public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
+                Log.d("test", "sssss"+response);
+//                cprs.stopProgressDialog();
+                cprs.makeToast("获取评论失败");
+            }
+        };
+        new Thread() {
+            @Override
+            public void run() {
+                try {
+                    RequestParams params=new RequestParams();
+                    GlobalApp.user.get(getReviewUrl, params, handler);
+                    Log.d("Total","postrequest");
+                }
+                catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        }.start();
+    }
+    public static void getCommentPageHelper(final CommentPanelRetSwitcher cprs, final int totalpage){
+//        final ArrayList<String> ret=new ArrayList<String>();
+        final ArrayList<Integer> queryIds=new ArrayList<Integer>();
+        final ArrayList<HashMap<String, String>> list=new ArrayList<HashMap<String, String>>();
+        final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
+            private int count=0;
+            public void onSuccess(int statusCode, Header[] headers, String response) {
+                count++;
 //                Log.d(TAG, "getCommentHelper statusCode:" + statusCode + ", response:" + response);
                 String[] items=response.split("\n");
                 String line;
@@ -175,9 +223,11 @@ public class CommentHttpHelper {
 //                        }
 //                    }
 //                }
-                Log.d(TAG, "new list title"+list.get(0).get("title"));
+                Log.d(TAG, "new list title" + list.get(0).get("title"));
                 cprs.notifyListChange(list, queryIds);
-                cprs.makeToast("获取评论成功");
+                if(count==totalpage){
+                    cprs.makeToast("获取评论成功");
+                }
 //                cprs.stopProgressDialog();
             }
 
@@ -191,8 +241,22 @@ public class CommentHttpHelper {
             @Override
             public void run() {
                 try {
-                    RequestParams params = new RequestParams();
-                    GlobalApp.user.get(getReviewUrl, params, handler);
+                    int curpage=1;
+                    RequestParams params = null;
+                    while(curpage<totalpage+1){
+                        params = new RequestParams();
+                        params.put("pageResult.pageNo", curpage);
+                        GlobalApp.user.get(getReviewPageUrl, params, handler);
+                        curpage++;
+                    }
+//                    int curpage=totalpage;
+//                    RequestParams params = null;
+//                    while(curpage>0){
+//                        params = new RequestParams();
+//                        params.put("pageResult.pageNo", curpage);
+//                        GlobalApp.user.get(getReviewPageUrl, params, handler);
+//                        curpage--;
+//                    }
                 }
                 catch (Exception e) {
                     e.printStackTrace();

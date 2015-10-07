@@ -207,11 +207,14 @@ public class CommentHttpHelper {
         final int idsize=queryIds.size();
         final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, String response) {
-//                Log.d(TAG, "statusCode:" + statusCode + ", response:" + response);
+                Log.d("TEF", "statusCode:" + statusCode + ", response:" + response);
                 String columns[]=response.split(",");
                 String contentraw=columns[5].split(":")[1];
                 Integer queryid=Integer.parseInt(columns[1].split(":")[1]);
-                String content=contentraw.substring(2, contentraw.length()-2);
+//                String content=contentraw.substring(2, contentraw.length()-2);
+                String content=response.substring(response.indexOf(",\\\"remark\\\":\\\"")+",\\\"remark\\\":\\\"".length(),
+                        response.indexOf("\\\",\\\"times\\\":")).replace("\\","");
+                Log.d("TEF",content);
                 retmap.put(queryid, content);
                 if(retmap.size()==idsize){
                     cprs.setEditDialogContent(retmap);

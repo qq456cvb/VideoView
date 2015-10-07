@@ -11,7 +11,8 @@
         android:layout_weight="1"
         android:autoText="false"
         android:layout_marginRight="3pt"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:background="@drawable/listseg" />
 
     <TextView
         android:layout_width="match_parent"
@@ -20,7 +21,8 @@
         android:id="@+id/title"
         android:layout_weight="1"
         android:layout_marginRight="3pt"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:background="@drawable/listseg" />
 
     <TextView
         android:layout_width="match_parent"
@@ -29,7 +31,8 @@
         android:id="@+id/docname"
         android:layout_weight="1"
         android:layout_marginRight="3pt"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:background="@drawable/listseg" />
 
     <TextView
         android:layout_width="match_parent"
@@ -38,7 +41,8 @@
         android:id="@+id/relfile"
         android:layout_weight="1"
         android:layout_marginRight="3pt"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:background="@drawable/listseg" />
 
     <TextView
         android:layout_width="match_parent"
@@ -47,7 +51,8 @@
         android:id="@+id/date"
         android:layout_weight="1"
         android:layout_marginRight="3pt"
-        android:textSize="18sp" />
+        android:textSize="18sp"
+        android:background="@drawable/listseg" />
 
     <LinearLayout
         android:orientation="horizontal"

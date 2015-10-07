@@ -12,6 +12,7 @@ import android.widget.TextView;
 import com.qq456cvb.videoview.R;
 import com.qq456cvb.videoview.Subviews.RightChannelFragment;
 import com.qq456cvb.videoview.Utils.Channel;
+import com.qq456cvb.videoview.Utils.UserCity;
 
 import java.util.ArrayList;
 
@@ -20,17 +21,19 @@ import java.util.ArrayList;
  */
 public class DishiListAdapter extends BaseExpandableListAdapter {
 
-    private String[] dishis = {"福州", "厦门", "宁德", "莆田", "泉州", "漳州"};
     private RightChannelFragment rightChannelFragment;
     private ArrayList<ArrayList<Channel>> channels;
-    public DishiListAdapter(RightChannelFragment rightChannelFragment, ArrayList<ArrayList<Channel>>channels) {
+    private ArrayList<UserCity> cities;
+    public int currGroup = -1, currChild = -1;
+
+    public DishiListAdapter(RightChannelFragment rightChannelFragment, ArrayList<UserCity>cities) {
         this.rightChannelFragment = rightChannelFragment;
-        this.channels = channels;
+        this.cities = cities;
     }
 
-//    public void updateProgramme (ArrayList<ArrayList<Programme>> programmes) {
-//        this.programmes = programmes;
-//    }
+    public void updateChannels (ArrayList<ArrayList<Channel>> channels) {
+        this.channels = channels;
+    }
 
     //自己定义一个获得文字信息的方法
     TextView getTextView(float fontSize) {
@@ -51,13 +54,13 @@ public class DishiListAdapter extends BaseExpandableListAdapter {
     @Override
     public int getGroupCount() {
         // TODO Auto-generated method stub
-        return 6;
+        return cities.size();
     }
 
     @Override
     public Object getGroup(int groupPosition) {
         // TODO Auto-generated method stub
-        return dishis[groupPosition];
+        return cities.get(groupPosition);
     }
 
 //    public Channel getGroupChannel(int groupPosition) {
@@ -106,8 +109,13 @@ public class DishiListAdapter extends BaseExpandableListAdapter {
     public View getGroupView(final int groupPosition, boolean isExpanded,
                              final View convertView, ViewGroup parent) {
         View view = (rightChannelFragment.getActivity()).getLayoutInflater().inflate(R.layout.channel_list_item, null);
+        if (isExpanded) {
+            view.setBackgroundColor(0xFFEE4029);
+        } else {
+            view.setBackgroundColor(0x00000000);
+        }
         final TextView textView = (TextView)view.findViewById(R.id.channel_item);
-        textView.setText(getGroup(groupPosition).toString());
+        textView.setText(((UserCity)getGroup(groupPosition)).city);
         return view;
     }
 
@@ -120,7 +128,11 @@ public class DishiListAdapter extends BaseExpandableListAdapter {
         TextView textView = getTextView(30);
         textView.setText(getChild(groupPosition, childPosition)
                 .toString());
-
+        if (currGroup == groupPosition && currChild == childPosition) {
+            ll.setBackgroundColor(0xFFEE4029);
+        } else {
+            ll.setBackgroundColor(0x00000000);
+        }
         ll.addView(textView);
         return ll;
     }

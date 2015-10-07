@@ -101,7 +101,7 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
 
         overlayTitle = (TextView) view.findViewById(R.id.vlc_overlay_title);
         overlayTitle.setText(urlToStream);
-//        overlayTitle.setVisibility(View.INVISIBLE);
+        overlayTitle.setVisibility(View.INVISIBLE);
 
         // AUTOSTART
         playMovie();

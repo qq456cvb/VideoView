@@ -18,8 +18,10 @@ import com.qq456cvb.videoview.Adapters.Channel.DishiListAdapter;
 import com.qq456cvb.videoview.Application.GlobalApp;
 import com.qq456cvb.videoview.R;
 import com.qq456cvb.videoview.Tools.ChannelLoader;
+import com.qq456cvb.videoview.Tools.DishiLoader;
 import com.qq456cvb.videoview.Utils.Channel;
 import com.qq456cvb.videoview.Utils.Programme;
+import com.qq456cvb.videoview.Utils.UserCity;
 import com.qq456cvb.videoview.Utils.UserClient;
 
 import org.apache.http.Header;
@@ -32,18 +34,20 @@ import java.util.ArrayList;
 /**
  * Created by qq456cvb on 8/17/15.
  */
-public class RightChannelFragment extends Fragment implements ChannelLoader.OnLoadedListener {
+public class RightChannelFragment extends Fragment implements ChannelLoader.OnLoadedListener, DishiLoader.OnLoadedListener {
     public final static int TV = 3;
     public final static int RADIO = 1;
     private static int counter = 0;
 
     private ArrayList<String> channels = new ArrayList<>();
     private ArrayList<Channel> origins = new ArrayList<>();
+    private ArrayList<UserCity> cities = new ArrayList<>();
     private ArrayList<ArrayList<Programme>> restore = new ArrayList<>();
     private ChannelListAdapter channelListAdapter;
     private DishiListAdapter dishiListAdapter;
     private ExpandableListView channelList;
     private ChannelLoader channelLoader = new ChannelLoader(this);
+    private DishiLoader dishiLoader = new DishiLoader(this);
     private int groupIndex = 0;
     private View view;
     private int type = 0; // 0 means manually expand, 1 means auto expand
@@ -58,6 +62,7 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
         view = inflater.inflate(R.layout.right_layout_channel, container, false);
         channelList = (ExpandableListView) view.findViewById(R.id.list);
         channelListAdapter = new ChannelListAdapter(this, origins);
+        dishiListAdapter = new DishiListAdapter(this, cities);
         channelList.setAdapter(channelListAdapter);
 
         pdl = ProgressDialog.show(this.getActivity(), "获取中...", "请等待...", true, false);
@@ -67,9 +72,86 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
         return view;
     }
 
+    public void onDishiLoaded(final ArrayList<UserCity> cities) {
+        channelList.setAdapter(dishiListAdapter);
+        expandGroup(groupIndex, false);
+        if (cities.isEmpty()) {
+            this.cities.clear();
+            this.cities.addAll(cities);
+            dishiListAdapter.notifyDataSetChanged();
+//            pdl.dismiss();
+            return;
+        }
+        channelList.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+
+            }
+        });
+        this.cities.clear();
+        this.cities.addAll(cities);
+        dishiListAdapter.notifyDataSetChanged();
+
+        channelList.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+            @Override
+            public void onGroupExpand(int groupPosition) {
+                if (groupPosition != groupIndex && dishiListAdapter.getChildrenCount(groupPosition) > 0) {
+                    expandGroup(groupIndex, false);
+                }
+                groupIndex = groupPosition;
+            }
+        });
+        channelList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+            @Override
+            public boolean onChildClick(ExpandableListView parent, View v,
+                                        final int groupPosition, final int childPosition, long id) {
+                dishiListAdapter.currGroup = groupPosition;
+                dishiListAdapter.currChild = childPosition;
+                dishiListAdapter.notifyDataSetChanged();
+                Toast.makeText(RightChannelFragment.this.getActivity(),
+                        "你点击了" + dishiListAdapter.getChildChannel(groupPosition, childPosition).getName(),
+                        Toast.LENGTH_SHORT).show();
+                Message msg = Message.obtain(MainActivity.handler);
+                msg.what = MainActivity.CHANNEL;
+                Bundle bundle = new Bundle();
+                bundle.putString("type", "play");
+                bundle.putString("value", dishiListAdapter.getChildChannel(groupPosition, childPosition).getMulticastIP());
+                bundle.putFloat("startTime", 0);
+                msg.obj = dishiListAdapter.getChildChannel(groupPosition, childPosition);
+                msg.setData(bundle);
+                msg.sendToTarget();
+
+                return false;
+            }
+        });
+    }
+
+    public void onDishiChannelLoaded(final ArrayList<ArrayList<Channel>> channels) {
+        if (channels.isEmpty()) {
+            dishiListAdapter.updateChannels(channels);
+            dishiListAdapter.notifyDataSetChanged();
+            pdl.dismiss();
+            return;
+        }
+        synchronized (this) {
+            Message msg = Message.obtain(MainActivity.handler);
+            msg.what = MainActivity.CHANNEL;
+            Bundle bundle = new Bundle();
+            bundle.putString("type", "play");
+            bundle.putString("value", channels.get(0).get(0).getMulticastIP());
+            bundle.putFloat("startTime", 0);
+            msg.obj = channels.get(0).get(0);
+            msg.setData(bundle);
+            msg.sendToTarget();
+        }
+        dishiListAdapter.updateChannels(channels);
+        dishiListAdapter.notifyDataSetChanged();
+        pdl.dismiss();
+    }
+
     public void onLoaded(final ArrayList<Channel> channels) {
 //        channelListAdapter = new ChannelListAdapter(this, channels);
-//        channelList.setAdapter(channelListAdapter);
+        channelList.setAdapter(channelListAdapter);
         expandGroup(groupIndex, false);
         if (channels.isEmpty()) {
             origins.clear();
@@ -195,7 +277,11 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
     public void changeCategory(String category, int type) {
         pdl = ProgressDialog.show(this.getActivity(), "获取中...", "请等待...", true, false);
         restore.clear();
-        channelLoader.getChannelsBycategory(category, type);
+        if (category.equals("dishi")) {
+            dishiLoader.getChannelsBycategory(category, type);
+        } else {
+            channelLoader.getChannelsBycategory(category, type);
+        }
     }
 
     private void parseProgrammes(String html) {
@@ -257,56 +343,56 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
         }.start();
     }
 
-    public void changeDishi(int type) {
-        ArrayList<ArrayList<Channel>> channels;
-        if (type == 3) {
-            channels = getDishiTv();
-        } else {
-            channels = getDishiRadio();
-        }
-
-
-        dishiListAdapter = new DishiListAdapter(this, channels);
-        channelList.setAdapter(dishiListAdapter);
-
-        Message msg = Message.obtain(MainActivity.handler);
-        msg.what = MainActivity.CHANNEL;
-        Bundle bundle = new Bundle();
-        bundle.putString("type", "play");
-        bundle.putString("value", channels.get(0).get(0).getMulticastIP());
-        bundle.putFloat("startTime", 0);
-        msg.obj = channels.get(0).get(0);
-        msg.setData(bundle);
-        msg.sendToTarget();
-        channelList.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
-            @Override
-            public void onGroupExpand(int groupPosition) {
-
-            }
-        });
-        
-        channelList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
-            @Override
-            public boolean onChildClick(ExpandableListView parent, View v,
-                                        final int groupPosition, final int childPosition, long id) {
-
-                Toast.makeText(RightChannelFragment.this.getActivity(),
-                        "你点击了" + dishiListAdapter.getChildChannel(groupPosition, childPosition).getName(),
-                        Toast.LENGTH_SHORT).show();
-                Message msg = Message.obtain(MainActivity.handler);
-                msg.what = MainActivity.DISHI;
-                Bundle bundle = new Bundle();
-                bundle.putString("type", "play");
-                bundle.putString("value", dishiListAdapter.getChildChannel(groupPosition, childPosition).getMulticastIP());
-                bundle.putFloat("startTime", 0);
-                msg.obj = dishiListAdapter.getChildChannel(groupPosition, childPosition);
-                msg.setData(bundle);
-                msg.sendToTarget();
-
-                return false;
-            }
-        });
-    }
+//    public void changeDishi(int type) {
+//        ArrayList<ArrayList<Channel>> channels;
+//        if (type == 3) {
+//            channels = getDishiTv();
+//        } else {
+//            channels = getDishiRadio();
+//        }
+//
+//
+//        dishiListAdapter = new DishiListAdapter(this, channels);
+//        channelList.setAdapter(dishiListAdapter);
+//
+//        Message msg = Message.obtain(MainActivity.handler);
+//        msg.what = MainActivity.CHANNEL;
+//        Bundle bundle = new Bundle();
+//        bundle.putString("type", "play");
+//        bundle.putString("value", channels.get(0).get(0).getMulticastIP());
+//        bundle.putFloat("startTime", 0);
+//        msg.obj = channels.get(0).get(0);
+//        msg.setData(bundle);
+//        msg.sendToTarget();
+//        channelList.setOnGroupExpandListener(new ExpandableListView.OnGroupExpandListener() {
+//            @Override
+//            public void onGroupExpand(int groupPosition) {
+//
+//            }
+//        });
+//
+//        channelList.setOnChildClickListener(new ExpandableListView.OnChildClickListener() {
+//            @Override
+//            public boolean onChildClick(ExpandableListView parent, View v,
+//                                        final int groupPosition, final int childPosition, long id) {
+//
+//                Toast.makeText(RightChannelFragment.this.getActivity(),
+//                        "你点击了" + dishiListAdapter.getChildChannel(groupPosition, childPosition).getName(),
+//                        Toast.LENGTH_SHORT).show();
+//                Message msg = Message.obtain(MainActivity.handler);
+//                msg.what = MainActivity.DISHI;
+//                Bundle bundle = new Bundle();
+//                bundle.putString("type", "play");
+//                bundle.putString("value", dishiListAdapter.getChildChannel(groupPosition, childPosition).getMulticastIP());
+//                bundle.putFloat("startTime", 0);
+//                msg.obj = dishiListAdapter.getChildChannel(groupPosition, childPosition);
+//                msg.setData(bundle);
+//                msg.sendToTarget();
+//
+//                return false;
+//            }
+//        });
+//    }
 
     public void expandGroup(int groupPosition, boolean expand)
     {

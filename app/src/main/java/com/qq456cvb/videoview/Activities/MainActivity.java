@@ -39,7 +39,6 @@ import jp.wasabeef.sample.commentPanelFragment;
 public class MainActivity extends FragmentActivity implements ProfileFragment.OnProfileListener, CommentPanelRetSwitcher {
 
     public final static String TAG = "MainActivity";
-    public final static int DISHI = 0;
     public final static int CHANNEL = 1;
     public final static int MYCOMMENT = 2;
     public final static int EDITCOMMENT = 3;
@@ -296,17 +295,6 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
         handler = new Handler() {
             public void handleMessage(Message message) {
                 switch (message.what) {
-                    case DISHI: {
-                        String type = message.getData().getString("type");
-                        if (type.equals("list")) {
-                            getRightChannelFragment().changeDishi(message.arg1);
-                        }
-                        else if (type.equals("play")) {
-                            mMiddleFragment.changeSrc(message.getData().getString("value"), message.getData().getFloat("startTime"));
-                            GlobalApp.currentChannel = (Channel)message.obj;
-                        }
-                        break;
-                    }
                     case CHANNEL: {
                         String type = message.getData().getString("type");
                         if (type.equals("list")) {

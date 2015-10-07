@@ -142,98 +142,59 @@ public class MiddleFragment extends Fragment {
         });
         for (int i = 0; i < radios.size(); ++i) {
             final int inner_i = i;
-            if (!radios.get(i).getText().toString().equals("地市")) {
-                radios.get(i).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(view.getContext(), "你点击了" + radios.get(inner_i).getText(), Toast.LENGTH_SHORT).show();
-                        highlightButton(inner_i, false);
-                        Message msg = Message.obtain(MainActivity.handler);
-                        msg.what = MainActivity.CHANNEL;
-                        msg.arg1 = RightChannelFragment.RADIO;
-                        Bundle bundle = new Bundle();
-                        bundle.putString("type", "list");
-                        if (radios.get(inner_i).getText().equals("中央")) {
-                            bundle.putString("value", "yangshi");
-                        } else if (radios.get(inner_i).getText().equals("省级")) {
-                            bundle.putString("value", "shengji");
-                        } else if (radios.get(inner_i).getText().equals("地市")) {
-                            bundle.putString("value", "dishi");
-                        } else if (radios.get(inner_i).getText().equals("县级")) {
-                            bundle.putString("value", "xianji");
-                        }
-                        msg.setData(bundle);
-                        msg.sendToTarget();
-                    }
-                });
-            }
-            if (radios.get(i).getText().toString().equals("地市")) {
-                radios.get(i).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(view.getContext(), "你点击了" + radios.get(inner_i).getText(), Toast.LENGTH_SHORT).show();
-                        highlightButton(inner_i, false);
-                        Message msg = Message.obtain(MainActivity.handler);
-                        msg.what = MainActivity.DISHI;
-                        msg.arg1 = RightChannelFragment.RADIO;
-                        Bundle bundle = new Bundle();
-                        bundle.putString("type", "list");
+            radios.get(i).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(view.getContext(), "你点击了" + radios.get(inner_i).getText(), Toast.LENGTH_SHORT).show();
+                    highlightButton(inner_i, false);
+                    Message msg = Message.obtain(MainActivity.handler);
+                    msg.what = MainActivity.CHANNEL;
+                    msg.arg1 = RightChannelFragment.RADIO;
+                    Bundle bundle = new Bundle();
+                    bundle.putString("type", "list");
+                    if (radios.get(inner_i).getText().equals("中央")) {
+                        bundle.putString("value", "yangshi");
+                    } else if (radios.get(inner_i).getText().equals("省级")) {
+                        bundle.putString("value", "shengji");
+                    } else if (radios.get(inner_i).getText().equals("地市")) {
                         bundle.putString("value", "dishi");
-                        msg.setData(bundle);
-                        msg.sendToTarget();
+                    } else if (radios.get(inner_i).getText().equals("县级")) {
+                        bundle.putString("value", "xianji");
                     }
-                });
-            }
+                    msg.setData(bundle);
+                    msg.sendToTarget();
+                }
+            });
         }
         for (int i = 0; i < tvs.size(); ++i) {
             final int inner_i = i;
-            if (!tvs.get(i).getText().toString().equals("地市")) {
-                tvs.get(i).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(view.getContext(), "你点击了" + tvs.get(inner_i).getText(), Toast.LENGTH_SHORT).show();
-                        highlightButton(inner_i, true);
-                        Message msg = Message.obtain(MainActivity.handler);
-                        msg.what = MainActivity.CHANNEL;
-                        msg.arg1 = RightChannelFragment.TV;
-                        Bundle bundle = new Bundle();
-                        bundle.putString("type", "list");
-                        if (tvs.get(inner_i).getText().equals("央视")) {
-                            bundle.putString("value", "yangshi");
-                        } else if (tvs.get(inner_i).getText().equals("卫视")) {
-                            bundle.putString("value", "weishi");
-                        } else if (tvs.get(inner_i).getText().equals("省级")) {
-                            bundle.putString("value", "shengji");
-                        } else if (tvs.get(inner_i).getText().equals("地市")) {
-                            bundle.putString("value", "dishi");
-                        } else if (tvs.get(inner_i).getText().equals("县级")) {
-                            bundle.putString("value", "xianji");
-                        } else if (tvs.get(inner_i).getText().equals("境外")) {
-                            bundle.putString("value", "jingwai");
-                        }
-                        msg.setData(bundle);
-                        msg.sendToTarget();
-                    }
-                });
-
-            }
-            if (tvs.get(i).getText().toString().equals("地市")) {
-                tvs.get(i).setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        Toast.makeText(view.getContext(), "你点击了" + tvs.get(inner_i).getText(), Toast.LENGTH_SHORT).show();
-                        highlightButton(inner_i, true);
-                        Message msg = Message.obtain(MainActivity.handler);
-                        msg.what = MainActivity.DISHI;
-                        msg.arg1 = RightChannelFragment.TV;
-                        Bundle bundle = new Bundle();
-                        bundle.putString("type", "list");
+            tvs.get(i).setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Toast.makeText(view.getContext(), "你点击了" + tvs.get(inner_i).getText(), Toast.LENGTH_SHORT).show();
+                    highlightButton(inner_i, true);
+                    Message msg = Message.obtain(MainActivity.handler);
+                    msg.what = MainActivity.CHANNEL;
+                    msg.arg1 = RightChannelFragment.TV;
+                    Bundle bundle = new Bundle();
+                    bundle.putString("type", "list");
+                    if (tvs.get(inner_i).getText().equals("央视")) {
+                        bundle.putString("value", "yangshi");
+                    } else if (tvs.get(inner_i).getText().equals("卫视")) {
+                        bundle.putString("value", "weishi");
+                    } else if (tvs.get(inner_i).getText().equals("省级")) {
+                        bundle.putString("value", "shengji");
+                    } else if (tvs.get(inner_i).getText().equals("地市")) {
                         bundle.putString("value", "dishi");
-                        msg.setData(bundle);
-                        msg.sendToTarget();
+                    } else if (tvs.get(inner_i).getText().equals("县级")) {
+                        bundle.putString("value", "xianji");
+                    } else if (tvs.get(inner_i).getText().equals("境外")) {
+                        bundle.putString("value", "jingwai");
                     }
-                });
-            }
+                    msg.setData(bundle);
+                    msg.sendToTarget();
+                }
+            });
         }
     }
 

@@ -7,7 +7,7 @@ import android.widget.Toast;
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
 import com.qq456cvb.videoview.Utils.Channel;
-import com.qq456cvb.videoview.Utils.Programme;
+import com.qq456cvb.videoview.Utils.UserCity;
 import com.qq456cvb.videoview.Utils.UserClient;
 
 import org.apache.http.Header;
@@ -19,38 +19,37 @@ import org.json.JSONTokener;
 import java.util.ArrayList;
 
 /**
- * Created by qq456cvb on 8/28/15.
+ * Created by qq456cvb on 10/7/15.
  */
-public class ChannelLoader {
-
+public class DishiLoader {
     private int pages = 0;
     private String category;
-    private ArrayList<Channel> result = new ArrayList<>();
-    private ArrayList<ArrayList<Programme>> programmes = new ArrayList<>();
+    private ArrayList<UserCity> cities = new ArrayList<>();
+    private ArrayList<ArrayList<Channel>> channels = new ArrayList<>();
     private OnLoadedListener listener;
 
     public interface OnLoadedListener {
-        void onLoaded(ArrayList<Channel> arrayList);
-        void onProgrammeLoaded(ArrayList<ArrayList<Programme>> programmes);
+        void onDishiLoaded(ArrayList<UserCity> arrayList);
+        void onDishiChannelLoaded(ArrayList<ArrayList<Channel>> channels);
     }
 
-    public ChannelLoader(OnLoadedListener listener) {
+    public DishiLoader(OnLoadedListener listener) {
         this.listener = listener;
     }
 
     public void getChannelsBycategory(final String category, final int type) {
         this.category = category;
         this.pages = 0;
-        this.result.clear();
-        this.programmes.clear();
+        this.channels.clear();
+        this.cities.clear();
         final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, String response) {
                 pages = Integer.valueOf(response.substring(response.lastIndexOf("hdnPagetotal") + 21, response.lastIndexOf("hdnPagetotal") + 22));
                 if (pages != 0) {
-                    getChannelsByPage(1, type);
+                    getCitiesByPage(1, type);
                 } else {
                     Toast.makeText(((Fragment) listener).getActivity(), "数据菜集中", Toast.LENGTH_SHORT).show();
-                    listener.onLoaded(result);
+                    listener.onDishiLoaded(cities);
                 }
             }
 
@@ -62,21 +61,22 @@ public class ChannelLoader {
             @Override
             public void run() {
                 try {
-                    UserClient.get("/stpy/audioVisualAction!queryChannleInfo.action?hdnType=" + type + "&channel=" + category, null, handler);
-                } catch (Exception e) {
+                    UserClient.get("/stpy/videoDownloadAction!queryChannleInfo.action?hdnType=3&channel=dishi", null, handler);
+                }
+                catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         }.start();
     }
 
-    private void getChannelsByPage(final int page, final int type)
+    private void getCitiesByPage(final int page, final int type)
     {
         if (page <= pages) {
             final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
                 public void onSuccess(int statusCode, Header[] headers, String response) {
-                    getChannelsFromSinglePage(response);
-                    getChannelsByPage(page+1, type);
+                    getCitiesFromSinglePage(response);
+                    getCitiesByPage(page + 1, type);
                 }
 
                 public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
@@ -99,16 +99,16 @@ public class ChannelLoader {
                 }
             }.start();
         } else {
-            listener.onLoaded(result);
-            if (result.size() > 0) {
-                getProgrammesByChannel(result.get(0));
+            listener.onDishiLoaded(cities);
+            if (cities.size() > 0) {
+                getChannelByCity(cities.get(0));
             } else {
-                listener.onProgrammeLoaded(new ArrayList<ArrayList<Programme>>());
+                listener.onDishiChannelLoaded(new ArrayList<ArrayList<Channel>>());
             }
         }
     }
 
-    private void getChannelsFromSinglePage(String html)
+    private void getCitiesFromSinglePage(String html)
     {
         html = html.replace("\\", "");
         html = html.substring(2, html.length() - 2);
@@ -118,28 +118,26 @@ public class ChannelLoader {
             JSONArray list = channelObj.getJSONArray("list");
             for (int i = 0; i < list.length(); i++) {
                 JSONObject item = (JSONObject)list.get(i);
-                String name = item.getString("channle");
-                String multicastIP = item.getString("zubo");
-                Channel channel = new Channel(1, name, "", multicastIP);
-                channel.id = item.getString("id");
-                channel.hdnDyass = item.getString("dypass");
-                channel.hdnType = item.getString("type");
-                result.add(channel);
+                UserCity userCity = new UserCity();
+                userCity.city = item.getString("city");
+                userCity.name = item.getString("name");
+                userCity.type = item.getString("type");
+                cities.add(userCity);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
     }
 
-    private void getProgrammesByChannel (final Channel channel) {
+    private void getChannelByCity (final UserCity userCity) {
 
         final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, String response) {
-                parseProgrammes(response);
-                if (result.indexOf(channel) < result.size() - 1) {
-                    getProgrammesByChannel(result.get(result.indexOf(channel) + 1));
+                parseChannels(response);
+                if (cities.indexOf(userCity) < cities.size() - 1) {
+                    getChannelByCity(cities.get(cities.indexOf(userCity) + 1));
                 } else {
-                    listener.onProgrammeLoaded(programmes);
+                    listener.onDishiChannelLoaded(channels);
                 }
             }
 
@@ -151,7 +149,8 @@ public class ChannelLoader {
             @Override
             public void run() {
                 try {
-                    UserClient.get("/stpy/ajaxVlcAction!queryEpgInfo.action?channel=" + channel.getName() + "&dateTime=", null, handler);
+
+                    UserClient.get("/stpy/ajaxVlcAction!getChannelInfoByName.action?name="+userCity.name+"&hdnType="+userCity.type, null, handler);
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -160,13 +159,13 @@ public class ChannelLoader {
 
     }
 
-    private void parseProgrammes(String html) {
+    private void parseChannels(String html) {
         if (!html.contains(":")) {
-            ArrayList<Programme> programmeArrayList = new ArrayList<>();
-            programmes.add(programmeArrayList);
+            ArrayList<Channel> channelArrayList = new ArrayList<>();
+            channels.add(channelArrayList);
             return;
         }
-        ArrayList<Programme> programmeArrayList = new ArrayList<>();
+        ArrayList<Channel> channelArrayList = new ArrayList<>();
         html = html.replace("\\", "");
         html = html.substring(2, html.length() - 2);
         try {
@@ -175,27 +174,15 @@ public class ChannelLoader {
             for (int i = 0; i < jsonArray.length(); i++) {
                 JSONObject item = jsonArray.getJSONObject(i); //每条记录又由
                 // 几个Object对象组成
-                String channel = item.getString("channle");
-                String name = item.getString("program");
-                String starttime = item.getString("starttime");
-                Programme programme = new Programme();
-                programme.name = name;
-                programme.channel = getChannelByName(channel);
-                programme.starttime = starttime;
-                programmeArrayList.add(programme);
+                Channel channel = new Channel(1, item.getString("channle"), "", item.getString("zubo"));
+                channel.id = item.getString("id");
+                channel.hdnDyass = item.getString("dypass");
+                channel.hdnType = item.getString("type");
+                channelArrayList.add(channel);
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
-        programmes.add(programmeArrayList);
-    }
-
-    private Channel getChannelByName(String name) {
-        for (int i = 0; i < result.size(); i++) {
-            if (result.get(i).getName().equals(name)) {
-                return result.get(i);
-            }
-        }
-        return null;
+        channels.add(channelArrayList);
     }
 }

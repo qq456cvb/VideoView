@@ -3,6 +3,7 @@ package com.qq456cvb.videoview.Application;
 import android.app.Application;
 
 import com.qq456cvb.videoview.Utils.Channel;
+import com.qq456cvb.videoview.Utils.Programme;
 import com.qq456cvb.videoview.Utils.UserClient;
 
 
@@ -12,6 +13,8 @@ import com.qq456cvb.videoview.Utils.UserClient;
 public class GlobalApp extends Application {
     public static UserClient user;
     public static Channel currentChannel;
+    public static Programme currentProgramme;
+    public static String endTime;
 
     @Override
     public void onCreate() {

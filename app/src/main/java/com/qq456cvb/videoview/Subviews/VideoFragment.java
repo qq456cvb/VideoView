@@ -23,10 +23,15 @@ import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.loopj.android.http.TextHttpResponseHandler;
 import com.qq456cvb.videoview.Activities.MainActivity;
 import com.qq456cvb.videoview.Application.GlobalApp;
 import com.qq456cvb.videoview.R;
+import com.qq456cvb.videoview.Utils.UserClient;
 
+import org.apache.http.Header;
+import org.json.JSONException;
+import org.json.JSONObject;
 import org.videolan.libvlc.EventHandler;
 import org.videolan.libvlc.IVideoPlayer;
 import org.videolan.libvlc.LibVLC;
@@ -36,6 +41,7 @@ import java.io.File;
 import java.lang.ref.WeakReference;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 
 /**
  * Created by qq456cvb on 8/17/15.
@@ -171,7 +177,7 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
                 {
                     sdDir = Environment.getExternalStorageDirectory();//获取跟目录
                     String dateNow;
-                    SimpleDateFormat sdf = new SimpleDateFormat(" yyyy-MM-dd HH:mm:ss");
+                    SimpleDateFormat sdf = new SimpleDateFormat(" yyyy-MM-dd HH-mm-ss");
                     dateNow = sdf.format(Calendar.getInstance().getTime());
                     localPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/" + GlobalApp.currentChannel.getName() + dateNow + ".jpg";
                 } else {
@@ -460,6 +466,10 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
     }
 
     public void changeSrc(String src, float startTime) {
+        if (src.contains("udp") || src.contains("192.168")) {
+            Toast.makeText(VideoFragment.this.getActivity(), "播放地址无效", Toast.LENGTH_SHORT).show();
+            return;
+        }
         synchronized (this) {
             if (src.contains(".mp4") || src.contains(".mp3")) {
                 vlcDuration.setVisibility(View.VISIBLE);
@@ -524,9 +534,58 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
             // Libvlc events
             Bundle b = msg.getData();
             switch (b.getInt("event")) {
-                case EventHandler.MediaPlayerEndReached:
+                case EventHandler.MediaPlayerEndReached: {
+                    if (overlayTitle.getText().toString().contains("VIDEO") || overlayTitle.getText().toString().contains("FZGB")) {
+                    Toast.makeText(VideoFragment.this.getActivity(), "结束", Toast.LENGTH_SHORT).show();
+                        final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
+                            public void onSuccess(int statusCode, Header[] headers, String response) {
+                                if (response.contains("\\")) {
+                                    response = response.replace("\\", "");
+                                    response = response.substring(1, response.length() - 1);
+                                    try {
+                                        JSONObject obj = new JSONObject(response);
+                                        float startTime = obj.getInt("startTime");
+                                        float timeLength = obj.getInt("timeLength");
+                                        GlobalApp.endTime = obj.getString("endTime");
+                                        Message msg = Message.obtain(MainActivity.handler);
+                                        msg.what = MainActivity.PROGRAMME;
+                                        Bundle bundle = new Bundle();
+                                        bundle.putString("type", "play");
+                                        bundle.putString("value", obj.getString("url"));
+                                        bundle.putFloat("startTime", startTime / timeLength);
+                                        msg.obj = GlobalApp.currentProgramme;
+                                        msg.setData(bundle);
+                                        msg.sendToTarget();
+                                    } catch (JSONException e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+
+                            public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
+                                Log.d("test", "sssss");
+                            }
+                        };
+                        new Thread() {
+                            @Override
+                            public void run() {
+                                try {
+                                    String id = GlobalApp.currentChannel.id;
+                                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+                                    Date nextTime = sdf.parse(GlobalApp.endTime);
+                                    nextTime = new Date(nextTime.getTime() + 1000);
+                                    UserClient.get("/stpy/ajaxVlcAction!getUrl.action?id=" + id + "&dateTime=" +
+                                            sdf.format(nextTime) + "&hdnType="
+                                            + GlobalApp.currentChannel.hdnType + "&urlNext=1", null, handler);
+                                } catch (Exception e) {
+                                    e.printStackTrace();
+                                }
+                            }
+                        }.start();
+                    }
 //                    player.releasePlayer();
                     break;
+                }
                 case EventHandler.MediaPlayerPlaying: {
                     Log.d(TAG, "playing changed!");
                     Handler handler = new Handler();

@@ -24,10 +24,16 @@
         android:layout_weight="1"
         android:gravity="center_vertical|right">
 
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="返回"
+            android:id="@+id/btn_img_return" />
+
         <ImageButton
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/btn_delete"
+            android:id="@+id/btn_img_delete"
             android:src="@android:drawable/ic_delete" />
 
     </LinearLayout>

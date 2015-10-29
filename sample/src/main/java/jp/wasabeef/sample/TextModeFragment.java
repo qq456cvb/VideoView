@@ -1,11 +1,9 @@
 package jp.wasabeef.sample;
 
-import android.app.Application;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.os.Bundle;
-import android.provider.Settings;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -54,13 +52,15 @@ public class TextModeFragment extends Fragment {
                 try {
                     String title = tef.getTitle();
                     if (title == null || title.trim().equals("")) {
-                        Toast.makeText(getActivity().getApplicationContext(), "请输入标题", Toast.LENGTH_LONG);
+                        Toast.makeText(getActivity().getApplicationContext(), "请输入标题", Toast.LENGTH_LONG).show();
                     } else {
                         //need to save to local?
                         FileUtils.saveToMobile(getActivity().getApplicationContext(), tef.getTitle(), tef.getContent());
                         CommentPanelRetSwitcher sprs=(CommentPanelRetSwitcher)getActivity();
                         sprs.uploadTxtComment(tef.getTitle(), tef.getContent());
                         tef.clear();
+                        CommentPanelRetSwitcher switcher=(CommentPanelRetSwitcher)getActivity();
+                        switcher.switchRightPanel();
                     }
                 } catch (IOException e) {
                     e.printStackTrace();

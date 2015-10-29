@@ -105,7 +105,8 @@
             android:id="@+id/oldPwd"
             android:layout_weight="0"
             android:text="test"
-            android:gravity="center_vertical" />
+            android:gravity="center_vertical"
+            android:inputType="textPassword" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -138,7 +139,8 @@
             android:layout_height="fill_parent"
             android:id="@+id/newPwd"
             android:layout_weight="0"
-            android:gravity="center_vertical" />
+            android:gravity="center_vertical"
+            android:inputType="textPassword" />
 
         <TextView
             android:layout_width="wrap_content"
@@ -171,7 +173,8 @@
             android:layout_height="fill_parent"
             android:id="@+id/newPwdCfm"
             android:layout_weight="0"
-            android:gravity="center_vertical" />
+            android:gravity="center_vertical"
+            android:inputType="textPassword" />
 
         <TextView
             android:layout_width="wrap_content"

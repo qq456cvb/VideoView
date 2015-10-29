@@ -1,8 +1,9 @@
 package com.qq456cvb.videoview.Tools;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
+import android.content.DialogInterface;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.loopj.android.http.RequestParams;
 import com.loopj.android.http.TextHttpResponseHandler;
@@ -49,7 +50,15 @@ public class ChannelLoader {
                 if (pages != 0) {
                     getChannelsByPage(1, type);
                 } else {
-                    Toast.makeText(((Fragment) listener).getActivity(), "数据菜集中", Toast.LENGTH_SHORT).show();
+                    AlertDialog.Builder builder = new AlertDialog.Builder(((Fragment) listener).getActivity());
+                    builder.setMessage("数据采集中");
+                    builder.setTitle("提示");
+                    builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }).create().show();
                     listener.onLoaded(result);
                 }
             }

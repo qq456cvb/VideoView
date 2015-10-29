@@ -38,11 +38,10 @@ public class DishiListAdapter extends BaseExpandableListAdapter {
     //自己定义一个获得文字信息的方法
     TextView getTextView(float fontSize) {
         FrameLayout.LayoutParams lp = new FrameLayout.LayoutParams(
-                ViewGroup.LayoutParams.MATCH_PARENT, 100);
+                ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT);
         lp.gravity = Gravity.CENTER;
         TextView textView = new TextView(rightChannelFragment.getActivity());
         textView.setLayoutParams(lp);
-        textView.setGravity(Gravity.CENTER_VERTICAL);
         textView.setGravity(Gravity.CENTER_HORIZONTAL);
         textView.setTextSize(fontSize);
         textView.setTextColor(Color.BLACK);

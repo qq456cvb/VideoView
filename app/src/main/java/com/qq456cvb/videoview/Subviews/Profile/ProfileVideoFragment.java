@@ -15,6 +15,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageButton;
+import android.widget.LinearLayout;
 import android.widget.ListView;
 
 import com.loopj.android.http.RequestParams;
@@ -30,6 +31,8 @@ import org.apache.http.Header;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Iterator;
 import java.util.Map;
 
@@ -44,6 +47,7 @@ public class ProfileVideoFragment extends Fragment implements VideoLoader.OnLoad
     private ArrayList<UserVideo> deleteList = new ArrayList<>();
     private ImageButton btnDelete;
     private Button checkAll;
+    private LinearLayout videoRightLayout;
     public VideoFragment videoFragment;
     private VideoLoader videoLoader = new VideoLoader(this);
     private boolean online;
@@ -59,13 +63,14 @@ public class ProfileVideoFragment extends Fragment implements VideoLoader.OnLoad
         listView = (ListView)view.findViewById(R.id.video_list);
         btnDelete = (ImageButton)view.findViewById(R.id.btn_video_delete);
         checkAll = (Button)view.findViewById(R.id.btn_video_all);
+        videoRightLayout = (LinearLayout)view.findViewById(R.id.video_right);
 
         bindOnClickListeners();
 
-        if (!online) {
-            btnDelete.setVisibility(View.GONE);
-            checkAll.setVisibility(View.GONE);
-        }
+//        if (!online) {
+//            btnDelete.setVisibility(View.GONE);
+//            checkAll.setVisibility(View.GONE);
+//        }
 
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
@@ -110,6 +115,7 @@ public class ProfileVideoFragment extends Fragment implements VideoLoader.OnLoad
     }
 
     private void getLocalVideos() {
+        videos.clear();
         File sdDir = null, videoPath = null;
         boolean sdCardExist = Environment.getExternalStorageState()
                 .equals(android.os.Environment.MEDIA_MOUNTED); //判断sd卡是否存在
@@ -137,6 +143,7 @@ public class ProfileVideoFragment extends Fragment implements VideoLoader.OnLoad
                             {
                                 UserVideo userVideo = new UserVideo();
                                 userVideo.url = file.getAbsolutePath();
+                                userVideo.lastModified = file.lastModified();
                                 videos.add(userVideo);
                             }
                         } catch(Exception e) {
@@ -144,19 +151,31 @@ public class ProfileVideoFragment extends Fragment implements VideoLoader.OnLoad
                         }
                     }
                 }
+                Collections.sort(videos, new SortByDate());
             }
         } else {
             //TODO
         }
     }
 
+    class SortByDate implements Comparator<UserVideo> {
+
+        @Override
+        public int compare(UserVideo s1, UserVideo s2) {
+            if (s1.lastModified < s2.lastModified)
+                return 1;
+            else
+                return -1;
+        }
+    }
+
     public void toggleFullscreen(boolean fullscreen) {
         if (fullscreen) {
-            listView.setVisibility(View.GONE);
+            videoRightLayout.setVisibility(View.GONE);
             Message msg = Message.obtain(videoFragment.mHandler, VideoFragment.VideoSizeChanged, videoFragment.getView().getWidth(), videoFragment.getView().getHeight());
             msg.sendToTarget();
         } else {
-            listView.setVisibility(View.VISIBLE);
+            videoRightLayout.setVisibility(View.VISIBLE);
             Message msg = Message.obtain(videoFragment.mHandler, VideoFragment.VideoSizeChanged, videoFragment.getView().getWidth(), videoFragment.getView().getHeight());
             msg.sendToTarget();
         }
@@ -179,7 +198,7 @@ public class ProfileVideoFragment extends Fragment implements VideoLoader.OnLoad
                 while (iter.hasNext()) {
                     Map.Entry entry = (Map.Entry) iter.next();
                     Object key = entry.getKey();
-                    CheckBox box = (CheckBox)entry.getValue();
+                    CheckBox box = (CheckBox) entry.getValue();
                     if (!box.isChecked()) {
                         checked = false;
                         break;
@@ -190,7 +209,7 @@ public class ProfileVideoFragment extends Fragment implements VideoLoader.OnLoad
                     while (iter2.hasNext()) {
                         Map.Entry entry = (Map.Entry) iter2.next();
                         Object key = entry.getKey();
-                        CheckBox box = (CheckBox)entry.getValue();
+                        CheckBox box = (CheckBox) entry.getValue();
                         box.setChecked(true);
                     }
                     deleteList.clear();
@@ -200,7 +219,7 @@ public class ProfileVideoFragment extends Fragment implements VideoLoader.OnLoad
                     while (iter3.hasNext()) {
                         Map.Entry entry = (Map.Entry) iter3.next();
                         Object key = entry.getKey();
-                        CheckBox box = (CheckBox)entry.getValue();
+                        CheckBox box = (CheckBox) entry.getValue();
                         box.setChecked(false);
                     }
                     deleteList.clear();
@@ -216,33 +235,59 @@ public class ProfileVideoFragment extends Fragment implements VideoLoader.OnLoad
                 builder.setPositiveButton("确认", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialog, int which) {
-                        counter = 0;
-                        final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
-                            public void onSuccess(int statusCode, Header[] headers, String response) {
-                                if (++counter == deleteList.size()) {
-                                    deleteList.clear();
-                                    videoLoader.getVideos();
-                                }
-                            }
-
-                            public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
-                                Log.d("test", "sssss");
-                            }
-                        };
-                        new Thread() {
-                            @Override
-                            public void run() {
-                                try {
-                                    for (int i = 0; i < deleteList.size(); i++) {
-                                        RequestParams params = new RequestParams();
-                                        params.put("provincialBox", deleteList.get(i).id);
-                                        UserClient.post("/stpy/videoMainAction!alldeleteVideo.action", params, handler);
+                        if (online) {
+                            counter = 0;
+                            final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
+                                public void onSuccess(int statusCode, Header[] headers, String response) {
+                                    if (++counter == deleteList.size()) {
+                                        Iterator iter = profileVideoAdapter.checkBoxHashMap.entrySet().iterator();
+                                        while (iter.hasNext()) {
+                                            Map.Entry entry = (Map.Entry) iter.next();
+                                            Object key = entry.getKey();
+                                            CheckBox box = (CheckBox) entry.getValue();
+                                            box.setChecked(false);
+                                        }
+                                        deleteList.clear();
+                                        videoLoader.getVideos();
                                     }
-                                } catch (Exception e) {
-                                    e.printStackTrace();
+                                }
+
+                                public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
+                                    Log.d("test", "sssss");
+                                }
+                            };
+                            new Thread() {
+                                @Override
+                                public void run() {
+                                    try {
+                                        for (int i = 0; i < deleteList.size(); i++) {
+                                            RequestParams params = new RequestParams();
+                                            params.put("provincialBox", deleteList.get(i).id);
+                                            UserClient.post("/stpy/videoMainAction!alldeleteVideo.action", params, handler);
+                                        }
+                                    } catch (Exception e) {
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }.start();
+                        } else {
+                            for (int i = 0; i < deleteList.size(); i++) {
+                                File file = new File(deleteList.get(i).url);
+                                if (file.isFile() && file.exists()) {
+                                    file.delete();
                                 }
                             }
-                        }.start();
+                            Iterator iter = profileVideoAdapter.checkBoxHashMap.entrySet().iterator();
+                            while (iter.hasNext()) {
+                                Map.Entry entry = (Map.Entry) iter.next();
+                                Object key = entry.getKey();
+                                CheckBox box = (CheckBox) entry.getValue();
+                                box.setChecked(false);
+                            }
+                            deleteList.clear();
+                            getLocalVideos();
+                            profileVideoAdapter.notifyDataSetChanged();
+                        }
                     }
                 });
                 builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {

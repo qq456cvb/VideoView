@@ -1,13 +1,11 @@
 package com.example.littlebeanfang.comment;
 
 
-import android.app.Dialog;
-import android.app.DialogFragment;
+import android.app.AlertDialog;
+import android.app.ListFragment;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
-import android.app.ListFragment;
-import android.app.AlertDialog;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -15,13 +13,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.TextView;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -61,34 +57,13 @@ public class CommentListFragment extends ListFragment {
         CommentPanelRetSwitcher cprs=(CommentPanelRetSwitcher)getActivity();
         cprs.getCommentList();
         ArrayList<HashMap<String,String>> list=new ArrayList<HashMap<String, String>>();
-        HashMap<String, String> map1=new HashMap<String, String>();
-        HashMap<String, String> map2=new HashMap<String, String>();
-        HashMap<String, String> map3=new HashMap<String, String>();
-        map1.put("type","type1");
-        map1.put("title","title1");
-        map1.put("docname","docname1");
-        map1.put("relfile","relfile1");
-        map1.put("date","date1");
-        map2.put("type","type2");
-        map2.put("title","title2");
-        map2.put("docname","docname2");
-        map2.put("relfile", "relfile2");
-        map2.put("date","date2");
-        map3.put("type","type3");
-        map3.put("title","title3");
-        map3.put("docname", "docname3");
-        map3.put("relfile","relfile3");
-        map3.put("date","date3");
-        list.add(map1);
-        list.add(map2);
-        list.add(map3);
         dataList=list;
         return list;
     }
 
     public void changeList(ArrayList<HashMap<String, String>> list, ArrayList<Integer> queryId){
         Log.d(TAG, "-------changeList");
-        Log.d(TAG, "newlist title" + list.get(1).get("title"));
+        Log.d(TAG, "newlist title" + list.get(0).get("title"));
         dataList=list;
         this.queryId=queryId;
         CommentPanelRetSwitcher cprs=(CommentPanelRetSwitcher)getActivity();

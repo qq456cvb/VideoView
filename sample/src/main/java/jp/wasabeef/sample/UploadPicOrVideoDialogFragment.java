@@ -14,6 +14,7 @@ import android.view.Window;
 import android.widget.Button;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 public class UploadPicOrVideoDialogFragment extends DialogFragment {
@@ -76,7 +77,11 @@ public class UploadPicOrVideoDialogFragment extends DialogFragment {
                         if(MIMEType.equals("images/*")){
                             cprs.uploadPic(queryid, fileUrl, selectFileName);
                         }else{
-                            cprs.uploadVideo(queryid, fileUrl, selectFileName);
+                            if (!MediaFile.isVideoFileType(fileUrl) && !MediaFile.isAudioFileType(fileUrl)) {
+                                Toast.makeText(UploadPicOrVideoDialogFragment.this.getActivity(), "不支持的文件类型", Toast.LENGTH_SHORT).show();
+                            } else {
+                                cprs.uploadVideo(queryid, fileUrl, selectFileName);
+                            }
                         }
 
                     }
@@ -98,11 +103,29 @@ public class UploadPicOrVideoDialogFragment extends DialogFragment {
 //            Toast.makeText(getActivity(), "请安装文件管理器", Toast.LENGTH_SHORT)
 //                    .show();
 //        }
-        Intent picture = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+
+//        Intent picture = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+//        if(MIMEType.equals("video/*")){
+//            picture.setType(MIMEType);
+//        }
+//        startActivityForResult(picture, FILE_SELECT_CODE);
+        Intent intent = null;
         if(MIMEType.equals("video/*")){
-            picture.setType(MIMEType);
+            intent = new Intent(Intent.ACTION_GET_CONTENT);
+            intent.setType(MIMEType);
+            intent.addCategory(Intent.CATEGORY_OPENABLE);
+            try {
+                startActivityForResult(Intent.createChooser(intent, "请选择一个要上传的文件"),
+                        FILE_SELECT_CODE);
+            } catch (android.content.ActivityNotFoundException ex) {
+                // Potentially direct the user to the Market with a Dialog
+                Toast.makeText(getActivity(), "请安装文件管理器", Toast.LENGTH_SHORT)
+                        .show();
+            }
+        } else {
+            intent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
         }
-        startActivityForResult(picture, FILE_SELECT_CODE);
+        startActivityForResult(intent, FILE_SELECT_CODE);
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

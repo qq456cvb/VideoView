@@ -2,6 +2,7 @@ package com.qq456cvb.videoview.Activities;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -26,6 +27,7 @@ public class LoginActivity extends Activity {
     private EditText passwordEditText;
     private Button loginButton;
     private UserClient user;
+    private SharedPreferences sharedPreferences;
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,8 +35,17 @@ public class LoginActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_login);
 
-        user = GlobalApp.user;
         findViews();
+
+        sharedPreferences = getSharedPreferences("cookie", Activity.MODE_PRIVATE);
+        String username = sharedPreferences.getString("username", "");
+        String password = sharedPreferences.getString("password", "");
+        if (!username.isEmpty() && !password.isEmpty()) {
+            usernameEditText.setText(username);
+            passwordEditText.setText(password);
+        }
+        user = GlobalApp.user;
+
         bindOnClickListeners();
     }
 
@@ -50,6 +61,10 @@ public class LoginActivity extends Activity {
                 if (response.contains("登录失败")) {
                     Toast.makeText(LoginActivity.this, "登录失败，请检查用户名和密码", Toast.LENGTH_SHORT).show();
                 } else if (response.contains("频道信息")) {
+                    SharedPreferences.Editor editor = sharedPreferences.edit();
+                    editor.putString("username", usernameEditText.getText().toString());
+                    editor.putString("password", passwordEditText.getText().toString());
+                    editor.commit();
                     Intent intent = new Intent(LoginActivity.this, MainActivity.class);
                     startActivity(intent);
                     finish();

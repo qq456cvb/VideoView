@@ -72,11 +72,11 @@ public class ProfileVideoAdapter extends ArrayAdapter<UserVideo> {
                 }
             }
         });
-        if (online) {
-            checkBoxHashMap.put(position, holder.delete);
-        } else {
-            holder.delete.setVisibility(View.GONE);
-        }
+//        if (online) {
+        checkBoxHashMap.put(position, holder.delete);
+//        } else {
+//            holder.delete.setVisibility(View.GONE);
+//        }
         return convertView;
     }
 
@@ -97,8 +97,8 @@ public class ProfileVideoAdapter extends ArrayAdapter<UserVideo> {
             result = year + "-" + month + "-" + day + " " + hour + ":" + minute + ":" + second;
             return result;
         } else {
-            String result = url.substring(url.indexOf("video")+6, url.lastIndexOf("_"));
-            result = result.replaceAll("_", " ");
+            String result = url.substring(url.indexOf("video")+6, url.lastIndexOf("."));
+//            result = result.replaceAll("_", " ");
             return result;
         }
     }

@@ -6,4 +6,5 @@ package com.qq456cvb.videoview.Utils;
 public class UserVideo {
     public String url;
     public String id;
+    public long lastModified;
 }

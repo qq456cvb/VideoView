@@ -1,8 +1,10 @@
 package com.qq456cvb.videoview.Subviews;
 
+import android.app.AlertDialog;
 import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
+import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Message;
 import android.util.Log;
@@ -70,24 +72,37 @@ public class RightFragment extends Fragment implements DateTimePickDialogUtil.On
         final String convertDateTime = (dateTime+":00").replace(" ", "%20");
         final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, String response) {
-                response = response.replace("\\", "");
-                response = response.substring(1, response.length() - 1);
-                try {
-                    JSONObject jsonObject = new JSONObject(response);
-                    float startTime = jsonObject.getInt("startTime");
-                    float timeLength = jsonObject.getInt("timeLength");
-                    Message msg = Message.obtain(MainActivity.handler);
-                    msg.what = MainActivity.CHANNEL;
-                    Bundle bundle = new Bundle();
-                    bundle.putString("type", "play");
-                    bundle.putString("value", jsonObject.getString("url"));
-                    bundle.putFloat("startTime", startTime / timeLength);
-                    msg.obj = GlobalApp.currentChannel;
-                    msg.setData(bundle);
-                    msg.sendToTarget();
-                    rightChannelFragment.loadHistoryEDG(GlobalApp.currentChannel, convertDateTime);
-                } catch (JSONException e) {
-                    e.printStackTrace();
+                if (response.contains(":")) {
+                    response = response.replace("\\", "");
+                    response = response.substring(1, response.length() - 1);
+                    try {
+                        JSONObject jsonObject = new JSONObject(response);
+                        float startTime = jsonObject.getInt("startTime");
+                        float timeLength = jsonObject.getInt("timeLength");
+                        GlobalApp.endTime = jsonObject.getString("endTime");
+                        Message msg = Message.obtain(MainActivity.handler);
+                        msg.what = MainActivity.CHANNEL;
+                        Bundle bundle = new Bundle();
+                        bundle.putString("type", "play");
+                        bundle.putString("value", jsonObject.getString("url"));
+                        bundle.putFloat("startTime", startTime / timeLength);
+                        msg.obj = GlobalApp.currentChannel;
+                        msg.setData(bundle);
+                        msg.sendToTarget();
+                        rightChannelFragment.loadHistoryEDG(GlobalApp.currentChannel, convertDateTime);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                } else {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(RightFragment.this.getActivity());
+                    builder.setMessage("暂无历史记录信息");
+                    builder.setTitle("提示");
+                    builder.setNegativeButton("关闭", new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    }).create().show();
                 }
             }
 

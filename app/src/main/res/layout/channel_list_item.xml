@@ -10,7 +10,7 @@
         android:id="@+id/channel_item"
         android:textColor="#ff000000"
         android:gravity="center_vertical|center_horizontal"
-        android:textSize="30sp"
+        android:textSize="23dp"
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false" />

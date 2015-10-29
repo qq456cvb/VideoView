@@ -2,6 +2,7 @@ package com.qq456cvb.videoview.Subviews.Profile;
 
 import android.app.AlertDialog;
 import android.app.Fragment;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,6 +11,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.GridView;
 import android.widget.ImageButton;
 
@@ -45,6 +47,7 @@ public class ProfileImageFragment extends Fragment implements ProfileImageLoader
     private GridView image_grid;
     private View view;
     private ImageButton btnDelete;
+    private Button btnReturn;
 
     public static Handler handler;
     private ProfileImageLoader profileImageLoader = new ProfileImageLoader(this);
@@ -53,6 +56,7 @@ public class ProfileImageFragment extends Fragment implements ProfileImageLoader
     private List<UserImage> deleteList = new ArrayList<>();
     private ProfileImageAdapter profileImageAdapter;
     private ProfileImageSetAdapter profileImageSetAdapter;
+    private ProgressDialog pdl;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,7 +66,11 @@ public class ProfileImageFragment extends Fragment implements ProfileImageLoader
 
         view = inflater.inflate(R.layout.profile_image, container, false);
         image_grid = (GridView)view.findViewById(R.id.image_grid);
-        btnDelete = (ImageButton)view.findViewById(R.id.btn_delete);
+        btnDelete = (ImageButton)view.findViewById(R.id.btn_img_delete);
+        btnReturn = (Button)view.findViewById(R.id.btn_img_return);
+
+        btnDelete.setVisibility(View.INVISIBLE);
+        btnReturn.setVisibility(View.INVISIBLE);
 
         bindOnClickListeners();
 
@@ -71,7 +79,7 @@ public class ProfileImageFragment extends Fragment implements ProfileImageLoader
 
         handler = new Handler() {
             public void handleMessage(Message message) {
-                btnDelete.setVisibility(View.VISIBLE);
+                pdl = ProgressDialog.show(ProfileImageFragment.this.getActivity(), "获取中...", "请等待...", true, false);
                 reviewId = (String)message.obj;
                 profileImageLoader.getSecondImagesByReviewId((String)message.obj);
             }
@@ -132,13 +140,20 @@ public class ProfileImageFragment extends Fragment implements ProfileImageLoader
 
             }
         });
+        btnReturn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                pdl = ProgressDialog.show(ProfileImageFragment.this.getActivity(), "获取中...", "请等待...", true, false);
+                profileImageLoader.getImages();
+            }
+        });
     }
 
     @Override
     public void onHiddenChanged(boolean hidden) {
         if (!hidden && image_grid != null) {
+            pdl = ProgressDialog.show(ProfileImageFragment.this.getActivity(), "获取中...", "请等待...", true, false);
             profileImageLoader.getImages();
-            btnDelete.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -151,18 +166,23 @@ public class ProfileImageFragment extends Fragment implements ProfileImageLoader
     }
 
     public void onLoaded(ArrayList<UserImage> images, int type) {
-        if (type == 0) {
+        if (type == 0) { // image outer
+            btnDelete.setVisibility(View.INVISIBLE);
+            btnReturn.setVisibility(View.INVISIBLE);
             list.clear();
             list.addAll(images);
             image_grid.setAdapter(profileImageAdapter);
             profileImageAdapter.notifyDataSetChanged();
-        } else {
+        } else { //detail images
+            btnDelete.setVisibility(View.VISIBLE);
+            btnReturn.setVisibility(View.VISIBLE);
             deleteList.clear();
             detailList.clear();
             detailList.addAll(images);
             image_grid.setAdapter(profileImageSetAdapter);
             profileImageSetAdapter.notifyDataSetChanged();
         }
+        pdl.dismiss();
     }
 
 }

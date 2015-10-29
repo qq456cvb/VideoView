@@ -22,11 +22,10 @@
                 android:layout_weight="6">
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="开始时间："
                     android:id="@+id/txt_starttime"
-                    android:layout_weight="1"
                     android:gravity="center_vertical"
                     android:textSize="20dp" />
 
@@ -35,9 +34,8 @@
                     android:layout_height="match_parent"
                     android:text="starttime"
                     android:id="@+id/starttime"
-                    android:textSize="30dp"
-                    android:gravity="center_vertical"
-                    android:layout_weight="0.4" />
+                    android:textSize="25dp"
+                    android:gravity="center_vertical" />
 
             </LinearLayout>
 
@@ -48,12 +46,11 @@
                 android:layout_weight="6">
 
                 <TextView
-                    android:layout_width="match_parent"
+                    android:layout_width="wrap_content"
                     android:layout_height="match_parent"
                     android:text="结束时间："
                     android:id="@+id/txt_endtime"
                     android:gravity="center_vertical"
-                    android:layout_weight="1"
                     android:textSize="20dp" />
 
                 <TextView
@@ -62,8 +59,7 @@
                     android:text="starttime"
                     android:id="@+id/endtime"
                     android:gravity="center_vertical"
-                    android:textSize="30dp"
-                    android:layout_weight="0.4" />
+                    android:textSize="25dp" />
             </LinearLayout>
 
         </LinearLayout>

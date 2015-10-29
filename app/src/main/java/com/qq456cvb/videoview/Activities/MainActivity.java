@@ -29,6 +29,7 @@ import com.qq456cvb.videoview.Subviews.RightFragment;
 import com.qq456cvb.videoview.Subviews.VideoFragment;
 import com.qq456cvb.videoview.Utils.Channel;
 import com.qq456cvb.videoview.Utils.CommentHttpHelper;
+import com.qq456cvb.videoview.Utils.Programme;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -156,9 +157,6 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
                 lastButton = mDownloadButton;
                 resetCatagory();
                 clearFragments();
-//                if (lastPlaying && lastButton == mProfileButton) {
-//                    mMiddleFragment.togglePlay(true);
-//                }
                 GlobalApp.currentChannel.resetChannel();
                 mDownloadButton.setBackgroundColor(0xff1945ff);
                 mContentMiddle.setVisibility(View.VISIBLE);
@@ -313,6 +311,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
                         }
                         else if (type.equals("play")) {
                             mMiddleFragment.changeSrc(message.getData().getString("value"), message.getData().getFloat("startTime"));
+                            GlobalApp.currentProgramme = (Programme)message.obj;
                         }
                         break;
                     }
@@ -374,12 +373,15 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
 
     @Override
     public void switchRightPanel() {
+        resetCatagory();
         clearFragments();
+        GlobalApp.currentChannel.resetChannel();
         mContentMiddle.setVisibility(View.VISIBLE);
         mContentRight.setVisibility(View.VISIBLE);
+        mMiddleFragment = new MiddleFragment();
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.show(mMiddleFragment);
+        transaction.add(R.id.content_middle, mMiddleFragment);
         transaction.show(comchanFragment);
         transaction.commit();
     }
@@ -453,7 +455,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
     @Override
     public void stopProgressDialog() {
 //        if(progress==null){
-            SystemClock.sleep(1000);
+        SystemClock.sleep(1000);
 //        }
         progress.cancel();
         progress=null;

@@ -1,13 +1,8 @@
 package com.qq456cvb.videoview.Utils;
 
 import android.app.Activity;
-import android.app.AlertDialog;
-import android.app.Dialog;
-import android.content.Intent;
 import android.os.Environment;
-import android.os.SystemClock;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.loopj.android.http.FileAsyncHttpResponseHandler;
 import com.loopj.android.http.RequestParams;
@@ -273,7 +268,7 @@ public class CommentHttpHelper {
             public void onSuccess(int statusCode, Header[] headers, String response) {
                 Log.d("TEF", "statusCode:" + statusCode + ", response:" + response);
                 String columns[]=response.split(",");
-                String contentraw=columns[5].split(":")[1];
+//                String contentraw=columns[5].split(":")[1];
                 Integer queryid=Integer.parseInt(columns[1].split(":")[1]);
 //                String content=contentraw.substring(2, contentraw.length()-2);
                 String content=response.substring(response.indexOf(",\\\"remark\\\":\\\"")+",\\\"remark\\\":\\\"".length(),

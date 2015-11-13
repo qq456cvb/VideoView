@@ -17,6 +17,7 @@ import com.qq456cvb.videoview.R;
 import com.qq456cvb.videoview.Subviews.Profile.ProfileImageFragment;
 import com.qq456cvb.videoview.Utils.UserImage;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -78,9 +79,14 @@ public class ProfileImageSetAdapter extends ArrayAdapter<UserImage> {
         holder.imageView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                ArrayList<String> urls = new ArrayList<String>();
+                for (int i = 0; i < profileImageFragment.detailList.size(); i++) {
+                    urls.add(profileImageFragment.detailList.get(i).getURL());
+                }
                 Bundle bundle = new Bundle();
-                bundle.putString("url", url);
-                DialogFragment dialogFragment=new BigImageDialog();
+                bundle.putStringArrayList("urls", urls);
+                bundle.putInt("idx", position);
+                DialogFragment dialogFragment = new BigImageDialog();
                 dialogFragment.setArguments(bundle);
                 dialogFragment.show(activity.getFragmentManager(), "bigImage");
 

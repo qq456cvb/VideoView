@@ -7,21 +7,48 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/datePicker"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:datePickerMode="spinner"
+        android:calendarViewShown="false" />
 
     <TimePicker
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/timePicker"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_horizontal"
+        android:longClickable="false"
+        android:timePickerMode="spinner" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="年月日只对直接下载有效，批量下载需重新选择日期"
-        android:id="@+id/textView9"
+        android:id="@+id/txt_warning"
         android:layout_gravity="center_horizontal"
         android:textStyle="bold"
         android:textSize="30dp"
         android:textColor="#ffff2224" />
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:gravity="right">
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="取消"
+            android:id="@+id/common_cancel"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+
+        <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="确认"
+            android:id="@+id/common_confirm"
+            android:textSize="30dp"
+            android:textStyle="bold" />
+    </LinearLayout>
 </LinearLayout>

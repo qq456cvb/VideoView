@@ -64,7 +64,7 @@ public class DownloadAndChannelListFragment extends Fragment implements DateTime
     private String initStartDateTime; // 初始化开始时间
     private String initEndDateTime; // 初始化结束时间
 
-    public String chooseDates;
+    public String chooseDates = null;
 
     public DownloadAndChannelListFragment() {
         // Required empty public constructor
@@ -119,6 +119,9 @@ public class DownloadAndChannelListFragment extends Fragment implements DateTime
         new Thread() {
             @Override
             public void run() {
+                if (rightChannelFragment.channelListAdapter.isEmpty()) {
+                    return;
+                }
                 try {
                     UserClient.get("/stpy/ajaxVlcAction!getUrl.action?id=" + GlobalApp.currentChannel.id + "" +
                             "&dateTime=" + convertDateTime + "&hdnType=" + GlobalApp.currentChannel.hdnType + "&urlNext=1", null, handler);
@@ -153,7 +156,7 @@ public class DownloadAndChannelListFragment extends Fragment implements DateTime
             public void onClick(View v) {
                 DateTimePickDialogUtil dateTimePickDialog = new DateTimePickDialogUtil(
                         DownloadAndChannelListFragment.this.getActivity(), DownloadAndChannelListFragment.this, startDateTime.getText().toString());
-                dateTimePickDialog.dateTimePickDialog(startDateTime);
+                dateTimePickDialog.dateTimePickDialog(startDateTime, true);
                 dateTimePickDialog.tag = 0;
             }
         });
@@ -163,7 +166,7 @@ public class DownloadAndChannelListFragment extends Fragment implements DateTime
             public void onClick(View v) {
                 DateTimePickDialogUtil dateTimePickDialog = new DateTimePickDialogUtil(
                         DownloadAndChannelListFragment.this.getActivity(), DownloadAndChannelListFragment.this, endDateTime.getText().toString());
-                dateTimePickDialog.dateTimePickDialog(endDateTime);
+                dateTimePickDialog.dateTimePickDialog(endDateTime, true);
                 dateTimePickDialog.tag = 1;
             }
         });
@@ -195,6 +198,7 @@ public class DownloadAndChannelListFragment extends Fragment implements DateTime
                                 localPath = videoPath.toString() + "/" +GlobalApp.currentChannel.getName()+"_"+ startDateTime.getText().toString() + "_" + endDateTime.getText().toString() + ".mp3";
                             }
                             localPath = localPath.replaceAll(":", "-");
+                            localPath = localPath.replaceAll(" ", "_");
                         } else {
                             //TODO
                         }
@@ -357,6 +361,7 @@ public class DownloadAndChannelListFragment extends Fragment implements DateTime
                         String filename = headers[1].getValue();
                         filename = filename.substring(filename.indexOf("filename=") + 9);
                         localPath = videoPath.toString() + "/"+filename;
+                        localPath = localPath.replaceAll(" ", "_");
                     } else {
                         videoPath = new File("/stpy/video");
                     }
@@ -389,6 +394,7 @@ public class DownloadAndChannelListFragment extends Fragment implements DateTime
                                 Toast.makeText(DownloadAndChannelListFragment.this.getActivity(), "已保存至" + inner_path, Toast.LENGTH_LONG).show();
                             }
                         });
+                        chooseDates = null;
 //                    Intent intent = new Intent(DownloadAndChannelListFragment.this.getActivity(), DownloadService.class);
 //                    Bundle bundle = new Bundle();
 //                    bundle.putString("url", remotePath);
@@ -435,6 +441,9 @@ public class DownloadAndChannelListFragment extends Fragment implements DateTime
             @Override
             public void run() {
                 try {
+                    if (chooseDates.isEmpty()) {
+                        return;
+                    }
                     Intent intent = new Intent(Intent.ACTION_VIEW);
                     intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
                     intent.setType("video/mp4");
@@ -448,9 +457,6 @@ public class DownloadAndChannelListFragment extends Fragment implements DateTime
                     String sendTime = "sendTime=" + (endDateTime.getText().toString() + ":00").substring(11).replaceAll(":", "%3A");
                     String hdnType = "hdnType=" + channel.hdnType;
                     Info info = new Info();
-                    if (chooseDates.isEmpty()) {
-                        return;
-                    }
                     if (!chooseDates.contains(";")) {
                         if (channel.hdnType.equals("1")) {
                             info.suffix = "mp3";

@@ -81,6 +81,7 @@ public class CommentListFragment extends ListFragment {
         dataList=getData();
         commentAdapter=new CommentAdapter(this.getActivity());
         cmList.setAdapter(commentAdapter);
+
         return view;
     }
     class CommentAdapter extends BaseAdapter {

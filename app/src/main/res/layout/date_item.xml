@@ -8,12 +8,15 @@
         android:layout_height="wrap_content"
         android:text="New Text"
         android:id="@+id/text_date"
-        android:layout_weight="0.4" />
+        android:layout_weight="0.4"
+        android:textIsSelectable="false"
+        android:textSize="30dp" />
 
     <Button
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="删除"
         android:id="@+id/btn_delete"
-        android:layout_weight="1" />
+        android:layout_weight="1"
+        android:textSize="30dp" />
 </LinearLayout>

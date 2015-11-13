@@ -43,7 +43,7 @@ public class RightChannelFragment extends Fragment implements ChannelLoader.OnLo
     private ArrayList<Channel> origins = new ArrayList<>();
     private ArrayList<UserCity> cities = new ArrayList<>();
     private ArrayList<ArrayList<Programme>> restore = new ArrayList<>();
-    private ChannelListAdapter channelListAdapter;
+    public ChannelListAdapter channelListAdapter;
     private DishiListAdapter dishiListAdapter;
     private ExpandableListView channelList;
     private ChannelLoader channelLoader = new ChannelLoader(this);

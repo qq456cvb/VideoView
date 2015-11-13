@@ -36,6 +36,10 @@ public class ChannelListAdapter extends BaseExpandableListAdapter {
         this.channels = channels;
     }
 
+    public boolean IsEmpty() {
+        return channels.isEmpty();
+    }
+
     public ArrayList<ArrayList<Programme>> getProgrammes() {
         return this.programmes;
     }

@@ -52,7 +52,7 @@ public class ProfileImageFragment extends Fragment implements ProfileImageLoader
     public static Handler handler;
     private ProfileImageLoader profileImageLoader = new ProfileImageLoader(this);
     private List<UserImage> list = new ArrayList<UserImage>();
-    private List<UserImage> detailList = new ArrayList<UserImage>();
+    public List<UserImage> detailList = new ArrayList<UserImage>();
     private List<UserImage> deleteList = new ArrayList<>();
     private ProfileImageAdapter profileImageAdapter;
     private ProfileImageSetAdapter profileImageSetAdapter;

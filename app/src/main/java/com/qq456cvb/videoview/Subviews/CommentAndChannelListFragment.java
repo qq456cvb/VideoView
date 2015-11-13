@@ -64,7 +64,7 @@ public class CommentAndChannelListFragment extends Fragment implements DateTimeP
             public void onClick(View v) {
                 DateTimePickDialogUtil dateTimePickDialog = new DateTimePickDialogUtil(
                         CommentAndChannelListFragment.this.getActivity(), CommentAndChannelListFragment.this, txtHistory.getText().toString());
-                dateTimePickDialog.dateTimePickDialog(txtHistory);
+                dateTimePickDialog.dateTimePickDialog(txtHistory, false);
             }
         });
 
@@ -136,6 +136,9 @@ public class CommentAndChannelListFragment extends Fragment implements DateTimeP
         new Thread() {
             @Override
             public void run() {
+                if (rightChannelFragment.channelListAdapter.isEmpty()) {
+                    return;
+                }
                 try {
                     UserClient.get("/stpy/ajaxVlcAction!getUrl.action?id=" + GlobalApp.currentChannel.id + "" +
                             "&dateTime=" + convertDateTime + "&hdnType=" + GlobalApp.currentChannel.hdnType + "&urlNext=1", null, handler);

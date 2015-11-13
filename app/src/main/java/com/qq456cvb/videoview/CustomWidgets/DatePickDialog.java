@@ -7,7 +7,6 @@ package com.qq456cvb.videoview.CustomWidgets;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,11 +16,11 @@ import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.qq456cvb.videoview.R;
 import com.qq456cvb.videoview.Subviews.DownloadAndChannelListFragment;
 
-import java.lang.reflect.Field;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -145,6 +144,9 @@ public class DatePickDialog implements DatePicker.OnDateChangedListener {
         downloadAndChannelListFragment = fragment;
         LinearLayout dateTimeLayout = (LinearLayout) activity
                 .getLayoutInflater().inflate(R.layout.multi_datetime, null);
+        Button btn_add = (Button) dateTimeLayout.findViewById(R.id.multi_add);
+        Button btn_cancel = (Button) dateTimeLayout.findViewById(R.id.multi_cancel);
+        Button btn_confirm = (Button) dateTimeLayout.findViewById(R.id.multi_confirm);
         datePicker = (DatePicker) dateTimeLayout.findViewById(R.id.datePicker2);
         listView = (ListView) dateTimeLayout.findViewById(R.id.date_choose);
         final DateBaseAdapter dateBaseAdapter = new DateBaseAdapter(fragment.getActivity());
@@ -155,64 +157,40 @@ public class DatePickDialog implements DatePicker.OnDateChangedListener {
         ad = new AlertDialog.Builder(activity)
                 .setTitle(initDateTime)
                 .setView(dateTimeLayout)
-                .setPositiveButton("下载", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        try
-                        {
-                            Field field = dialog.getClass().getSuperclass().getDeclaredField( "mShowing" );
-                            field.setAccessible( true );
-                            field.set(dialog,
-                                    true); // false - 使之不能关闭(此为机关所在，其它语句相同)
-                            String result = "";
-                            int i = 0;
-                            for (i = 0; i < dates.size() - 1; i ++) {
-                                result += dates.get(i) + ";";
-                            }
-                            result += dates.get(i);
-                            downloadAndChannelListFragment.chooseDates = result;
-                            downloadAndChannelListFragment.manyDownload();
-                        }
-                        catch ( Exception e )
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                })
-                .setNeutralButton("添加日期", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        try
-                        {
-                            Field field = dialog.getClass().getSuperclass().getDeclaredField( "mShowing" );
-                            field.setAccessible( true );
-                            field.set( dialog,
-                                    false ); // false - 使之不能关闭(此为机关所在，其它语句相同)
-                        }
-                        catch ( Exception e )
-                        {
-                            e.printStackTrace();
-                        }
-                        onDateChanged(null, 0, 0, 0);
-                        dates.add(dateTime);
-                        dateBaseAdapter.notifyDataSetChanged();
-                        onDateChanged(null, 0, 0, 0);
-                    }
-                })
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        try
-                        {
-                            Field field = dialog.getClass().getSuperclass().getDeclaredField( "mShowing" );
-                            field.setAccessible( true );
-                            field.set( dialog,
-                                    true ); // false - 使之不能关闭(此为机关所在，其它语句相同)
-                        }
-                        catch ( Exception e )
-                        {
-                            e.printStackTrace();
-                        }
-                    }
-                }).show();
-
+                .show();
+        btn_add.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDateChanged(null, 0, 0, 0);
+                dates.add(dateTime);
+                dateBaseAdapter.notifyDataSetChanged();
+                onDateChanged(null, 0, 0, 0);
+            }
+        });
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                ad.dismiss();
+            }
+        });
+        btn_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                String result = "";
+                int i = 0;
+                for (i = 0; i < dates.size() - 1; i ++) {
+                    result += dates.get(i) + ";";
+                }
+                if (dates.size() > 0) {
+                    result += dates.get(i);
+                } else {
+                    Toast.makeText(activity, "请选择日期", Toast.LENGTH_SHORT).show();
+                }
+                downloadAndChannelListFragment.chooseDates = result;
+                downloadAndChannelListFragment.manyDownload();
+                ad.dismiss();
+            }
+        });
         onDateChanged(null, 0, 0, 0);
         return ad;
     }

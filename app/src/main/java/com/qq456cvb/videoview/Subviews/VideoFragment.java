@@ -177,12 +177,13 @@ public class VideoFragment extends Fragment implements SurfaceHolder.Callback, I
                 {
                     sdDir = Environment.getExternalStorageDirectory();//获取跟目录
                     String dateNow;
-                    SimpleDateFormat sdf = new SimpleDateFormat(" yyyy-MM-dd HH-mm-ss");
+                    SimpleDateFormat sdf = new SimpleDateFormat(" yyyy-MM-dd_HH-mm-ss");
                     dateNow = sdf.format(Calendar.getInstance().getTime());
                     localPath = Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM) + "/" + GlobalApp.currentChannel.getName() + dateNow + ".jpg";
                 } else {
                     //TODO
                 }
+                localPath = localPath.replaceAll(" ","_");
                 libvlc.takeSnapShot(localPath, 800, 600);
                 Intent intent = new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE);
                 Uri uri = Uri.fromFile(new File(localPath));

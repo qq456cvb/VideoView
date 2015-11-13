@@ -4,7 +4,6 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.DialogFragment;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -20,6 +19,8 @@ import android.widget.Toast;
 public class UploadPicOrVideoDialogFragment extends DialogFragment {
     private String TAG="UploadPicOrVideoDialogFragment";
     private Button btn_selfile;
+    private Button btn_confirm;
+    private Button btn_cancel;
     private TextView tv_selfile;
     private RadioGroup rg_uploadtype;
     private int FILE_SELECT_CODE=1;
@@ -47,6 +48,8 @@ public class UploadPicOrVideoDialogFragment extends DialogFragment {
     public Dialog onCreateDialog(Bundle savedInstanceState) {
         View view=getActivity().getLayoutInflater().inflate(R.layout.fragment_upload_pic_or_video_dialog, null);
         btn_selfile=(Button)view.findViewById(R.id.btn_uploadselfile);
+        btn_confirm = (Button)view.findViewById(R.id.upload_confirm);
+        btn_cancel = (Button)view.findViewById(R.id.upload_cancel);
         tv_selfile=(TextView)view.findViewById(R.id.tv_uploadselectfile);
         rg_uploadtype=(RadioGroup)view.findViewById(R.id.rg_uploadtype);
         rg_uploadtype.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
@@ -68,26 +71,42 @@ public class UploadPicOrVideoDialogFragment extends DialogFragment {
         });
         AlertDialog.Builder builder = new AlertDialog.Builder(getActivity());
         builder.setView(view);
-        builder.setPositiveButton("上传",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int id) {
-                    //TODO: upload related data to server
-                        CommentPanelRetSwitcher cprs=(CommentPanelRetSwitcher)getActivity();
-                        if(MIMEType.equals("images/*")){
-                            cprs.uploadPic(queryid, fileUrl, selectFileName);
-                        }else{
-                            if (!MediaFile.isVideoFileType(fileUrl) && !MediaFile.isAudioFileType(fileUrl)) {
-                                Toast.makeText(UploadPicOrVideoDialogFragment.this.getActivity(), "不支持的文件类型", Toast.LENGTH_SHORT).show();
-                            } else {
-                                cprs.uploadVideo(queryid, fileUrl, selectFileName);
-                            }
-                        }
-
-                    }
-                }).setNegativeButton("取消", null);
-        Dialog dialog=builder.create();
+//        builder.setPositiveButton("上传",
+//                new DialogInterface.OnClickListener() {
+//                    @Override
+//                    public void onClick(DialogInterface dialog, int id) {
+//                    //TODO: upload related data to server
+//
+//                    }
+//                }).setNegativeButton("取消", null);
+        final Dialog dialog=builder.create();
         dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
+        btn_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (fileUrl == null) {
+                    Toast.makeText(UploadPicOrVideoDialogFragment.this.getActivity(), "请选择文件", Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                CommentPanelRetSwitcher cprs = (CommentPanelRetSwitcher) getActivity();
+                if (MIMEType.equals("images/*")) {
+                    cprs.uploadPic(queryid, fileUrl, selectFileName);
+                } else {
+                    if (!MediaFile.isVideoFileType(fileUrl) && !MediaFile.isAudioFileType(fileUrl)) {
+                        Toast.makeText(UploadPicOrVideoDialogFragment.this.getActivity(), "不支持的文件类型", Toast.LENGTH_SHORT).show();
+                    } else {
+                        cprs.uploadVideo(queryid, fileUrl, selectFileName);
+                    }
+                }
+                dialog.dismiss();
+            }
+        });
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
         return dialog;
     }
 
@@ -124,8 +143,9 @@ public class UploadPicOrVideoDialogFragment extends DialogFragment {
             }
         } else {
             intent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+            startActivityForResult(intent, FILE_SELECT_CODE);
         }
-        startActivityForResult(intent, FILE_SELECT_CODE);
+
     }
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {

@@ -6,7 +6,8 @@ package com.qq456cvb.videoview.CustomWidgets;
 
 import android.app.Activity;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
+import android.view.View;
+import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.LinearLayout;
 import android.widget.TextView;
@@ -86,11 +87,15 @@ public class DateTimePickDialogUtil implements DatePicker.OnDateChangedListener,
      *            :为需要设置的日期时间文本编辑框
      * @return
      */
-    public AlertDialog dateTimePickDialog(final TextView inputDate) {
+    public AlertDialog dateTimePickDialog(final TextView inputDate, boolean showWarning) {
         LinearLayout dateTimeLayout = (LinearLayout) activity
                 .getLayoutInflater().inflate(R.layout.common_datetime, null);
         datePicker = (DatePicker) dateTimeLayout.findViewById(R.id.datePicker);
         timePicker = (TimePicker) dateTimeLayout.findViewById(R.id.timePicker);
+        TextView txtWarning = (TextView)dateTimeLayout.findViewById(R.id.txt_warning);
+        if (!showWarning) {
+            txtWarning.setVisibility(View.GONE);
+        }
         init(datePicker, timePicker);
         timePicker.setIs24HourView(true);
         timePicker.setOnTimeChangedListener(this);
@@ -98,21 +103,27 @@ public class DateTimePickDialogUtil implements DatePicker.OnDateChangedListener,
         ad = new AlertDialog.Builder(activity)
                 .setTitle(initDateTime)
                 .setView(dateTimeLayout)
-                .setPositiveButton("确定", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        onDateChanged(null, 0, 0, 0);
-                        if (tag == 0) {
-                            onDateSelectListener.OnDateComplete(dateTime);
-                        }
-                        inputDate.setText(dateTime);
-                    }
-                })
-                .setNegativeButton("取消", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        inputDate.setText(dateTime);
-                    }
-                }).show();
-
+                .show();
+        Button btn_confirm = (Button)dateTimeLayout.findViewById(R.id.common_confirm);
+        Button btn_cancel = (Button)dateTimeLayout.findViewById(R.id.common_cancel);
+        btn_cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                inputDate.setText(dateTime);
+                ad.dismiss();
+            }
+        });
+        btn_confirm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onDateChanged(null, 0, 0, 0);
+                if (tag == 0) {
+                    onDateSelectListener.OnDateComplete(dateTime);
+                }
+                inputDate.setText(dateTime);
+                ad.dismiss();
+            }
+        });
         onDateChanged(null, 0, 0, 0);
         return ad;
     }

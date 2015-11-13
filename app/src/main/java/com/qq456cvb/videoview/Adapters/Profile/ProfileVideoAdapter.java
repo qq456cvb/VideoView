@@ -8,6 +8,7 @@ import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.qq456cvb.videoview.R;
 import com.qq456cvb.videoview.Subviews.Profile.ProfileVideoFragment;
@@ -34,7 +35,7 @@ public class ProfileVideoAdapter extends ArrayAdapter<UserVideo> {
     }
 
     public View getView(final int position, View convertView, ViewGroup parent) {
-        Activity activity = (Activity) getContext();
+        final Activity activity = (Activity) getContext();
         final UserVideo userVideo = getItem(position);
         String url = userVideo.url;
         // Load the image and set it on the ImageView
@@ -59,6 +60,7 @@ public class ProfileVideoAdapter extends ArrayAdapter<UserVideo> {
         holder.textView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                Toast.makeText(activity, "你点击了" + innerUrl, Toast.LENGTH_SHORT).show();
                 profileVideoFragment.changeSrc(innerUrl, 0);
             }
         });

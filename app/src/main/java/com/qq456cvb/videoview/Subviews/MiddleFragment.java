@@ -29,7 +29,7 @@ public class MiddleFragment extends Fragment {
 
     private LayoutInflater layoutInflater;
     private View view;
-    private Class fragments[] = {RightChannelFragment.class, RightFragment.class};
+    private Class fragments[] = {RightChannelFragment.class, MainChannelListFragment.class};
     private Button tvButton;
     private Button radioButton;
     private LinearLayout tabMenu;

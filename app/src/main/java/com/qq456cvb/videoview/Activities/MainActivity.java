@@ -1,5 +1,6 @@
 package com.qq456cvb.videoview.Activities;
 
+import android.app.Fragment;
 import android.app.FragmentManager;
 import android.app.FragmentTransaction;
 import android.app.ProgressDialog;
@@ -25,7 +26,7 @@ import com.qq456cvb.videoview.Subviews.DownloadAndChannelListFragment;
 import com.qq456cvb.videoview.Subviews.MiddleFragment;
 import com.qq456cvb.videoview.Subviews.ProfileFragment;
 import com.qq456cvb.videoview.Subviews.RightChannelFragment;
-import com.qq456cvb.videoview.Subviews.RightFragment;
+import com.qq456cvb.videoview.Subviews.MainChannelListFragment;
 import com.qq456cvb.videoview.Subviews.VideoFragment;
 import com.qq456cvb.videoview.Utils.Channel;
 import com.qq456cvb.videoview.Utils.CommentHttpHelper;
@@ -48,7 +49,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
     private long mExitTime = 0;
     private boolean isFullscreen = false;
 
-    private RightFragment mRightFragment = new RightFragment();
+    private MainChannelListFragment mMainChannelListFragment = new MainChannelListFragment();
     private MiddleFragment mMiddleFragment;
     public ProfileFragment mProfileFragment = new ProfileFragment();
     private CommentAndChannelListFragment comchanFragment = new CommentAndChannelListFragment();
@@ -145,7 +146,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
                 FragmentManager fm = getFragmentManager();
                 FragmentTransaction transaction = fm.beginTransaction();
                 transaction.add(R.id.content_middle, mMiddleFragment);
-                transaction.show(mRightFragment);
+                transaction.show(mMainChannelListFragment);
                 transaction.commit();
             }
         });
@@ -228,7 +229,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
         transaction.add(R.id.content_middle, mMiddleFragment);
-        transaction.add(R.id.content_right, mRightFragment);
+        transaction.add(R.id.content_right, mMainChannelListFragment);
         transaction.add(R.id.content_middle_and_right, mProfileFragment);
         transaction.add(R.id.content_right, commentPanelFragment);
         transaction.add(R.id.content_right, comchanFragment);
@@ -255,7 +256,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
         if (mMiddleFragment != null) {
             transaction.remove(mMiddleFragment);
         }
-        transaction.hide(mRightFragment);
+        transaction.hide(mMainChannelListFragment);
         transaction.hide(comchanFragment);
         transaction.hide(commentPanelFragment);
         transaction.hide(downloadAndChannelListFragment);
@@ -270,7 +271,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
 
     public void resetCatagory() {
         if (lastButton == mWatchButton) {
-            mRightFragment.getRightChannelFragment().changeCategory("yangshi", 3);
+            mMainChannelListFragment.getRightChannelFragment().changeCategory("yangshi", 3);
         } else if (lastButton == mDownloadButton) {
             downloadAndChannelListFragment.getRightChannelFragment().changeCategory("yangshi", 3);
         } else if (lastButton == mCommentButton) {
@@ -279,11 +280,23 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
     }
     public RightChannelFragment getRightChannelFragment() {
         if (lastButton == mWatchButton) {
-            return mRightFragment.getRightChannelFragment();
+            return mMainChannelListFragment.getRightChannelFragment();
         } else if (lastButton == mDownloadButton) {
             return downloadAndChannelListFragment.getRightChannelFragment();
         } else if (lastButton == mCommentButton) {
             return comchanFragment.getRightChannelFragment();
+        } else {
+            return null;
+        }
+    }
+
+    public Fragment getRightFragment() {
+        if (lastButton == mWatchButton) {
+            return mMainChannelListFragment;
+        } else if (lastButton == mDownloadButton) {
+            return downloadAndChannelListFragment;
+        } else if (lastButton == mCommentButton) {
+            return comchanFragment;
         } else {
             return null;
         }
@@ -328,7 +341,7 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
                         mProfileFragment.clearFragments();
                         FragmentManager fm = getFragmentManager();
                         FragmentTransaction transaction = fm.beginTransaction();
-                        transaction.hide(mRightFragment);
+                        transaction.hide(mMainChannelListFragment);
                         transaction.hide(comchanFragment);
                         transaction.hide(downloadAndChannelListFragment);
                         transaction.hide(mProfileFragment);
@@ -373,16 +386,20 @@ public class MainActivity extends FragmentActivity implements ProfileFragment.On
 
     @Override
     public void switchRightPanel() {
-        resetCatagory();
-        clearFragments();
-        GlobalApp.currentChannel.resetChannel();
-        mContentMiddle.setVisibility(View.VISIBLE);
-        mContentRight.setVisibility(View.VISIBLE);
-        mMiddleFragment = new MiddleFragment();
+//        resetCatagory();
+//        clearFragments();
+//        GlobalApp.currentChannel.resetChannel();
+//        mContentMiddle.setVisibility(View.VISIBLE);
+//        mContentRight.setVisibility(View.VISIBLE);
+//        mMiddleFragment = new MiddleFragment();
+//        FragmentManager fm = getFragmentManager();
+//        FragmentTransaction transaction = fm.beginTransaction();
+//        transaction.add(R.id.content_middle, mMiddleFragment);
+//        transaction.show(comchanFragment);
         FragmentManager fm = getFragmentManager();
         FragmentTransaction transaction = fm.beginTransaction();
-        transaction.add(R.id.content_middle, mMiddleFragment);
-        transaction.show(comchanFragment);
+        transaction.hide(commentPanelFragment);
+        transaction.show(getRightFragment());
         transaction.commit();
     }
     @Override

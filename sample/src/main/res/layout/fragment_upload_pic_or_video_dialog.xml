@@ -25,7 +25,7 @@
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="400dp">
+            android:layout_height="200dp">
 
             <RadioGroup
                 android:layout_width="match_parent"
@@ -69,6 +69,32 @@
                     android:textSize="25dp" />
 
             </LinearLayout>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:orientation="horizontal"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:gravity="right">
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="取消"
+                android:id="@+id/upload_cancel"
+                android:layout_gravity="right|top"
+                android:textStyle="bold"
+                android:textSize="30dp" />
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="确认"
+                android:id="@+id/upload_confirm"
+                android:textSize="30dp"
+                android:textStyle="bold"
+                android:layout_gravity="top|right" />
 
         </LinearLayout>
 

@@ -110,7 +110,7 @@ public class CommentHttpHelper {
                 try {
                     RequestParams params=new RequestParams();
                     GlobalApp.user.get(getReviewUrl, params, handler);
-                    Log.d("Total","postrequest");
+                    Log.d("Total", "postrequest");
                 }
                 catch (Exception e) {
                     e.printStackTrace();
@@ -119,49 +119,38 @@ public class CommentHttpHelper {
         }.start();
     }
     public static void getCommentPageHelper(final CommentPanelRetSwitcher cprs, final int totalpage){
-//        final ArrayList<String> ret=new ArrayList<String>();
+//      final ArrayList<String> ret=new ArrayList<String>();
         final ArrayList<Integer> queryIds=new ArrayList<Integer>();
         final ArrayList<HashMap<String, String>> list=new ArrayList<HashMap<String, String>>();
+        final HashMap<String, String> page_response=new HashMap<String, String>();
         final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
             private int count=0;
             public void onSuccess(int statusCode, Header[] headers, String response) {
                 count++;
-//                Log.d(TAG, "getCommentHelper statusCode:" + statusCode + ", response:" + response);
+                //TODO: get the page no, add in page_response Map
                 String[] items=response.split("\n");
                 String line;
-                String save="";
-                String[] names={"type","title","docname","relfile","date"};
-                HashMap<String, String> map=new HashMap<String, String>();
-                boolean flag=false;
-                int j=0;
+                String totalpagestr="1";
                 int i=0;
+                String totallinestart="<input name=\"pageResult.pageNo\" value=\"";
+                String totallineend="\" size=\"2\" maxlength=\"2\" style=\"width: 35px;\"/>";
                 while(i<items.length){
                     line=items[i].trim();
-                    if(line.equals("<center>")){
-                        flag=true;
-                    }else if(line.equals("</center>")){
-                        map.put(names[j%5],save);
-                        save="";
-                        if(j%5==4){
-                            list.add(map);
-                            Log.d(TAG, "map size:"+map.size());
-                            map=new HashMap<String, String>();
-                        }
-                        j++;
-                        flag=false;
-                    }else if(flag){
-                        save+=line;
-                    }else if(line.contains("onclick=\"reviewOpen")){
-                                        String queryidstr=line.substring(line.indexOf("(") + 1, line.indexOf(","));
-//                                        Log.d(TAG, "queryidstr:" + queryidstr);
-                                        queryIds.add(Integer.parseInt(queryidstr));
-                    }else if(line.contains("onclick=\"location='reviewMainAction!queryWrod.action?id=")){
-                        String queryidstr=line.substring(line.indexOf("id=") + 3, line.indexOf("'\""));
-                                        Log.d(TAG, "queryidstr:" + queryidstr);
-                        queryIds.add(Integer.parseInt(queryidstr));
+//                    Log.d("Total",line);
+                    if(line.startsWith(totallinestart)){
+//                        Log.d("Total","find start"+line);
+                        Log.d("Total","start:"+(line.indexOf(totallinestart)+totallinestart.length())+"end"+line.indexOf(totallineend));
+                        Log.d("Total","line:"+line+"\n"+"totalpage:"+totalpage);
+                        totalpagestr=line.substring(line.indexOf(totallinestart)+totallinestart.length(),line.indexOf(totallineend));
+
+                        break;
                     }
                     i++;
                 }
+                //TODO: store in map
+                page_response.put(totalpagestr,response);
+//                Log.d(TAG, "getCommentHelper statusCode:" + statusCode + ", response:" + response);
+
 //                for(int i=0; i<items.length ;i++){
 //                    if(items[i].trim().equals("</html>")){
 //                        break;
@@ -218,12 +207,16 @@ public class CommentHttpHelper {
 //                        }
 //                    }
 //                }
-                Log.d(TAG, "new list title" + list.get(0).get("title"));
-                cprs.notifyListChange(list, queryIds);
+//                Log.d(TAG, "new list title" + list.get(0).get("title"));
+
                 if(count==totalpage){
+                    for(int pageno=1; pageno <= totalpage; pageno++){
+                        processCommentListHelper(page_response.get(""+pageno),list,queryIds);
+                    }
+                    cprs.notifyListChange(list, queryIds);
                     cprs.makeToast("获取评论成功");
                 }
-//                cprs.stopProgressDialog();
+//               cprs.stopProgressDialog();
             }
 
             public void onFailure(int statusCode, Header[] headers, String response, Throwable throwable) {
@@ -258,6 +251,44 @@ public class CommentHttpHelper {
                 }
             }
         }.start();
+    }
+
+    private static void processCommentListHelper(String response, ArrayList<HashMap<String, String>> list,ArrayList<Integer> queryIds){
+        String[] items=response.split("\n");
+        String line;
+        String save="";
+        String[] names={"type","title","docname","relfile","date"};
+        HashMap<String, String> map=new HashMap<String, String>();
+        boolean flag=false;
+        int j=0;
+        int i=0;
+        while(i<items.length){
+            line=items[i].trim();
+            if(line.equals("<center>")){
+                flag=true;
+            }else if(line.equals("</center>")){
+                map.put(names[j%5],save);
+                save="";
+                if(j%5==4){
+                    list.add(map);
+                    Log.d(TAG, "map size:"+map.size());
+                    map=new HashMap<String, String>();
+                }
+                j++;
+                flag=false;
+            }else if(flag){
+                save+=line;
+            }else if(line.contains("onclick=\"reviewOpen")){
+                String queryidstr=line.substring(line.indexOf("(") + 1, line.indexOf(","));
+//                                        Log.d(TAG, "queryidstr:" + queryidstr);
+                queryIds.add(Integer.parseInt(queryidstr));
+            }else if(line.contains("onclick=\"location='reviewMainAction!queryWrod.action?id=")){
+                String queryidstr=line.substring(line.indexOf("id=") + 3, line.indexOf("'\""));
+                Log.d(TAG, "queryidstr:" + queryidstr);
+                queryIds.add(Integer.parseInt(queryidstr));
+            }
+            i++;
+        }
     }
 
     public static void editTxtCommentHelper(final ArrayList<Integer> queryIds, final CommentPanelRetSwitcher cprs){
@@ -376,7 +407,7 @@ public class CommentHttpHelper {
         final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, String response) {
                 Log.d(TAG, "---onsucess");
-                Log.d(TAG, "statusCode:" + statusCode + ", response:" + response);
+                Log.d("uploadCommentFileHelper", "statusCode:" + statusCode + ", response:" + response);
                 cprs.makeToast("文件上传成功");
                 cprs.getCommentList();
             }
@@ -401,7 +432,7 @@ public class CommentHttpHelper {
                         Log.d(TAG, "cannot open file!");
                         //TODO: Toast
                     }
-                    params.put("filName", fileName);
+                    params.put("filName", fileName.replace(" ",""));
                     params.put("radioReview", doctype);
                     String tmpUrl=uploadPicReviewUrl+"?id="+queryId;
                     Log.d(TAG, tmpUrl);

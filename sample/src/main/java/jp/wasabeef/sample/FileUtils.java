@@ -151,7 +151,11 @@ public static String getPath(final Context context, final Uri uri) {
         if(Environment.MEDIA_MOUNTED.equals(Environment.getExternalStorageState())) {
             isExternalStorageAvailable = true;
             fileOutputStream = new FileOutputStream(file);            //创建FileOutputStream对象
-            fileOutputStream.write(content.getBytes());                //向FileOutputStream对象中写入数据
+            if(content!=null){
+                fileOutputStream.write(content.getBytes());                //向FileOutputStream对象中写入数据
+            }else{
+                fileOutputStream.write("".getBytes());
+            }
             if(fileOutputStream != null) {            //关闭FileOutputStream对象
                 fileOutputStream.close();
             }

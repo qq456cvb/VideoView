@@ -14,8 +14,11 @@ import android.widget.RadioGroup;
 public class commentPanelFragment extends Fragment {
     private String TAG="commentPanelFragment";
     private RadioGroup cm_moderatio;
+    private static commentPanelFragment fragment;
     public static commentPanelFragment newInstance(String param1, String param2) {
-        commentPanelFragment fragment = new commentPanelFragment();
+        if(fragment==null) {
+            fragment = new commentPanelFragment();
+        }
         return fragment;
     }
 

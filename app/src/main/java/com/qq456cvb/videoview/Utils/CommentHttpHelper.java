@@ -407,7 +407,7 @@ public class CommentHttpHelper {
         final TextHttpResponseHandler handler = new TextHttpResponseHandler() {
             public void onSuccess(int statusCode, Header[] headers, String response) {
                 Log.d(TAG, "---onsucess");
-                Log.d(TAG, "statusCode:" + statusCode + ", response:" + response);
+                Log.d("uploadCommentFileHelper", "statusCode:" + statusCode + ", response:" + response);
                 cprs.makeToast("文件上传成功");
                 cprs.getCommentList();
             }
@@ -432,7 +432,7 @@ public class CommentHttpHelper {
                         Log.d(TAG, "cannot open file!");
                         //TODO: Toast
                     }
-                    params.put("filName", fileName);
+                    params.put("filName", fileName.replace(" ",""));
                     params.put("radioReview", doctype);
                     String tmpUrl=uploadPicReviewUrl+"?id="+queryId;
                     Log.d(TAG, tmpUrl);

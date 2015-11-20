@@ -130,17 +130,29 @@ public class UploadPicOrVideoDialogFragment extends DialogFragment {
 //        startActivityForResult(picture, FILE_SELECT_CODE);
         Intent intent = null;
         if(MIMEType.equals("video/*")){
-            intent = new Intent(Intent.ACTION_GET_CONTENT);
-            intent.setType(MIMEType);
-            intent.addCategory(Intent.CATEGORY_OPENABLE);
-            try {
-                startActivityForResult(Intent.createChooser(intent, "请选择一个要上传的文件"),
-                        FILE_SELECT_CODE);
-            } catch (android.content.ActivityNotFoundException ex) {
-                // Potentially direct the user to the Market with a Dialog
-                Toast.makeText(getActivity(), "请安装文件管理器", Toast.LENGTH_SHORT)
-                        .show();
-            }
+//            intent = new Intent(Intent.ACTION_GET_CONTENT);
+//            intent.setType(MIMEType);
+//            File sdDir = null, videoPath = null;
+//            boolean sdCardExist = Environment.getExternalStorageState()
+//                    .equals(android.os.Environment.MEDIA_MOUNTED); //判断sd卡是否存在
+//            if (sdCardExist) {
+//                sdDir = Environment.getExternalStorageDirectory();//获取跟目录
+//                videoPath = new File(sdDir.toString() + "/stpy/video");
+//                if (!videoPath.exists()) {
+//                    videoPath.mkdirs();
+//                }
+//            }
+//            intent.addCategory(Intent.CATEGORY_OPENABLE);
+//            try {
+//                startActivityForResult(Intent.createChooser(intent, "请选择一个要上传的文件"),
+//                        FILE_SELECT_CODE);
+//            } catch (android.content.ActivityNotFoundException ex) {
+//                // Potentially direct the user to the Market with a Dialog
+//                Toast.makeText(getActivity(), "请安装文件管理器", Toast.LENGTH_SHORT)
+//                        .show();
+//            }
+            intent = new Intent(getActivity(), PickActivity.class);
+            startActivityForResult(intent, FILE_SELECT_CODE);
         } else {
             intent = new Intent(Intent.ACTION_PICK,android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
             startActivityForResult(intent, FILE_SELECT_CODE);
@@ -155,6 +167,9 @@ public class UploadPicOrVideoDialogFragment extends DialogFragment {
             String url;
 //            try {
             url = FileUtils.getPath(getActivity(), uri);
+            if (url == null) {
+                url = uri.getPath();
+            }
             fileUrl = url;
             Log.i("ht", "url" + url);
             String fileName = url.substring(url.lastIndexOf("/") + 1);

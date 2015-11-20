@@ -67,6 +67,7 @@ public class WordUploadFragment extends Fragment {
                     //TODO: upload select file to server
                     CommentPanelRetSwitcher cprs=(CommentPanelRetSwitcher)getActivity();
                     cprs.uploadWord(selectFilePath, selectFileName);
+                    cprs.switchRightPanel();
                 } else {
                     Toast.makeText(getActivity().getApplicationContext(), "请先选择要上传的文件", Toast.LENGTH_LONG).show();
                 }

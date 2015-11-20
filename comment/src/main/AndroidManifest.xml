@@ -4,6 +4,13 @@
 
     <application>
         <uses-sdk android:minSdkVersion="14" android:maxSdkVersion="22"/>
+        <activity
+            android:theme="@android:style/Theme.Holo.Light.Dialog"
+            android:name="jp.wasabeef.sample.PickActivity"
+            android:configChanges="orientation|keyboard"
+            android:screenOrientation="sensorLandscape"
+            android:label="选择视频文件" >
+        </activity>
     </application>
 
 </manifest>

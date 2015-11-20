@@ -209,6 +209,16 @@
     <eat-comment/>
     <style name="AlertDialog.AppCompat" parent="Base.AlertDialog.AppCompat"/>
     <style name="AlertDialog.AppCompat.Light" parent="Base.AlertDialog.AppCompat.Light"/>
+    <!-- From: file:/Users/qq456cvb/Documents/VideoView/sample/src/main/res/values/styles.xml -->
+    <eat-comment/>
+    <style name="Anim_scale" parent="@android:style/Animation.Activity">
+        <item name="android:activityOpenEnterAnimation">@anim/abc_popup_enter</item>
+        <item name="android:activityOpenExitAnimation">@anim/abc_popup_exit</item>
+        <item name="android:activityCloseEnterAnimation">@anim/abc_popup_enter</item>
+        <item name="android:activityCloseExitAnimation">@anim/abc_popup_exit</item>
+    </style>
+    <!-- From: file:/Users/qq456cvb/Documents/VideoView/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/res/values/values.xml -->
+    <eat-comment/>
     <style name="Animation.AppCompat.Dialog" parent="Base.Animation.AppCompat.Dialog"/>
     <style name="Animation.AppCompat.DropDownUp" parent="Base.Animation.AppCompat.DropDownUp"/>
     <!-- From: file:/Users/qq456cvb/Documents/VideoView/sample/src/main/res/values/styles.xml -->
@@ -1132,6 +1142,16 @@
         <item name="android:scaleType">center</item>
         <item name="android:background">?attr/selectableItemBackground</item>
     </style>
+    <!-- From: file:/Users/qq456cvb/Documents/VideoView/sample/src/main/res/values/styles.xml -->
+    <eat-comment/>
+    <style name="PickTheme">
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowIsTranslucent">false</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowAnimationStyle">@style/Anim_scale</item>
+    </style>
+    <!-- From: file:/Users/qq456cvb/Documents/VideoView/sample/build/intermediates/exploded-aar/com.android.support/appcompat-v7/22.2.1/res/values/values.xml -->
+    <eat-comment/>
     <style name="Platform.AppCompat" parent="android:Theme">
         <item name="android:windowNoTitle">true</item>
 
